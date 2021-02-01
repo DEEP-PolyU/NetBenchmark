@@ -2,6 +2,7 @@ import numpy as np
 import scipy.io as sio
 import time
 from models.FeatWalk import featurewalk
+from models.NetMF import netmf
 from evaluation.SVM import node_classify
 '''################# Load data  #################'''
 mat_contents = sio.loadmat('data/ACM/ACM.mat')
@@ -42,5 +43,11 @@ labels = Label.reshape(-1)
 # max_class = np.max(labels) + 1
 # class_one = np.eye(max_class)
 # labels = class_one[labels]
-
 node_classify(np.array(H_FeatWalk),labels)
+#netMF
+# start_time = time.time()
+# netmf = netmf().netmf_small()
+# print(netmf.shape())
+# print("time elapsed: {:.2f}s".format(time.time() - start_time))
+#node_classify(np.array(netmf),labels)
+
