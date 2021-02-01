@@ -15,13 +15,13 @@ from sklearn import svm
 from sklearn.metrics import f1_score
 
 from preprocessing.utils import normalize, sigmoid, load_citation, sparse_mx_to_torch_sparse_tensor, load_citationmat
-from model.GCN.ZX_GCN import GCNTra
+from models.GCN.ZX_GCN import GCNTra
 from preprocessing.preprocessing import mask_test_edges
 
 # Training settings
 parser = argparse.ArgumentParser()
 parser.add_argument('--cuda', type=str, default='0', help='specify cuda devices')
-parser.add_argument('--dataset',type=str,default='cora',
+parser.add_argument('--dataset', type=str, default='cora',
                     #default="cora",
                     help='BlogCatalog.')
 parser.add_argument('--model_type', type=str, default="gcn",
@@ -152,13 +152,13 @@ def print_configuration(args):
         print('{}: {}'.format(key, value))
 
 
-def test_classify(feature, labels, args):
+def test_classify(feature, labels,arg):
     shape = len(labels.shape)
     if shape == 2:
         labels = np.argmax(labels, axis=1)
     f1_mac = []
     f1_mic = []
-    kf = KFold(n_splits=5, random_state=args.seed, shuffle=True)
+    kf = KFold(n_splits=5, random_state=arg.seed, shuffle=True)
     for train_index, test_index in kf.split(feature):
         train_X, train_y = feature[train_index], labels[train_index]
         test_X, test_y = feature[test_index], labels[test_index]
@@ -228,7 +228,7 @@ if __name__ == '__main__':
     node_emb = train(features, adj_norm, adj_label, val_edges, val_edges_false, save_path, device, args, pos_weight, norm)
 
     # save_emb(node_emb, adj_orig + sp.eye(adj_orig.shape[0]), labels, save_path_emb)
-    test_classify(node_emb, labels, args)
+    test_classify(node_emb, labels,args)
     print('!!! Finish')
 
 

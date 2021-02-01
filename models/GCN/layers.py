@@ -130,7 +130,7 @@ class NeighLayer(Module):
 
 
 class InnerProductDecoder(Module):
-    """Decoder model layer for link prediction."""
+    """Decoder models layer for link prediction."""
     def __init__(self, input_dim, dropout=0., act=F.sigmoid, **kwargs):
         super(InnerProductDecoder, self).__init__()
         self.dropout = dropout

@@ -15,7 +15,7 @@ beta        is the small value threshold
 num_paths   is the number of feature walks to start at each instance
 path_length is the length of the feature walk started at each instance
 dim         is the dimension of embedding representations
-win_size    is the window size of skipgram model
+win_size    is the window size of skipgram models
 '''
 
 class featurewalk:

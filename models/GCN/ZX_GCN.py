@@ -1,6 +1,6 @@
 import torch.nn as nn
 import torch.nn.functional as F
-from model.GCN.layers import GraphConvolution, SparseGraphConvolution, SparseLayer, DenseLayer, InnerProductDecoder, NeighLayer, SparseGCN, GCNTrans
+from models.GCN.layers import GraphConvolution, SparseGraphConvolution, SparseLayer, DenseLayer, InnerProductDecoder, NeighLayer, SparseGCN, GCNTrans
 import torch
 import math
 from torch.nn.parameter import Parameter
