@@ -17,7 +17,7 @@ from sklearn.metrics import f1_score
 from preprocessing.utils import normalize, sigmoid, load_citation, sparse_mx_to_torch_sparse_tensor, load_citationmat
 from models.GCN.ZX_GCN import GCNTra
 from preprocessing.preprocessing import mask_test_edges
-
+from evaluation.node_classification import SVM
 # Training settings
 parser = argparse.ArgumentParser()
 parser.add_argument('--cuda', type=str, default='0', help='specify cuda devices')
@@ -226,7 +226,6 @@ if __name__ == '__main__':
     save_path_emb = "./emb/%s_" % args.model_type + args.dataset + '_%d_' % args.hidden1 + '_%d_' % args.hidden2 + '.mat'
     print_configuration(args)
     node_emb = train(features, adj_norm, adj_label, val_edges, val_edges_false, save_path, device, args, pos_weight, norm)
-
     # save_emb(node_emb, adj_orig + sp.eye(adj_orig.shape[0]), labels, save_path_emb)
     test_classify(node_emb, labels,args)
     print('!!! Finish')
