@@ -11,7 +11,7 @@ from collections import Counter
 
 from six.moves import zip
 
-from NetBenchmark.models.deepwalk_package import graph
+from models.deepwalk_package import graph
 
 logger = logging.getLogger("deepwalk")
 

@@ -1,5 +1,5 @@
-from NetBenchmark.models.deepwalk_package import graph, walks as serialized_walks
-from NetBenchmark.models.deepwalk_package.skipgram import Skipgram
+from models.deepwalk_package import graph, walks as serialized_walks
+from models.deepwalk_package.skipgram import Skipgram
 from gensim.models import Word2Vec
 import random
 import numpy as np
