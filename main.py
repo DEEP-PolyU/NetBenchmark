@@ -4,7 +4,7 @@ import time
 from models.FeatWalk import featurewalk
 from preprocessing.utils import normalize, sigmoid, load_citation, sparse_mx_to_torch_sparse_tensor, load_citationmat
 from models.NetMF import netmf
-from evaluation.SVM import node_classify
+from evaluation.node_classification import SVM
 '''################# Load data  #################'''
 # adj, features, labels, idx_train, idx_val, idx_test = load_citation(dataset_str="cora", normalization="AugNormAdj", use_feat=1, cuda=True)
 mat_contents = sio.loadmat('data/BlogCatalog/BlogCatalog.mat')
@@ -36,5 +36,5 @@ import scipy.io as io
 matr = io.loadmat('blogFeat_Embedding.mat')
 H_FeatWalk = matr['H_FeatWalk']
 labels = Label.reshape(-1)
-node_classify(np.array(H_FeatWalk),labels)
+SVM(np.array(H_FeatWalk),labels)
 
