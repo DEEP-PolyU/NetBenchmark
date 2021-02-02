@@ -4,11 +4,14 @@ import numpy as np
 from sklearn.metrics import roc_auc_score
 from sklearn.metrics import average_precision_score
 from preprocessing.utils import normalize, sigmoid, load_citation, sparse_mx_to_torch_sparse_tensor, load_citationmat
+
+
+
 def get_roc_score(emb_name, edges_pos, edges_neg):
     matr = sio.loadmat(emb_name)
 
     data = matr['Deepwalk']
-    emb = np.transpose(data)
+    emb = data
 
     adj_rec = np.matmul(emb, emb.T)
 
@@ -30,8 +33,8 @@ def get_roc_score(emb_name, edges_pos, edges_neg):
 
 matr = sio.loadmat('data/BlogCatalog/BlogCatalog.mat')
 matr_emb=sio.loadmat('Deepwalk_Embedding.mat')
-adj= matr['Network']
-# print(adj.shape)
+adj=matr['Network']
+
 # print(matr_emb['Deepwalk'].shape)
 adj_train, train_edges, val_edges, val_edges_false, test_edges, test_edges_false = pre.mask_test_edges(adj)
 get_roc_score(emb_name="Deepwalk_Embedding.mat",edges_pos=val_edges,edges_neg = val_edges_false)
