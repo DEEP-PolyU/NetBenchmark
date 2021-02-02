@@ -107,12 +107,12 @@ def direct_compute_deepwalk_matrix(A, window, b):
     Y = f(M.todense().astype(theano.config.floatX))
     return sparse.csr_matrix(Y)
 class netmf:
-   def netmf_small(self):
+   def netmf_small(self,rootdir,variable_name):
        logger.info("Running NetMF for a small window size...")
        logger.info("Window size is set to be %d", 5)
        # load adjacency matrix
-       A = load_adjacency_matrix('data/ACM/ACM.mat',
-               variable_name="Network")
+       A = load_adjacency_matrix(rootdir,
+               variable_name=variable_name)
        # directly compute deepwalk matrix
        deepwalk_matrix = direct_compute_deepwalk_matrix(A,
                window=5, b=1.0)
@@ -121,4 +121,4 @@ class netmf:
        deepwalk_embedding = svd_deepwalk_matrix(deepwalk_matrix, dim=128)
        # logger.info("Save embedding to %s", args.output)
        # np.save(args.output, deepwalk_embedding, allow_pickle=False)
-       return deepwalk_embedding
+       scipy.io.savemat('netmf_Embedding.mat', {"NetMF": deepwalk_embedding})
