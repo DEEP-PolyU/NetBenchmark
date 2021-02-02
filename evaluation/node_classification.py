@@ -7,7 +7,7 @@ from sklearn.model_selection import KFold
 from sklearn import svm
 from sklearn.metrics import f1_score
 
-def node_classify(feature, labels):
+def SVM(feature, labels):
     shape = len(labels.shape)
     if shape == 2:
         labels = np.argmax(labels, axis=1)

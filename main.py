@@ -3,7 +3,7 @@ import scipy.io as sio
 import time
 from models.FeatWalk import featurewalk
 from models.NetMF import netmf
-from evaluation.SVM import node_classify
+from evaluation.node_classification import SVM
 '''################# Load data  #################'''
 mat_contents = sio.loadmat('data/ACM/ACM.mat')
 number_walks = 35  # 'Number of random walks to start at each instance'
@@ -30,6 +30,7 @@ CombX2 = X2[Group1+Group2, :][:, Group1+Group2]
 
 start_time = time.time()
 H_FeatWalk = featurewalk(featur1=CombX1, alpha1=.97, featur2=None, alpha2=0, Net=CombX2, beta=0, num_paths=number_walks, path_length=walk_length, dim=d, win_size=win_size).function()
+
 print("time elapsed: {:.2f}s".format(time.time() - start_time))
 sio.savemat('ACM_Embedding.mat', {"H_FeatWalk": H_FeatWalk})
 import scipy.io as io
@@ -43,7 +44,7 @@ labels = Label.reshape(-1)
 # max_class = np.max(labels) + 1
 # class_one = np.eye(max_class)
 # labels = class_one[labels]
-node_classify(np.array(H_FeatWalk),labels)
+SVM(np.array(H_FeatWalk),labels)
 #netMF
 # start_time = time.time()
 # netmf = netmf().netmf_small()
