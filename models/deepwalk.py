@@ -72,7 +72,7 @@ def deepwalk_fun(CombG, representation_size, number_walks):
 
 
 
-class deepwalk_c:
+class deepwalk:
     def deepwalkgood(self,rootdir,variable_name,number_walks,representation_size):
 
         mat_contents = sio.loadmat(rootdir)
