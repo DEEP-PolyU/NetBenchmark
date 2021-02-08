@@ -2,12 +2,13 @@ from __future__ import division
 from __future__ import print_function
 
 import numpy as np
-
+import scipy.io as sio
 from sklearn.model_selection import KFold
 from sklearn import svm
 from sklearn.metrics import f1_score
 
-def SVM(feature, labels):
+def node_classifcation(feature, labels):
+    labels = labels.reshape(-1)
     shape = len(labels.shape)
     if shape == 2:
         labels = np.argmax(labels, axis=1)
