@@ -3,7 +3,7 @@ import preprocessing.preprocessing as pre
 import numpy as np
 from sklearn.metrics import roc_auc_score
 from sklearn.metrics import average_precision_score
-from preprocessing.utils import normalize, sigmoid, load_citation, sparse_mx_to_torch_sparse_tensor, load_citationmat
+from preprocessing.utils import normalize, sigmoid, load_citation, sparse_mx_to_torch_sparse_tensor, load_citationANEmat
 
 
 

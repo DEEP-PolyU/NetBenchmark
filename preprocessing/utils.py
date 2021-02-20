@@ -9,7 +9,6 @@ import os
 import random
 import scipy.io as scio
 
-
 def sigmoid(x):
     return 1 / (1 + np.exp(-x))
 
@@ -225,74 +224,6 @@ def load_citation(dataset_str="cora", normalization="AugNormAdj", use_feat=1, cu
 
     return adj, features, labels, idx_train, idx_val, idx_test
 
-def load_citationmat(dataset_str="BlogCatalog", normalization="AugNormAdj", use_feat=1, cuda=True):
-    """
-    Load Citation Networks Datasets.
-    """
-    data_file = 'data/{}/{}'.format(dataset_str, dataset_str) + '.mat'
-    data = scio.loadmat(data_file)
-    features = data['Attributes']
-    labels = data['Label'].reshape(-1)
-    adj = data['Network']
-    features = preprocess_citation_feat(features)
-
-    label_min = np.min(labels)
-    if label_min != 0:
-        labels = labels - 1
-    max_class = np.max(labels) + 1
-    class_one = np.eye(max_class)
-    labels = class_one[labels]
-    if use_feat:
-        features = sparse_mx_to_torch_sparse_tensor(features).float()
-    else:
-        features = create_sparse_eye_tensor(features.shape).float()
-
-    idx_train = np.array(range(500))
-    idx_val = np.array(range(500, 1000))
-    idx_test = np.array(range(1000, 1500))
-
-    return adj, features, labels, idx_train, idx_val, idx_test
-
-def load_citationANEmat(dataset_str="BlogCatalog", normalization="AugNormAdj", use_net=0, cuda=True):
-    data_file = 'data/{}/{}'.format(dataset_str, dataset_str) + '.mat'
-    data = scio.loadmat(data_file)
-    features = data['Attributes']
-    labels = data['Label'].reshape(-1)
-    adj = data['Network']
-    features = preprocess_citation_feat(features)
-
-    label_min = np.min(labels)
-    if label_min != 0:
-        labels = labels - 1
-    max_class = np.max(labels) + 1
-    class_one = np.eye(max_class)
-    labels = class_one[labels]
-
-    n, d = features.shape
-    sparse_mx = features.tocoo().astype(np.float32)
-    index_row = sparse_mx.row
-    index_col = sparse_mx.col
-    nodeAttriNet = sp.csr_matrix((np.ones_like(index_row), (index_row, index_col)), shape=(n, d))
-    adj_mat = sp.dok_matrix((n + d, n + d), dtype=np.float32)
-    adj_mat = adj_mat.tolil()
-    R = nodeAttriNet.tolil()
-    adj_mat[:n, n:] = R
-    adj_mat[n:, :n] = R.T
-    if use_net:
-        adj.data = np.ones_like(adj.data)
-        adj_ori = adj.tolil()
-        adj_mat[:n, :n] = adj_ori
-    adj_mat = adj_mat.tocsr()
-    sum_num = adj_mat.sum() * 1.0
-    sparsity = sum_num / (n * d)
-    print('---> Sparsity of feature matrix: %.4f' % sparsity)
-
-    idx_train = np.array(range(500))
-    idx_val = np.array(range(500, 1000))
-    idx_test = np.array(range(1000, 1500))
-
-    return adj, features, adj_mat, labels, idx_train, idx_val, idx_test
-
 def load_citationANE(dataset_str="cora", normalization="AugNormAdj", use_net=0, cuda=True):
     """
     Load Citation Networks Datasets.
@@ -390,12 +321,6 @@ def load_citationANE(dataset_str="cora", normalization="AugNormAdj", use_net=0, 
         features = preprocess_citation_feat(features)
 
     # porting to pytorch
-    # features = torch.FloatTensor(np.array(features.todense())).float()
-    # if use_feat:
-    #     features = sparse_mx_to_torch_sparse_tensor(features).float()
-    # else:
-    #     features = create_sparse_eye_tensor(features.shape).float(
-
     n, d = features.shape
     sparse_mx = features.tocoo().astype(np.float32)
     index_row = sparse_mx.row
@@ -410,16 +335,7 @@ def load_citationANE(dataset_str="cora", normalization="AugNormAdj", use_net=0, 
         adj.data = np.ones_like(adj.data)
         adj_ori = adj.tolil()
         adj_mat[:n, :n] = adj_ori
-    # adj_mat = adj_mat.todok()
-    # # adj_mat = adj_mat + sp.eye(adj_mat.shape[0])
-    # rowsum = np.array(adj_mat.sum(axis=1))
-    # d_inv = np.power(rowsum, -0.5).flatten()
-    # d_inv[np.isinf(d_inv)] = 0.
-    # d_mat = sp.diags(d_inv)
-    #
-    # norm_adj = d_mat.dot(adj_mat)
-    # norm_adj = norm_adj.dot(d_mat)
-    # norm_adj = norm_adj.tocsr()
+
     adj_mat = adj_mat.tocsr()
     sum_num = adj_mat.sum() * 1.0
     sparsity = sum_num / (n * d)
@@ -427,6 +343,41 @@ def load_citationANE(dataset_str="cora", normalization="AugNormAdj", use_net=0, 
 
     return adj, features, adj_mat, labels, idx_train, idx_val, idx_test
 
+def load_citationANEmat(dataset_str="BlogCatalog"):
+    data_file = 'data/{}/{}'.format(dataset_str, dataset_str) + '.mat'
+    data = scio.loadmat(data_file)
+    features = data['Attributes']
+    labels = data['Label'].reshape(-1)
+    adj = data['Network']
+    features = preprocess_citation_feat(features)
+
+    label_min = np.min(labels)
+    if label_min != 0:
+        labels = labels - 1
+    max_class = np.max(labels) + 1
+    class_one = np.eye(max_class)
+    labels = class_one[labels]
+
+    n, d = features.shape
+    sparse_mx = features.tocoo().astype(np.float32)
+    index_row = sparse_mx.row
+    index_col = sparse_mx.col
+    nodeAttriNet = sp.csr_matrix((np.ones_like(index_row), (index_row, index_col)), shape=(n, d))
+    adj_mat = sp.dok_matrix((n + d, n + d), dtype=np.float32)
+    adj_mat = adj_mat.tolil()
+    R = nodeAttriNet.tolil()
+    adj_mat[:n, n:] = R
+    adj_mat[n:, :n] = R.T
+    adj_mat = adj_mat.tocsr()
+    sum_num = adj_mat.sum() * 1.0
+    sparsity = sum_num / (n * d)
+    print('---> Sparsity of feature matrix: %.4f' % sparsity)
+
+    idx_train = np.array(range(500))
+    idx_val = np.array(range(500, 1000))
+    idx_test = np.array(range(1000, 1500))
+
+    return adj, features, adj_mat, labels, idx_train, idx_val, idx_test
 
 def load_citation_2graph(dataset_str="cora", normalization="AugNormAdj", use_feat=True, cuda=True):
     """
@@ -753,6 +704,3 @@ class EdgeSampler(object):
         return np.array(batch_x), np.array(batch_y)
 
 
-if __name__ == '__main__':
-    dataset = 'BlogCatalog'
-    data = load_citationmat(dataset)
