@@ -135,12 +135,11 @@ class netmf(Models):
     def is_epoch(cls):
         return False
 
-    def train_model(self, rootdir, **kwargs):
+    def train_model(self, mat_content, **kwargs):
         logger.info("Running NetMF for a small window size...")
         logger.info("Window size is set to be %d", 5)
         # load adjacency matrix
-        A = load_adjacency_matrix(rootdir,
-                                  variable_name=kwargs['variable_name'])
+        A = mat_content
         # directly compute deepwalk matrix
         deepwalk_matrix = direct_compute_deepwalk_matrix(A,
                                                          window=5, b=1.0)

@@ -2,15 +2,18 @@ import argparse
 import numpy as np
 import time
 from models.NetMF import netmf
-
+from preprocessing.dataset import Flickr,ACM,Cora,BlogCatalog
 dataAddress = {'Flickr':"data/Flickr/Flickr_SDM.mat"}
+
+datasetlist = [Flickr, ACM, Cora, BlogCatalog]
+datasetdict = {Cls.__name__.lower(): Cls for Cls in datasetlist}
 
 def parse_args():
     parser = argparse.ArgumentParser(description='NetBenchmark(DeepLab).')
 
     parser.add_argument('--dataset', type=str,
-                        default='Flickr',choices=['BlogCatalog','ACM','Flickr'],
-                        help='select a available dataset (default: Flicker)')
+                        default='flickr',choices=datasetdict,
+                        help='select a available dataset (default: flicker)')
     parser.add_argument('--method', type=str, default='NetMF',
                         choices=['node2vec', 'deepWalk', 'line',
                         'gcn', 'grarep', 'tadw', 'lle', 'hope',
@@ -26,14 +29,13 @@ def parse_args():
     return args
 
 
-
-
-
-
 def main(args):
+
     print("Loading...")
+    Graph = datasetdict[args.dataset]
+    Graph=Graph.get_graph(Graph)
     if args.method == 'NetMF':
-        netmf(dataAddress[args.dataset], args.evaluation, variable_name=args.variable_name or'Network' )
+        netmf(Graph, args.evaluation, variable_name=args.variable_name or 'Network' )
 
 
 

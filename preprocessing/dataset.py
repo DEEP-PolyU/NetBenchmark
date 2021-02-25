@@ -1,13 +1,13 @@
 import scipy
 import logging
-import loadCora
+from .loadCora import load_citation
 
 logger = logging.getLogger(__name__)
 def load_adjacency_matrix(file, variable_name="network"):
     data = scipy.io.loadmat(file)
     logger.info("loading mat file %s", file)
     if variable_name not in data:
-        variable_name[0]=variable_name[0].upper()
+        variable_name=variable_name.capitalize()
     return data[variable_name]
 
 class Datasets:
@@ -65,7 +65,7 @@ class Cora(Datasets):
         super(Cora, self).__init__()
 
     def get_graph(self):
-        adj, features, labels, idx_train, idx_val, idx_test = loadCora.load_citation()
+        adj, features, labels, idx_train, idx_val, idx_test = load_citation()
         return adj
 
     @classmethod

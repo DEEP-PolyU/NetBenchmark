@@ -13,7 +13,8 @@ class Models(torch.nn.Module):
             self.preprocessing(datasets)
         if(self.is_epoch==True):
             self.forward()
-        mat_contents = sio.loadmat(datasets)
+        # mat_contents = sio.loadmat(datasets)
+        mat_contents = datasets
         start_time = time.time()
         self.save_emb_name,self.model_name=self.train_model(datasets,**kwargs)
         print("time elapsed: {:.2f}s".format(time.time() - start_time))
@@ -47,7 +48,7 @@ class Models(torch.nn.Module):
      def forward(self):
          return None
 
-     def train_model(self, rootdir, **kwargs):
+     def train_model(self, mat_content, **kwargs):
          filename=""
          return filename
 
