@@ -26,12 +26,10 @@ def parse_args():
     return args
 
 def main(args):
-    start_time = time.time()
     print("Loading...")
     if args.method == 'NetMF':
         netmf(dataAddress[args.dataset], args.evaluation, variable_name=args.variable_name or'Network' )
-    end_time = time.time()
-    print(end_time-start_time)
+
 
 
 
