@@ -13,6 +13,7 @@ import argparse
 import logging
 import theano
 from theano import tensor as T
+from .model import *
 
 logger = logging.getLogger(__name__)
 theano.config.exception_verbosity='high'
@@ -106,8 +107,8 @@ def direct_compute_deepwalk_matrix(A, window, b):
     f = theano.function([m], T.log(T.maximum(m, 1)))
     Y = f(M.todense().astype(theano.config.floatX))
     return sparse.csr_matrix(Y)
-class netmf:
-   def netmf_small(self,rootdir,variable_name):
+class netmf1:
+   def netmf_small(self,rootdir,variable_name="Network"):
        logger.info("Running NetMF for a small window size...")
        logger.info("Window size is set to be %d", 5)
        # load adjacency matrix
@@ -121,4 +122,32 @@ class netmf:
        deepwalk_embedding = svd_deepwalk_matrix(deepwalk_matrix, dim=128)
        # logger.info("Save embedding to %s", args.output)
        # np.save(args.output, deepwalk_embedding, allow_pickle=False)
-       scipy.io.savemat('netmf_Embedding.mat', {"NetMF": deepwalk_embedding})
+       scipy.io.savemat('netmf2_Embedding.mat', {"NetMF": deepwalk_embedding})
+
+class netmf(Models):
+    def __init__(self, datasets,evlation,**kwargs):
+        super(netmf, self).__init__(datasets=datasets, evlation=evlation,**kwargs)
+    @classmethod
+    def is_preprocessing(cls):
+        return False
+
+    @classmethod
+    def is_epoch(cls):
+        return False
+
+    def train_model(self, rootdir, **kwargs):
+        logger.info("Running NetMF for a small window size...")
+        logger.info("Window size is set to be %d", 5)
+        # load adjacency matrix
+        A = load_adjacency_matrix(rootdir,
+                                  variable_name=kwargs['variable_name'])
+        # directly compute deepwalk matrix
+        deepwalk_matrix = direct_compute_deepwalk_matrix(A,
+                                                         window=5, b=1.0)
+
+        # factorize deepwalk matrix with SVD
+        deepwalk_embedding = svd_deepwalk_matrix(deepwalk_matrix, dim=128)
+        # logger.info("Save embedding to %s", args.output)
+        # np.save(args.output, deepwalk_embedding, allow_pickle=False)
+        scipy.io.savemat('netmf_Embedding.mat', {"NetMF": deepwalk_embedding})
+        return 'netmf_Embedding.mat',"NetMF"
