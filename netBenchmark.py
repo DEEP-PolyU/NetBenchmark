@@ -33,9 +33,9 @@ def main(args):
 
     print("Loading...")
     Graph = datasetdict[args.dataset]
-    Graph=Graph.get_graph(Graph)
+    Graph=Graph.get_graph(Graph,variable_name= args.variable_name or 'network' )
     if args.method == 'NetMF':
-        netmf(Graph, args.evaluation, variable_name=args.variable_name or 'Network' )
+        netmf(Graph, args.evaluation)
 
 
 
