@@ -5,15 +5,18 @@
 import argparse
 import numpy as np
 import networkx as nx
-import models.node2vec as node2vec
+import models.Node2vec as node2vec
 import scipy.io
 from collections import defaultdict
 from time import perf_counter
 from datetime import timedelta
 from gensim.models import Word2Vec
 from gensim.models import KeyedVectors
-from multiprocessing import cpu_count
+from multiprocessing import cpu_count, process
 from evaluation.node_classification import node_classifcation
+from .models import *
+
+
 
 
 def read_graph(input_path, directed=False):
@@ -58,7 +61,7 @@ def generate_embeddings(corpus, dimensions, window_size, num_workers, p, q, inpu
     return model, w2v_emb
 
 
-def process(input, directed, p, q, d, walks, length, workers, window, output,content):
+def newprocess(input, directed, p, q, d, walks, length, workers, window, output,content):
     Graph, init_probabilities = read_graph(input, directed)
     G = node2vec.Graph(Graph, init_probabilities, p, q, walks, length, workers)
     G.compute_probabilities()
@@ -73,6 +76,27 @@ def process(input, directed, p, q, d, walks, length, workers, window, output,con
         H[nodei] = embeddings[str(nodei)]
     return H
 
+
+
+class node2vec(Models):
+    def __init__(self, datasets,evlation,**kwargs):
+        super(node2vec, self).__init__(datasets=datasets, evlation=evlation,**kwargs)
+    @classmethod
+    def is_preprocessing(cls):
+        return False
+
+    @classmethod
+    def is_epoch(cls):
+        return False
+
+    def train_model(self,input,**kwargs):
+
+        embbeding = newprocess(input=input, directed=False, p=1.0, q=1.0, d=128, walks=4, length=10,
+                                    workers=12,
+                                    window=5, output=None, content='network')
+        scipy.io.savemat('../node2vec_Embedding.mat', {"node2vec": embbeding})
+
+        return 'node2vec_Embedding.mat', "node2vec"
 
 
 
@@ -108,6 +132,7 @@ def process(input, directed, p, q, d, walks, length, workers, window, output,con
 
 
 if __name__ == '__main__':
+
     embbeding = process(input='../data/POS.mat', directed=False, p=1.0, q=1.0, d=128, walks=4, length=10, workers=12,
                         window=5, output=None,content='network')
     scipy.io.savemat('../node2vec_Embedding.mat', {"node2vec": embbeding})
