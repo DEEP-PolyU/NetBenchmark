@@ -78,9 +78,9 @@ def newprocess(input, directed, p, q, d, walks, length, workers, window, output,
     walks = G.generate_random_walks()
     model, embeddings = generate_embeddings(walks, d, window, workers, p, q, input, output)
 
-    mat = scipy.io.loadmat(input)
+    #mat = scipy.io.loadmat(input)
 
-    H = np.zeros((mat[content].shape[0], d))
+    H = np.zeros((input.shape[0], d))
     H[:, 0] = 1
     for nodei in Graph.nodes():
         H[nodei] = embeddings[str(nodei)]
