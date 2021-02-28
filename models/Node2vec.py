@@ -36,24 +36,13 @@ def timer(msg):
     return inner
 
 def read_graph(input_path, directed=False):
-    if (input_path.split('.')[-1] == 'edgelist'):
-        G = nx.read_edgelist(input_path, nodetype=int, data=(('weight', float),), create_using=nx.DiGraph())
-
-    elif (input_path.split('.')[-1] == 'mat'):
-        edges = list()
-        mat = scipy.io.loadmat(input_path)
-        nodes = mat['network'].tolil()
-        G = nx.DiGraph()
-        for start_node, end_nodes in enumerate(nodes.rows, start=0):
-            for end_node in end_nodes:
-                edges.append((start_node, end_node))
-
-        G.add_edges_from(edges)
-
-    else:
-        import sys
-        sys.exit('Unsupported input type')
-
+    edges = list()
+    nodes = input_path.tolil()
+    G = nx.DiGraph()
+    for start_node, end_nodes in enumerate(nodes.rows, start=0):
+        for end_node in end_nodes:
+            edges.append((start_node, end_node))
+    G.add_edges_from(edges)
     if not directed:
         G = G.to_undirected()
 
@@ -172,6 +161,6 @@ class node2vec(Models):
         embbeding = newprocess(input=mat_content, directed=False, p=1.0, q=1.0, d=128, walks=4, length=10,
                                workers=12,
                                window=5, output=None, content='network')
-        scipy.io.savemat('../node2vec_Embedding.mat', {"node2vec": embbeding})
+        scipy.io.savemat('node2vec_Embedding.mat', {"node2vec": embbeding})
 
         return 'node2vec_Embedding.mat', "node2vec"
