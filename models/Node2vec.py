@@ -72,6 +72,7 @@ def generate_embeddings(corpus, dimensions, window_size, num_workers, p, q, inpu
     return model, w2v_emb
 
 def newprocess(input, directed, p, q, d, walks, length, workers, window, output,content):
+
     Graph, init_probabilities = read_graph(input, directed)
     G = HGraph(Graph, init_probabilities, p, q, walks, length, workers)
     G.compute_probabilities()
@@ -153,8 +154,8 @@ class HGraph():
 
 class node2vec(Models):
 
-    def __init__(self, datasets,evlation,**kwargs):
-        super(node2vec, self).__init__(datasets=datasets, evlation=evlation,**kwargs)
+    def __init__(self, datasets,evaluation,**kwargs):
+        super(node2vec, self).__init__(datasets=datasets, evaluation=evaluation,**kwargs)
     @classmethod
     def is_preprocessing(cls):
         return False
