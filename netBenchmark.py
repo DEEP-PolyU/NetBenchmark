@@ -3,6 +3,7 @@ import numpy as np
 import time
 from models.NetMF import netmf
 from preprocessing.dataset import Flickr,ACM,Cora,BlogCatalog
+from models.Node2vec import node2vec
 dataAddress = {'Flickr':"data/Flickr/Flickr_SDM.mat"}
 
 datasetlist = [Flickr, ACM, Cora, BlogCatalog]
@@ -34,8 +35,10 @@ def main(args):
     print("Loading...")
     Graph = datasetdict[args.dataset]
     Graph=Graph.get_graph(Graph,variable_name= args.variable_name or 'network' )
-    if args.method == 'NetMF':
-        netmf(Graph, args.evaluation)
+
+
+    #if args.method == 'node2vec':
+    node2vec(Graph, args.evaluation)
 
 
 
