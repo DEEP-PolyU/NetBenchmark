@@ -13,7 +13,7 @@ def parse_args():
     parser = argparse.ArgumentParser(description='NetBenchmark(DeepLab).')
 
     parser.add_argument('--dataset', type=str,
-                        default='flickr',choices=datasetdict,
+                        default='cora',choices=datasetdict,
                         help='select a available dataset (default: flicker)')
     parser.add_argument('--method', type=str, default='NetMF',
                         choices=['node2vec', 'deepWalk', 'line',

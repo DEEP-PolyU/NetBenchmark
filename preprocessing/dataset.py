@@ -64,7 +64,8 @@ class Cora(Datasets):
 
     def get_graph(self,variable_name):
         adj, features, labels, idx_train, idx_val, idx_test = load_citation()
-        return adj
+        data={"Network":adj,"Label":labels,"Attributes":features}
+        return data
 
     @classmethod
     def attributed(cls):

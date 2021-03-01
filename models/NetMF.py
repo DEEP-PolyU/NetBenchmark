@@ -125,8 +125,8 @@ class netmf1:
        scipy.io.savemat('netmf2_Embedding.mat', {"NetMF": deepwalk_embedding})
 
 class netmf(Models):
-    def __init__(self, datasets,evlation,**kwargs):
-        super(netmf, self).__init__(datasets=datasets, evlation=evlation,**kwargs)
+    def __init__(self, datasets,evaluation,**kwargs):
+        super(netmf, self).__init__(datasets=datasets, evaluation=evaluation,**kwargs)
     @classmethod
     def is_preprocessing(cls):
         return False
