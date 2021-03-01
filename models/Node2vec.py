@@ -168,6 +168,6 @@ class node2vec(Models):
         embbeding = newprocess(input=mat_content, directed=False, p=1.0, q=1.0, d=128, walks=4, length=10,
                                workers=12,
                                window=5, output=None, content='network')
-        scipy.io.savemat('../NetBechmark/node2vec_Embedding.mat', {"node2vec": embbeding})
+        scipy.io.savemat('node2vec_Embedding.mat', {"node2vec": embbeding})
 
         return 'node2vec_Embedding.mat', "node2vec"

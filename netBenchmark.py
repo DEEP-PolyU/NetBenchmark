@@ -36,9 +36,10 @@ def main(args):
     Graph = datasetdict[args.dataset]
     Graph=Graph.get_graph(Graph,variable_name= args.variable_name or 'network' )
 
-
-    #if args.method == 'node2vec':
-    node2vec(Graph, args.evaluation)
+    if args.method == 'NetMF':
+      netmf(Graph, args.evaluation)
+    if args.method == 'node2vec':
+      node2vec(Graph, args.evaluation)
 
 
 

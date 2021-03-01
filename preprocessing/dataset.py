@@ -3,12 +3,10 @@ import logging
 from .loadCora import load_citation
 
 logger = logging.getLogger(__name__)
-def load_adjacency_matrix(file, variable_name="network"):
+def load_adjacency_matrix(file):
     data = scipy.io.loadmat(file)
     logger.info("loading mat file %s", file)
-    if variable_name not in data:
-        variable_name=variable_name.capitalize()
-    return data[variable_name]
+    return data
 
 class Datasets:
     def __init__(self):
@@ -28,7 +26,7 @@ class ACM(Datasets):
 
     def get_graph(self,variable_name):
         dir='data/ACM/ACM.mat'
-        return load_adjacency_matrix(dir,variable_name)
+        return load_adjacency_matrix(dir)
 
     @classmethod
     def attributed(cls):
@@ -42,7 +40,7 @@ class Flickr(Datasets):
     def get_graph(self,variable_name):
         dir = 'data/Flickr/Flickr_SDM.mat'
 
-        return load_adjacency_matrix(dir,variable_name)
+        return load_adjacency_matrix(dir)
 
     @classmethod
     def attributed(cls):
@@ -54,7 +52,7 @@ class BlogCatalog(Datasets):
 
     def get_graph(self,variable_name):
         dir = 'data/BlogCatalog/BlogCatalog.mat'
-        return load_adjacency_matrix(dir,variable_name)
+        return load_adjacency_matrix(dir)
 
     @classmethod
     def attributed(cls):

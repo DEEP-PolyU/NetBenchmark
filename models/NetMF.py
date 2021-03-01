@@ -139,9 +139,9 @@ class netmf(Models):
         logger.info("Running NetMF for a small window size...")
         logger.info("Window size is set to be %d", 5)
         # load adjacency matrix
-        A = mat_content
+        A_network=mat_content['Network']
         # directly compute deepwalk matrix
-        deepwalk_matrix = direct_compute_deepwalk_matrix(A,
+        deepwalk_matrix = direct_compute_deepwalk_matrix(A_network,
                                                          window=5, b=1.0)
 
         # factorize deepwalk matrix with SVD
