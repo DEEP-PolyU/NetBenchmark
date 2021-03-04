@@ -21,7 +21,8 @@ from gensim.models import Word2Vec
 from gensim.models import KeyedVectors
 from multiprocessing import cpu_count, process
 from .model import *
-
+from hyperopt import fmin, tpe, hp, space_eval,Trials, partial
+from evaluation.node_classification import node_classifcation_test
 
 def timer(msg):
     def inner(func):
@@ -95,9 +96,9 @@ class HGraph():
         self.probs = probs
         self.p = p
         self.q = q
-        self.max_walks = max_walks
-        self.walk_len = walk_len
-        self.workers = workers 
+        self.max_walks = int(max_walks)
+        self.walk_len = int(walk_len)
+        self.workers = int(workers)
         return
     
     @timer('Computing probabilities')   
@@ -156,6 +157,22 @@ class node2vec(Models):
 
     def __init__(self, datasets,evaluation,**kwargs):
         super(node2vec, self).__init__(datasets=datasets, evaluation=evaluation,**kwargs)
+
+
+    def check_train_parameters(self):
+
+        space_dtree = {
+            # unifrom 就是隨機抽取數字，按document說是完成了random search
+            'p': hp.uniform('p', 0.1, 2),
+            'q': hp.uniform('q', 0.1, 2),
+            'walks': hp.uniformint('walks', 5, 20),
+            'length': hp.uniformint('length', 5, 15),
+            'window': hp.uniformint('window', 5, 15)
+        }
+
+
+        return space_dtree
+
     @classmethod
     def is_preprocessing(cls):
         return False
@@ -164,11 +181,22 @@ class node2vec(Models):
     def is_epoch(cls):
         return False
 
-    def train_model(self, mat_content, **kwargs):
-
-        embbeding = newprocess(input=mat_content, directed=False, p=1.0, q=1.0, d=128, walks=4, length=10,
-                               workers=12,
-                               window=5, output=None, content='Network')
+    def train_model(self, **kwargs):
+        embbeding = newprocess(input=self.mat_content, directed=False, d=128,workers=12,
+                            output=None, content='Network',**kwargs)
         scipy.io.savemat('node2vec_Embedding.mat', {"node2vec": embbeding})
 
         return 'node2vec_Embedding.mat', "node2vec"
+
+
+    def get_score(self, params):
+
+        embbeding = newprocess(input=self.mat_content, directed=False, d=128,workers=12,
+                            output=None, content='Network',**params)
+        Label = self.mat_content["Label"]
+        score=node_classifcation_test(np.array(embbeding),Label)
+        return score
+
+
+
+
