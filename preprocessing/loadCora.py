@@ -138,14 +138,14 @@ def load_citation(dataset_str="cora", normalization="AugNormAdj", use_feat=1, cu
         idx_val = range(len(y), len(y) + 500)
 
         # adj, features = preprocess_citation(adj, features, normalization)
-        features = preprocess_citation_feat(features)
+        #features = preprocess_citation_feat(features)  ##changed here
 
-    # porting to pytorch
+    # porting to pytorch #changed heere
     # features = torch.FloatTensor(np.array(features.todense())).float()
-    if use_feat:
-        features = sparse_mx_to_torch_sparse_tensor(features).float()
-    else:
-        features = create_sparse_eye_tensor(features.shape).float()
+    #if use_feat:
+    #    features = sparse_mx_to_torch_sparse_tensor(features).float()
+    #else:
+    #    features = create_sparse_eye_tensor(features.shape).float()
         # features = sp.identity(features.shape[0])
     # labels = torch.LongTensor(labels)
     # labels = torch.max(labels, dim=1)[1]
@@ -157,6 +157,9 @@ def load_citation(dataset_str="cora", normalization="AugNormAdj", use_feat=1, cu
     for i in range(len(labels)):
         temp=np.where(labels[i] == 1)
         new_label[i]=temp[0]
+
+    adj = adj.tocsc()
+    features = features.tocsc() # change to csc
 
 
     return adj, features, new_label, idx_train, idx_val, idx_test
