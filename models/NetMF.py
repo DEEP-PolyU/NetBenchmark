@@ -14,7 +14,7 @@ import logging
 import theano
 from theano import tensor as T
 from .model import *
-
+from evaluation.node_classification import node_classifcation_test
 logger = logging.getLogger(__name__)
 theano.config.exception_verbosity='high'
 
@@ -135,14 +135,15 @@ class netmf(Models):
     def is_epoch(cls):
         return False
 
-    def train_model(self, mat_content, **kwargs):
+    def train_model(self, window):
+        mat_content=self.mat_content
         logger.info("Running NetMF for a small window size...")
         logger.info("Window size is set to be %d", 5)
         # load adjacency matrix
         A_network=mat_content['Network']
         # directly compute deepwalk matrix
         deepwalk_matrix = direct_compute_deepwalk_matrix(A_network,
-                                                         window=5, b=1.0)
+                                                         window=int(window), b=1.0)
 
         # factorize deepwalk matrix with SVD
         deepwalk_embedding = svd_deepwalk_matrix(deepwalk_matrix, dim=128)
@@ -150,3 +151,22 @@ class netmf(Models):
         # np.save(args.output, deepwalk_embedding, allow_pickle=False)
         scipy.io.savemat('netmf_Embedding.mat', {"NetMF": deepwalk_embedding})
         return 'netmf_Embedding.mat',"NetMF"
+
+    def check_train_parameters(self):
+
+        space_dtree = {
+            # unifrom 就是隨機抽取數字，按document說是完成了random search
+            'window': hp.uniformint('window', 5, 15)
+        }
+
+
+        return space_dtree
+
+    def get_score(self, params):
+
+        self.save_emb_name, self.model_name = self.train_model(**params)
+        matr = sio.loadmat(self.save_emb_name)
+        embbeding = matr[self.model_name]
+        Label = self.mat_content["Label"]
+        score=node_classifcation_test(np.array(embbeding),Label)
+        return score
