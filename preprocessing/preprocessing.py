@@ -495,3 +495,30 @@ def mask_test_edges_bipartall(adj, num_node):
 
     # NOTE: these edge lists only contain single direction of edge!
     return adj_train, [train_edges, np.array(train_edges_false)], val_edges, val_edges_false, test_edges, test_edges_false
+
+def mask_test_edges_fast(adj):
+    # Function to build test set with 10% positive links
+    # NOTE: Splits are randomized and results might slightly deviate from reported numbers in the paper.
+
+
+    # Remove diagonal elements
+    adj = adj - sp.dia_matrix((adj.diagonal()[np.newaxis, :], [0]), shape=adj.shape)
+    adj.eliminate_zeros()
+    # Check that diag is zero:
+    assert np.diag(adj.todense()).sum() == 0
+
+    adj_triu = sp.triu(adj)
+    adj_tuple = sparse_to_tuple(adj_triu)
+    edges = adj_tuple[0]
+    edges_all = sparse_to_tuple(adj)[0]
+    num_test = int(np.floor(edges.shape[0] / 10.))
+    num_val = int(np.floor(edges.shape[0] / 20.))
+
+    all_edge_idx = list(range(edges.shape[0]))
+    np.random.shuffle(all_edge_idx)
+    val_edge_idx = all_edge_idx[:num_val]
+    # test_edge_idx = all_edge_idx[num_val:(num_val + num_test)]
+    # test_edges = edges[test_edge_idx]
+    val_edges = edges[val_edge_idx]
+    # train_edges = np.delete(edges, np.hstack([test_edge_idx, val_edge_idx]), axis=0)
+    train_edges = np.delete(edges, val_edge_idx, axis=0)

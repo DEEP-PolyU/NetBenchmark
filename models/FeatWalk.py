@@ -1,9 +1,14 @@
-import numpy as np
 import numpy.random as npr
 from scipy.sparse import csc_matrix
 from sklearn.preprocessing import normalize
 from math import ceil
 from gensim.models import Word2Vec
+import scipy.sparse as sp
+from .model import *
+import scipy.io as sio
+from hyperopt import hp
+from preprocessing.preprocessing import mask_test_edges_fast
+from evaluation.node_classification import node_classifcation_test
 
 '''
 featur1     is the first feature matrix
@@ -15,11 +20,46 @@ beta        is the small value threshold
 num_paths   is the number of feature walks to start at each instance
 path_length is the length of the feature walk started at each instance
 dim         is the dimension of embedding representations
-win_size    is the window size of skipgram models
+win_size    is the window size of skipgram model
 '''
+
+
+def load_citationmat_featwalk(self, dataset, normalization="AugNormAdj", use_feat=1, cuda=True):
+    """
+    Load Citation Networks Datasets.
+    """
+
+    data = sio.loadmat(dataset)
+    features = data['Attributes']
+    labels = data['Label'].reshape(-1)
+    adj = data['Network']
+    # features = preprocess_citation_feat(features)
+
+    label_min = np.min(labels)
+    if label_min != 0:
+        labels = labels - 1
+    max_class = np.max(labels) + 1
+    class_one = np.eye(max_class)
+    labels = class_one[labels]
+
+    # if use_feat:
+    #    features = sparse_mx_to_torch_sparse_tensor(features).float()
+    # else:
+    #    features = create_sparse_eye_tensor(features.shape).float()
+
+    # idx_train = np.array(range(500))
+    # idx_val = np.array(range(500, 1000))
+    # idx_test = np.array(range(1000, 1500))
+
+    return adj, features, labels  # idx_train, idx_val, idx_test
+
+
 
 class featurewalk:
     def __init__(self, featur1, alpha1, featur2, alpha2, Net, beta, num_paths, path_length, dim, win_size):
+        adj_train, train_edges, val_edges, val_edges_false, test_edges, test_edges_false = mask_test_edges_fast(Net)
+        Net = adj_train #move the adj preprocessing to here
+        Net = Net + sp.eye(adj_train.shape[0])
         self.n = featur1.shape[0]  # number of instance
         if alpha1+alpha2 < 1:  # Embed Network
             Net = csc_matrix(Net)
@@ -209,3 +249,57 @@ def alias_draw(J, q):
         return kk
     else:
         return J[kk]
+
+
+
+class featwalk(Models):
+
+    def __init__(self, datasets,evaluation,**kwargs):
+        super(featwalk, self).__init__(datasets=datasets, evaluation=evaluation ,**kwargs)
+
+
+
+    def check_train_parameters(self):
+
+        space_dtree = {
+            # unifrom 就是隨機抽取數字，按document說是完成了random search
+            'alpha1': hp.uniform('alpha1', 0, 1),
+            'alpha2': hp.uniform('alpha2', 0, 1),
+            'num_paths': hp.uniformint('num_paths', 10, 50),
+            'path_length': hp.uniformint('path_length', 5, 50),
+            'win_size': hp.uniformint('win_size', 5, 15)
+        }
+
+        return space_dtree
+
+    def is_preprocessing(cls):
+        return False
+
+    @classmethod
+    def is_epoch(cls):
+        return False
+
+
+
+    def train_model(self, **kwargs):
+
+        adj, features, labels = load_citationmat_featwalk(self.mat_content)
+        embbeding = featurewalk(featur1=features, featur2=None, Net=adj, beta=0, d=128, workers=12,
+                                output=None, **kwargs).function()
+
+        sio.savemat('featwalk.mat', {"featwalk": embbeding})
+
+        return 'featwalk.mat', "featwalk"
+
+    def get_score(self, params):
+
+        adj, features, Label = load_citationmat_featwalk(self.mat_content)
+
+        embbeding = featurewalk(featur1=features, featur2=None, Net=adj, beta=0, d=128, workers=12,
+                                output=None, **params).function()
+
+
+        score = node_classifcation_test(np.array(embbeding),Label)
+        return score
+
+

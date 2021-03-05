@@ -1,6 +1,7 @@
 import argparse
 import numpy as np
 import time
+from models.FeatWalk import featwalk
 from models.NetMF import netmf
 from preprocessing.dataset import Flickr,ACM,Cora,BlogCatalog
 from models.Node2vec import node2vec
@@ -40,6 +41,8 @@ def main(args):
       netmf(Graph, args.evaluation)
     if args.method == 'node2vec':
       node2vec(Graph, args.evaluation)
+    if args.method == 'featwalk':
+      featwalk(Graph, args.evaluation)
 
 
 
