@@ -293,6 +293,7 @@ class featwalk(Models):
 
     def get_score(self, params):
 
+        # TODO: Don't know wht 297 cannot read dataset but 286 can read
         adj, features, Label = load_citationmat_featwalk(self.mat_content)
 
         embbeding = featurewalk(featur1=features, featur2=None, Net=adj, beta=0, d=128, workers=12,
