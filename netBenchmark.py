@@ -19,7 +19,7 @@ def parse_args():
     parser.add_argument('--method', type=str, default='NetMF',
                         choices=['node2vec', 'deepWalk', 'line',
                         'gcn', 'grarep', 'tadw', 'lle', 'hope',
-                        'lap', 'gf','sdne','NetMF'],
+                        'lap', 'gf','sdne','NetMF','featwalk'],
                         help='The learning method')
     parser.add_argument('--evaluation', type=str, default='node_classification',
                         choices=['node_classification','link_prediction'],

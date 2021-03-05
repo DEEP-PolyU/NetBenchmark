@@ -29,7 +29,7 @@ def load_citationmat_featwalk(self, dataset, normalization="AugNormAdj", use_fea
     Load Citation Networks Datasets.
     """
 
-    data = sio.loadmat(dataset)
+    data = dataset
     features = data['Attributes']
     labels = data['Label'].reshape(-1)
     adj = data['Network']
@@ -57,6 +57,7 @@ def load_citationmat_featwalk(self, dataset, normalization="AugNormAdj", use_fea
 
 class featurewalk:
     def __init__(self, featur1, alpha1, featur2, alpha2, Net, beta, num_paths, path_length, dim, win_size):
+
         adj_train, train_edges, val_edges, val_edges_false, test_edges, test_edges_false = mask_test_edges_fast(Net)
         Net = adj_train #move the adj preprocessing to here
         Net = Net + sp.eye(adj_train.shape[0])
@@ -76,10 +77,10 @@ class featurewalk:
         self.alpha1 = alpha1
         self.alpha2 = alpha2
         self.beta = beta
-        self.num_paths = num_paths
-        self.path_length = path_length
+        self.num_paths = int(num_paths)
+        self.path_length = int(path_length)
         self.d = dim
-        self.win_size = win_size
+        self.win_size = int(win_size)
 
     def throughfeatur(self):  # Walk through Feature
         sentlist = []
@@ -264,7 +265,7 @@ class featwalk(Models):
         space_dtree = {
             # unifrom 就是隨機抽取數字，按document說是完成了random search
             'alpha1': hp.uniform('alpha1', 0, 1),
-            'alpha2': hp.uniform('alpha2', 0, 1),
+            #'alpha2': hp.uniform('alpha2', 0, 1),  #我們只有一個feature所以暫時用不到alpha2 如果要的話輸入結構還是要改變一下
             'num_paths': hp.uniformint('num_paths', 10, 50),
             'path_length': hp.uniformint('path_length', 5, 50),
             'win_size': hp.uniformint('win_size', 5, 15)
@@ -283,9 +284,8 @@ class featwalk(Models):
 
     def train_model(self, **kwargs):
 
-        adj, features, labels = load_citationmat_featwalk(self.mat_content)
-        embbeding = featurewalk(featur1=features, featur2=None, Net=adj, beta=0, d=128, workers=12,
-                                output=None, **kwargs).function()
+        adj, features, labels = load_citationmat_featwalk(self,dataset=self.mat_content)
+        embbeding = featurewalk(featur1=features, featur2=None, Net=adj, beta=0, dim=128, alpha2=0, **kwargs).function()
 
         sio.savemat('featwalk.mat', {"featwalk": embbeding})
 
@@ -293,14 +293,13 @@ class featwalk(Models):
 
     def get_score(self, params):
 
-        # TODO: Don't know wht 297 cannot read dataset but 286 can read
-        adj, features, Label = load_citationmat_featwalk(self.mat_content)
 
-        embbeding = featurewalk(featur1=features, featur2=None, Net=adj, beta=0, d=128, workers=12,
-                                output=None, **params).function()
+        adj, features, Label = load_citationmat_featwalk(self,dataset=self.mat_content)
+
+        embbeding = featurewalk(featur1=features, featur2=None, Net=adj, beta=0, dim=128, alpha2=0, **params).function()
 
 
         score = node_classifcation_test(np.array(embbeding),Label)
-        return score
+        return -score
 
 

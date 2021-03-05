@@ -195,7 +195,7 @@ class node2vec(Models):
                             output=None, content='Network',**params)
         Label = self.mat_content["Label"]
         score=node_classifcation_test(np.array(embbeding),Label)
-        return score
+        return -score
 
 
 
