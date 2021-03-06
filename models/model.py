@@ -3,7 +3,7 @@ import scipy.io as sio
 import time
 import preprocessing.preprocessing as pre
 from evaluation.node_classification import node_classifcation
-from evaluation.link_prediction import link_prediction
+from evaluation.link_prediction import link_prediction,link_prediction_test
 import numpy as np
 from hyperopt import fmin, tpe, hp, space_eval,Trials, partial
 
@@ -56,8 +56,12 @@ class Models(torch.nn.Module):
         return filename
 
     def get_score(self,params):
-        score = ""
-        return score
+        self.save_emb_name, self.model_name = self.train_model(**params)
+        matr = sio.loadmat(self.mat_content)
+        adj = matr['Network']
+        adj_train, train_edges, val_edges, val_edges_false, test_edges, test_edges_false = pre.mask_test_edges(adj)
+        score=link_prediction_test(emb_name=self.save_emb_name,variable_name=self.model_name,edges_pos=val_edges,edges_neg=val_edges_false)
+        return -score
 
     def preprocessing(self, filename):
         return None
