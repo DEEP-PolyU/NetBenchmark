@@ -3,6 +3,7 @@ import numpy as np
 import time
 from models.FeatWalk import featwalk
 from models.NetMF import netmf
+from models.deepwalk import deepwalk
 from preprocessing.dataset import Flickr,ACM,Cora,BlogCatalog
 from models.Node2vec import node2vec
 dataAddress = {'Flickr':"data/Flickr/Flickr_SDM.mat"}
@@ -14,9 +15,9 @@ def parse_args():
     parser = argparse.ArgumentParser(description='NetBenchmark(DeepLab).')
 
     parser.add_argument('--dataset', type=str,
-                        default='cora',choices=datasetdict,
+                        default='blogcatalog',choices=datasetdict,
                         help='select a available dataset (default: flicker)')
-    parser.add_argument('--method', type=str, default='NetMF',
+    parser.add_argument('--method', type=str, default='deepWalk',
                         choices=['node2vec', 'deepWalk', 'line',
                         'gcn', 'grarep', 'tadw', 'lle', 'hope',
                         'lap', 'gf','sdne','NetMF','featwalk'],
@@ -43,6 +44,8 @@ def main(args):
       node2vec(Graph, args.evaluation)
     if args.method == 'featwalk':
       featwalk(Graph, args.evaluation)
+    if args.method == 'deepWalk':
+      deepwalk(Graph, args.evaluation)
 
 
 

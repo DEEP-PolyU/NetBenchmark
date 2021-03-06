@@ -45,7 +45,7 @@ def node_classifcation_test(feature, labels):
     for train_index, test_index in kf.split(feature):
         train_X, train_y = feature[train_index], labels[train_index]
         test_X, test_y = feature[test_index], labels[test_index]
-        clf = svm.SVC(kernel='rbf')
+        clf = svm.SVC(kernel='rbf', decision_function_shape='ovo')
         clf.fit(train_X, train_y)
         preds = clf.predict(test_X)
 

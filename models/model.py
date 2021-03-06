@@ -21,7 +21,7 @@ class Models(torch.nn.Module):
         trials = Trials()
         algo = partial(tpe.suggest)
         best = fmin(
-            fn=self.get_score, space=space_dtree, algo=algo, max_evals=2, trials=trials)
+            fn=self.get_score, space=space_dtree, algo=algo, max_evals=150, trials=trials)
         print(best)
         if evaluation == "node_classification":
             start_time = time.time()

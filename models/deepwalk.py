@@ -5,14 +5,15 @@ import random
 import numpy as np
 import time
 import scipy.io as sio
+from evaluation.node_classification import node_classifcation_test
+from .model import *
+from hyperopt import fmin, tpe, hp, space_eval,Trials, partial
 
 
 
-def deepwalk_fun(CombG, representation_size, number_walks):
+def deepwalk_fun(CombG, d, number_walks, walk_length,window_size):
 
-    walk_length = 40
     max_memory_data_size = 1000000000
-    window_size = 5
     seed = 0
     vertex_freq_degree = False
 
@@ -35,7 +36,7 @@ def deepwalk_fun(CombG, representation_size, number_walks):
         print("time elapsed: {:.2f}s".format(time.time() - start_time))
         print("Training...")
         walks = [list(map(str, walk)) for walk in walks]
-        model = Word2Vec(walks, size=representation_size, window=window_size, min_count=0, workers=1)
+        model = Word2Vec(walks, size=d, window=window_size, min_count=0, workers=1)
         print("time elapsed: {:.2f}s".format(time.time() - start_time))
     else:
         print("Data size {} is larger than limit (max-memory-data-size: {}).  Dumping walks to disk.".format(data_size, max_memory_data_size))
@@ -56,11 +57,11 @@ def deepwalk_fun(CombG, representation_size, number_walks):
 
         print("Training...")
         model = Skipgram(sentences=serialized_walks.combine_files_iter(walk_files), vocabulary_counts=vertex_counts,
-                         size=representation_size,
+                         size=d,
                          window=window_size, min_count=0, workers=1)
 
     word_vectors = model.wv
-    H = np.zeros((CombG.shape[0], representation_size))
+    H = np.zeros((CombG.shape[0], d))
     H[:,0] = 1
     for nodei in G.nodes():
         H[nodei] = word_vectors[str(nodei)]
@@ -72,13 +73,50 @@ def deepwalk_fun(CombG, representation_size, number_walks):
 
 
 
-class deepwalk:
-    def deepwalkgood(self,rootdir,variable_name,number_walks,representation_size):
+class deepwalk(Models):
 
-        mat_contents = sio.loadmat(rootdir)
+    def __init__(self, datasets,evaluation,**kwargs):
+        super(deepwalk, self).__init__(datasets=datasets, evaluation=evaluation,**kwargs)
 
-        ComG = mat_contents[variable_name]
 
-        embeding = deepwalk_fun(ComG, representation_size, number_walks)
+    def check_train_parameters(self):
 
-        sio.savemat('Deepwalk_Embedding.mat', {"Deepwalk": embeding})
+        space_dtree = {
+
+            'number_walks': hp.uniformint('number_walks', 5, 80),
+            'walk_length': hp.uniformint('length', 5, 50),
+            'window_size': hp.uniformint('window', 5, 50) #walk_length,window_size
+        }
+
+
+        return space_dtree
+
+    @classmethod
+    def is_preprocessing(cls):
+        return False
+
+    @classmethod
+    def is_epoch(cls):
+        return False
+
+
+    def train_model(self, **kwargs): #(self,rootdir,variable_name,number_walks):
+
+
+        ComG = self.mat_content['Network']
+
+        embbeding = deepwalk_fun(ComG, d = 128,**kwargs)
+
+        sio.savemat('Deepwalk_Embedding.mat', {"Deepwalk": embbeding})
+
+        return 'Deepwalk_Embedding.mat',"Deepwalk"
+
+    def get_score(self, params):
+        ComG = self.mat_content['Network']
+
+        embbeding = deepwalk_fun(ComG, d=128, **params)
+
+        Label = self.mat_content["Label"]
+        score=node_classifcation_test(np.array(embbeding),Label)
+
+        return -score
