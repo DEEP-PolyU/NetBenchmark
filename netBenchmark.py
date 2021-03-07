@@ -11,16 +11,16 @@ dataAddress = {'Flickr':"data/Flickr/Flickr_SDM.mat"}
 datasetlist = [Flickr, ACM, Cora, BlogCatalog]
 datasetdict = {Cls.__name__.lower(): Cls for Cls in datasetlist}
 
+modellist=[featwalk,netmf,deepwalk,node2vec]
+modeldict = {Cls.__name__.lower(): Cls for Cls in modellist}
 def parse_args():
     parser = argparse.ArgumentParser(description='NetBenchmark(DeepLab).')
 
     parser.add_argument('--dataset', type=str,
                         default='blogcatalog',choices=datasetdict,
                         help='select a available dataset (default: flicker)')
-    parser.add_argument('--method', type=str, default='deepWalk',
-                        choices=['node2vec', 'deepWalk', 'line',
-                        'gcn', 'grarep', 'tadw', 'lle', 'hope',
-                        'lap', 'gf','sdne','NetMF','featwalk'],
+    parser.add_argument('--method', type=str, default='deepwalk',
+                        choices=modeldict,
                         help='The learning method')
     parser.add_argument('--evaluation', type=str, default='node_classification',
                         choices=['node_classification','link_prediction'],
@@ -38,14 +38,9 @@ def main(args):
     Graph = datasetdict[args.dataset]
     Graph=Graph.get_graph(Graph,variable_name= args.variable_name or 'network' )
 
-    if args.method == 'NetMF':
-      netmf(Graph, args.evaluation)
-    if args.method == 'node2vec':
-      node2vec(Graph, args.evaluation)
-    if args.method == 'featwalk':
-      featwalk(Graph, args.evaluation)
-    if args.method == 'deepWalk':
-      deepwalk(Graph, args.evaluation)
+    model=modeldict[args.method]
+    model(Graph, args.evaluation)
+
 
 
 
