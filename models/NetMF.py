@@ -125,8 +125,8 @@ class netmf1:
        scipy.io.savemat('netmf2_Embedding.mat', {"NetMF": deepwalk_embedding})
 
 class netmf(Models):
-    def __init__(self, datasets,evaluation,**kwargs):
-        super(netmf, self).__init__(datasets=datasets, evaluation=evaluation,**kwargs)
+    def __init__(self, method,datasets,evaluation,**kwargs):
+        super(netmf, self).__init__(method=method,datasets=datasets, evaluation=evaluation,**kwargs)
     @classmethod
     def is_preprocessing(cls):
         return False
@@ -149,8 +149,9 @@ class netmf(Models):
         deepwalk_embedding = svd_deepwalk_matrix(deepwalk_matrix, dim=128)
         # logger.info("Save embedding to %s", args.output)
         # np.save(args.output, deepwalk_embedding, allow_pickle=False)
-        scipy.io.savemat('netmf_Embedding.mat', {"NetMF": deepwalk_embedding})
-        return 'netmf_Embedding.mat',"NetMF"
+        # scipy.io.savemat('netmf_Embedding.mat', {"NetMF": deepwalk_embedding})
+        # return 'netmf_Embedding.mat',"NetMF"
+        return deepwalk_embedding
 
     def check_train_parameters(self):
 
@@ -162,11 +163,11 @@ class netmf(Models):
 
         return space_dtree
 
-    def get_score(self, params):
-
-        self.save_emb_name, self.model_name = self.train_model(**params)
-        matr = sio.loadmat(self.save_emb_name)
-        embbeding = matr[self.model_name]
-        Label = self.mat_content["Label"]
-        score=node_classifcation_test(np.array(embbeding),Label)
-        return score
+    # def get_score(self, params):
+    #
+    #     self.save_emb_name, self.model_name = self.train_model(**params)
+    #     matr = sio.loadmat(self.save_emb_name)
+    #     embbeding = matr[self.model_name]
+    #     Label = self.mat_content["Label"]
+    #     score=node_classifcation_test(np.array(embbeding),Label)
+    #     return score

@@ -17,8 +17,8 @@ def parse_args():
     parser = argparse.ArgumentParser(description='NetBenchmark(DeepLab).')
 
     parser.add_argument('--dataset', type=str,
-                        default='blogcatalog',choices=datasetdict,
-                        help='select a available dataset (default: flicker)')
+                        default='cora',choices=datasetdict,
+                        help='select a available dataset (default: cora)')
     parser.add_argument('--method', type=str, default='deepwalk',
                         choices=modeldict,
                         help='The learning method')
@@ -39,7 +39,7 @@ def main(args):
     Graph=Graph.get_graph(Graph,variable_name= args.variable_name or 'network' )
 
     model=modeldict[args.method]
-    model(Graph, args.evaluation)
+    model(method=args.method, datasets=Graph, evaluation=args.evaluation)
 
 
 

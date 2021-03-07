@@ -155,8 +155,8 @@ class HGraph():
 
 class node2vec(Models):
 
-    def __init__(self, datasets,evaluation,**kwargs):
-        super(node2vec, self).__init__(datasets=datasets, evaluation=evaluation,**kwargs)
+    def __init__(self,method,datasets,evaluation,**kwargs):
+        super(node2vec, self).__init__(method=method,datasets=datasets, evaluation=evaluation,**kwargs)
 
 
     def check_train_parameters(self):
@@ -184,18 +184,11 @@ class node2vec(Models):
     def train_model(self, **kwargs):
         embbeding = newprocess(input=self.mat_content, directed=False, d=128,workers=12,
                             output=None, content='Network',**kwargs)
-        scipy.io.savemat('node2vec_Embedding.mat', {"node2vec": embbeding})
+        # scipy.io.savemat('node2vec_Embedding.mat', {"node2vec": embbeding})
+        #
+        # return 'node2vec_Embedding.mat', "node2vec"
+        return embbeding
 
-        return 'node2vec_Embedding.mat', "node2vec"
-
-
-    def get_score(self, params):
-
-        embbeding = newprocess(input=self.mat_content, directed=False, d=128,workers=12,
-                            output=None, content='Network',**params)
-        Label = self.mat_content["Label"]
-        score=node_classifcation_test(np.array(embbeding),Label)
-        return -score
 
 
 

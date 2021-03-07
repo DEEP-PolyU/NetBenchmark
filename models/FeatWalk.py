@@ -255,8 +255,8 @@ def alias_draw(J, q):
 
 class featwalk(Models):
 
-    def __init__(self, datasets,evaluation,**kwargs):
-        super(featwalk, self).__init__(datasets=datasets, evaluation=evaluation ,**kwargs)
+    def __init__(self,method,datasets,evaluation,**kwargs):
+        super(featwalk, self).__init__(method=method,datasets=datasets, evaluation=evaluation ,**kwargs)
 
 
 
@@ -287,19 +287,10 @@ class featwalk(Models):
         adj, features, labels = load_citationmat_featwalk(self,dataset=self.mat_content)
         embbeding = featurewalk(featur1=features, featur2=None, Net=adj, beta=0, dim=128, alpha2=0, **kwargs).function()
 
-        sio.savemat('featwalk.mat', {"featwalk": embbeding})
+        # sio.savemat('featwalk.mat', {"featwalk": embbeding})
+        #
+        # return 'featwalk.mat', "featwalk"
+        return embbeding
 
-        return 'featwalk.mat', "featwalk"
-
-    def get_score(self, params):
-
-
-        adj, features, Label = load_citationmat_featwalk(self,dataset=self.mat_content)
-
-        embbeding = featurewalk(featur1=features, featur2=None, Net=adj, beta=0, dim=128, alpha2=0, **params).function()
-
-
-        score = node_classifcation_test(np.array(embbeding),Label)
-        return -score
 
 

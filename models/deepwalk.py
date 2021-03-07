@@ -75,8 +75,8 @@ def deepwalk_fun(CombG, d, number_walks, walk_length,window_size):
 
 class deepwalk(Models):
 
-    def __init__(self, datasets,evaluation,**kwargs):
-        super(deepwalk, self).__init__(datasets=datasets, evaluation=evaluation,**kwargs)
+    def __init__(self, method,datasets,evaluation,**kwargs):
+        super(deepwalk, self).__init__(method=method,datasets=datasets, evaluation=evaluation,**kwargs)
 
 
     def check_train_parameters(self):
@@ -84,8 +84,8 @@ class deepwalk(Models):
         space_dtree = {
 
             'number_walks': hp.uniformint('number_walks', 5, 80),
-            'walk_length': hp.uniformint('length', 5, 50),
-            'window_size': hp.uniformint('window', 5, 50) #walk_length,window_size
+            'walk_length': hp.uniformint('walk_length', 5, 50),
+            'window_size': hp.uniformint('window_size', 5, 50) #walk_length,window_size
         }
 
 
@@ -107,16 +107,17 @@ class deepwalk(Models):
 
         embbeding = deepwalk_fun(ComG, d = 128,**kwargs)
 
-        sio.savemat('Deepwalk_Embedding.mat', {"Deepwalk": embbeding})
+        # sio.savemat('Deepwalk_Embedding.mat', {"Deepwalk": embbeding})
+        #
+        # return 'Deepwalk_Embedding.mat',"Deepwalk"
+        return embbeding
 
-        return 'Deepwalk_Embedding.mat',"Deepwalk"
-
-    def get_score(self, params):
-        ComG = self.mat_content['Network']
-
-        embbeding = deepwalk_fun(ComG, d=128, **params)
-
-        Label = self.mat_content["Label"]
-        score=node_classifcation_test(np.array(embbeding),Label)
-
-        return -score
+    # def get_score(self, params):
+    #     ComG = self.mat_content['Network']
+    #
+    #     embbeding = deepwalk_fun(ComG, d=128, **params)
+    #
+    #     Label = self.mat_content["Label"]
+    #     score=node_classifcation_test(np.array(embbeding),Label)
+    #
+    #     return -score

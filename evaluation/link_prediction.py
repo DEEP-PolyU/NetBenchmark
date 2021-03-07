@@ -29,11 +29,7 @@ def link_prediction(emb_name,variable_name, edges_pos, edges_neg):
     print("roc_score=",roc_score)
     print("ap_score=",ap_score)
 
-def link_prediction_test(emb_name,variable_name, edges_pos, edges_neg):
-    matr = sio.loadmat(emb_name)
-    data = matr[variable_name]
-    emb = data
-
+def link_prediction_Automatic_tuning(emb, edges_pos, edges_neg):
     adj_rec = np.matmul(emb, emb.T)
 
     preds = []
