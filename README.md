@@ -64,7 +64,7 @@ Besides, the input file can be divided into 2 kinds of format,which is the mat f
 
 ### Base class: `Models`
 All algorithms model inherit from a base class: `Models`, which itself inherits from `torch.nn.Module`.
-The main idea of this class is tuning parameters and obtain the best result, which will be evaluated by node classification.
+The main idea of this class is to tune parameters and obtain the best result, which will be evaluated by node classification.
 
 ```python
 class Models(torch.nn.Module):
