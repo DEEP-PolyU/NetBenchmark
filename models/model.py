@@ -27,9 +27,9 @@ class Models(torch.nn.Module):
         if evaluation == "node_classification":
             start_time = time.time()
             emb=self.train_model(**best)
-            sio.savemat(self.method+'_embedding.mat', {self.method: emb})
             print("time elapsed: {:.2f}s".format(time.time() - start_time))
             node_classifcation(np.array(emb), Label)
+            sio.savemat('emb/'+self.method + '_embedding.mat', {self.method: emb})
         if evaluation == "link_prediction":
             matr = sio.loadmat(datasets)
             adj = matr['Network']
