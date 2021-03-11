@@ -1,0 +1,1 @@
+from.GAEmodel import GCN,GCNTra
