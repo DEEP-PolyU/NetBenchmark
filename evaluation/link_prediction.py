@@ -7,10 +7,7 @@ from preprocessing.utils import normalize, sigmoid, load_citation, sparse_mx_to_
 
 
 
-def link_prediction(emb_name,variable_name, edges_pos, edges_neg):
-    matr = sio.loadmat(emb_name)
-    data = matr[variable_name]
-    emb = data
+def link_prediction(emb,edges_pos, edges_neg):
 
     adj_rec = np.matmul(emb, emb.T)
 

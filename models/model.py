@@ -31,11 +31,13 @@ class Models(torch.nn.Module):
             node_classifcation(np.array(emb), Label)
             sio.savemat('emb/'+self.method + '_embedding.mat', {self.method: emb})
         if evaluation == "link_prediction":
-            matr = sio.loadmat(datasets)
-            adj = matr['Network']
+            start_time = time.time()
+            emb = self.train_model(**best)
+            print("time elapsed: {:.2f}s".format(time.time() - start_time))
+            adj = datasets['Network']
             adj_train, train_edges, val_edges, val_edges_false, test_edges, test_edges_false = pre.mask_test_edges(adj)
-            link_prediction(emb_name=self.save_emb_name, variable_name=self.model_name, edges_pos=val_edges,
-                            edges_neg=val_edges_false)
+            link_prediction(emb, edges_pos=test_edges,
+                            edges_neg=test_edges_false)
 
     def check_train_parameters(self):
         return None
