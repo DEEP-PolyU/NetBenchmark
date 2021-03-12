@@ -55,6 +55,7 @@ def get_roc_score(net, features, adj, edges_pos, edges_neg):
 def mat_import(mat):
 
     adj, features, labels, idx_train, idx_val, idx_test = process.load_citationmat(mat)
+    features = process.sparse_mx_to_torch_sparse_tensor(features).float()
     adj_orig = adj
     adj_orig = adj_orig - sp.dia_matrix((adj_orig.diagonal()[np.newaxis, :], [0]), shape=adj_orig.shape)
     adj_orig.eliminate_zeros()
@@ -118,7 +119,7 @@ def train(features, adj, adj_label, val_edges, val_edges_false, save_path, devic
               'valid_acu: %.4f' % auc_,
               'valid_ap: %.4f' % ap_)
 
-        if cnt_wait == 6000 and best_epoch != 0:
+        if cnt_wait == 3000 and best_epoch != 0:
             print('Early stopping!')
             break
 
@@ -130,7 +131,7 @@ def train(features, adj, adj_label, val_edges, val_edges_false, save_path, devic
     emb = model(features, adj)
 
 
-    return emb
+    return emb.data.cpu().numpy()
 
 
 def save_emb(emb, adj, label, save_emb_path):
@@ -180,26 +181,7 @@ class GAE(Models):
             device = torch.device("cpu")
             print("--> No GPU")
         self.mat_content = datasets
-
-        adj, features, labels, idx_train, idx_val, idx_test = process.load_citationmat(self.mat_content)
-
-        adj_orig = adj
-        adj_orig = adj_orig - sp.dia_matrix((adj_orig.diagonal()[np.newaxis, :], [0]), shape=adj_orig.shape)
-        adj_orig.eliminate_zeros()
-
-        # adj_train, train_edges, val_edges, val_edges_false, test_edges, test_edges_false = mask_test_edges(adj)
-        adj_train, train_edges, val_edges, val_edges_false, test_edges, test_edges_false = mask_test_edges_fast(adj)
-        adj = adj_train
-
-        # Some preprocessing and transfer to tensor
-        adj_norm = process.row_normalize(adj + sp.eye(adj_train.shape[0]))
-        adj_norm = process.sparse_mx_to_torch_sparse_tensor(adj_norm)
-
-        pos_weight = torch.Tensor([float(adj.shape[0] * adj.shape[0] - adj.sum()) / adj.sum()])
-        norm = adj.shape[0] * adj.shape[0] / float((adj.shape[0] * adj.shape[0] - adj.sum()) * 2)
-
-        adj_label = adj_train + sp.eye(adj_train.shape[0])
-        #features, adj_norm, adj_label, val_edges, val_edges_false, test_edges, test_edges_false, norm, pos_weight = mat_import(self.mat_content)
+        features, adj_norm, adj_label, val_edges, val_edges_false, test_edges, test_edges_false, norm, pos_weight = mat_import(self.mat_content)
         #features, adj, adj_label, val_edges, val_edges_false, save_path, device, pos_weight, norm,hid1,hid2,dropout,lr,weight_decay,epochs
         embeding = train(features=features, adj = adj_norm, adj_label = adj_label, val_edges = val_edges, val_edges_false = val_edges_false, save_path='emb/GAETemp', device=device, pos_weight=pos_weight, norm=norm,hid1= 256,hid2 = 128,dropout =0.6 ,lr = 0.001,weight_decay = 0,epochs = 1000)
 
