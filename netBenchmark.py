@@ -8,12 +8,13 @@ from preprocessing.dataset import Flickr,ACM,Cora,BlogCatalog
 from models.Node2vec import node2vec
 from models.DGI import DGI
 from models.GAE import GAE
+from models.CAN import CAN
 dataAddress = {'Flickr':"data/Flickr/Flickr_SDM.mat"}
 
 datasetlist = [Flickr, ACM, Cora, BlogCatalog]
 datasetdict = {Cls.__name__.lower(): Cls for Cls in datasetlist}
 
-modellist=[featwalk,netmf,deepwalk,node2vec,DGI,GAE]
+modellist=[featwalk,netmf,deepwalk,node2vec,DGI,GAE,CAN]
 modeldict = {Cls.__name__.lower(): Cls for Cls in modellist}
 def parse_args():
     parser = argparse.ArgumentParser(description='NetBenchmark(DeepLab).')
@@ -21,7 +22,7 @@ def parse_args():
     parser.add_argument('--dataset', type=str,
                         default='cora',choices=datasetdict,
                         help='select a available dataset (default: cora)')
-    parser.add_argument('--method', type=str, default='gae',
+    parser.add_argument('--method', type=str, default='can',
                         choices=modeldict,
                         help='The learning method')
     parser.add_argument('--evaluation', type=str, default='node_classification',
