@@ -32,33 +32,39 @@ class CAN(Models):
     num_features=None
     features_orig=None
 
+    @classmethod
+    def is_preprocessing(cls):
+        return False
 
+
+    @classmethod
+    def is_epoch(cls):
+        return False
+    @classmethod
+    def is_deep_model(cls):
+        return True
     def get_roc_score(self,edges_pos, edges_neg, preds_sub_u):
-        global num_nodes
-        global num_features
-        global adj_orig
-        global features_orig
         def sigmoid(x):
             x = np.clip(x, -500, 500)
             return 1.0 / (1 + np.exp(-x))
 
         # Predict on test set of edges
-        # adj_rec = sess.run(model.reconstructions[0], feed_dict=feed_dict).reshape([num_nodes, num_nodes])
+        # adj_rec = sess.run(model.reconstructions[0], feed_dict=feed_dict).reshape([self.num_nodes, self.num_nodes])
         if (use_gpu):
-            adj_rec = preds_sub_u.view(num_nodes, num_nodes).cpu().data.numpy()
+            adj_rec = preds_sub_u.view(self.num_nodes, self.num_nodes).cpu().data.numpy()
         else:
-            adj_rec = preds_sub_u.view(num_nodes, num_nodes).data.numpy()
+            adj_rec = preds_sub_u.view(self.num_nodes, self.num_nodes).data.numpy()
         preds = []
         pos = []
         for e in edges_pos:
             preds.append(sigmoid(adj_rec[e[0], e[1]]))
-            pos.append(adj_orig[e[0], e[1]])
+            pos.append(self.adj_orig[e[0], e[1]])
         # print(np.min(adj_rec))
         preds_neg = []
         neg = []
         for e in edges_neg:
             preds_neg.append(sigmoid(adj_rec[e[0], e[1]]))
-            neg.append(adj_orig[e[0], e[1]])
+            neg.append(self.adj_orig[e[0], e[1]])
 
         preds_all = np.hstack([preds, preds_neg]).astype(np.float)
         labels_all = np.hstack([np.ones(len(preds)), np.zeros(len(preds))])
@@ -68,10 +74,6 @@ class CAN(Models):
         return roc_score, ap_score
 
     def get_roc_score_a(self,feas_pos, feas_neg, preds_sub_a):
-        global num_nodes
-        global num_features
-        global adj_orig
-        global features_orig
 
 
         def sigmoid(x):
@@ -79,22 +81,22 @@ class CAN(Models):
             return 1.0 / (1 + np.exp(-x))
 
         # Predict on test set of edges
-        # fea_rec = sess.run(model.reconstructions[1], feed_dict=feed_dict).reshape([num_nodes, num_features])
+        # fea_rec = sess.run(model.reconstructions[1], feed_dict=feed_dict).reshape([self.num_nodes, self.num_features])
         if (use_gpu):
-            fea_rec = preds_sub_a.view(num_nodes, num_features).cpu().data.numpy()
+            fea_rec = preds_sub_a.view(self.num_nodes, self.num_features).cpu().data.numpy()
         else:
-            fea_rec = preds_sub_a.view(num_nodes, num_features).data.numpy()
+            fea_rec = preds_sub_a.view(self.num_nodes, self.num_features).data.numpy()
         preds = []
         pos = []
         for e in feas_pos:
             preds.append(sigmoid(fea_rec[e[0], e[1]]))
-            pos.append(features_orig[e[0], e[1]])
+            pos.append(self.features_orig[e[0], e[1]])
 
         preds_neg = []
         neg = []
         for e in feas_neg:
             preds_neg.append(sigmoid(fea_rec[e[0], e[1]]))
-            neg.append(features_orig[e[0], e[1]])
+            neg.append(self.features_orig[e[0], e[1]])
 
         preds_all = np.hstack([preds, preds_neg])
         labels_all = np.hstack([np.ones(len(preds)), np.zeros(len(preds))])
@@ -108,29 +110,23 @@ class CAN(Models):
         return targets * -torch.log(torch.sigmoid(logits)) * pos_weight + (1 - targets) * -torch.log(
             1 - torch.sigmoid(logits))
 
-    def __init__(self, method,datasets,evaluation,**kwargs):
-        global num_nodes
-        global num_features
-        global adj_orig
-        global features_orig
-
+    def deep_algo(self):
         learning_rate=0.01
         hidden1=256
         hidden2=128
         dropout=0
-        epochs=200
-        self.mat_content = datasets
+        epochs=2
         adj=self.mat_content['Network']
         features=self.mat_content['Attributes']
-        adj_orig = adj
-        adj_orig = adj_orig - sp.dia_matrix((adj_orig.diagonal()[np.newaxis, :], [0]), shape=adj_orig.shape)
-        adj_orig.eliminate_zeros()
+        self.adj_orig = adj
+        self.adj_orig = self.adj_orig - sp.dia_matrix((self.adj_orig.diagonal()[np.newaxis, :], [0]), shape=self.adj_orig.shape)
+        self.adj_orig.eliminate_zeros()
         print('--->Generate train/valid links for unsupervised learning...')
         adj_train, train_edges, val_edges, val_edges_false, test_edges, test_edges_false = mask_test_edges(adj)
         fea_train, train_feas, val_feas, val_feas_false, test_feas, test_feas_false = mask_test_feas(features)
 
         adj = adj_train
-        features_orig = features
+        self.features_orig = features
         features = sp.lil_matrix(features)
 
         link_predic_result_file = "result/AGAE_{}.res".format('datasets')
@@ -141,16 +137,16 @@ class CAN(Models):
 
         adj_norm = preprocess_graph(adj)
 
-        num_nodes = adj.shape[0]
+        self.num_nodes = adj.shape[0]
         features = sparse_to_tuple(features.tocoo())
-        num_features = features[2][1]
+        self.num_features = features[2][1]
         features_nonzero = features[1].shape[0]
         print(features[1].shape)
         # Create model
         print('--->Create model...')
         # args can be one parameter
         # 创建model这里的参数是传到CAN的构造函数(init)处
-        model = CAN_original(hidden1, hidden2, num_features, num_nodes, features_nonzero, dropout).to(device)
+        model = CAN_original(hidden1, hidden2, self.num_features, self.num_nodes, features_nonzero, dropout).to(device)
         pos_weight_u = float(adj.shape[0] * adj.shape[0] - adj.sum()) / adj.sum()
         norm_u = adj.shape[0] * adj.shape[0] / float((adj.shape[0] * adj.shape[0] - adj.sum()) * 2)
         pos_weight_a = float(features[2][0] * features[2][1] - len(features[1])) / len(features[1])
@@ -168,7 +164,7 @@ class CAN(Models):
 
         adj_label = adj_train + sp.eye(adj_train.shape[0])
         adj_label = sparse_to_tuple(adj_label)
-        features_label = sparse_to_tuple(features_orig)
+        features_label = sparse_to_tuple(self.features_orig)
         '''sparse_to_tuple返回三个参数，第1个的index，即指明哪一行哪一列有指，第2个就是具体的value，第三个是矩阵的维度
         这三个参数刚好是torch.sparse将稠密矩阵转成稀疏矩阵的参数，具体可以查官网文档'''
         features = torch.sparse.FloatTensor(torch.LongTensor(features[0]).t(), torch.FloatTensor(features[1]),
@@ -185,8 +181,8 @@ class CAN(Models):
             '''train model这里参数传到CAN的forward处，features即论文模型图中的X矩阵(结点属性矩阵)，adj_norm是模型中的A矩阵，即邻接矩阵'''
             preds_sub_u, preds_sub_a, z_u_mean, z_u_log_std, z_a_mean, z_a_log_std = model(features, adj_norm)
 
-            labels_sub_u = torch.from_numpy(adj_orig.toarray()).flatten().float().to(device)
-            labels_sub_a = torch.from_numpy(features_orig.toarray()).flatten().float().to(device)
+            labels_sub_u = torch.from_numpy(self.adj_orig.toarray()).flatten().float().to(device)
+            labels_sub_a = torch.from_numpy(self.features_orig.toarray()).flatten().float().to(device)
             cost_u = norm_u * torch.mean(
                 self.weighted_cross_entropy_with_logits(logits=preds_sub_u, targets=labels_sub_u, pos_weight=pos_weight_u))
             cost_a = norm_a * torch.mean(
@@ -195,9 +191,9 @@ class CAN(Models):
             # Latent loss
             log_lik = cost_u + cost_a
             kl_u = (0.5) * torch.mean(
-                (1 + 2 * z_u_log_std - z_u_mean.pow(2) - (torch.exp(2 * z_u_log_std))).sum(1)) / num_nodes
+                (1 + 2 * z_u_log_std - z_u_mean.pow(2) - (torch.exp(2 * z_u_log_std))).sum(1)) / self.num_nodes
             kl_a = (0.5) * torch.mean(
-                (1 + 2 * z_a_log_std - (z_a_mean.pow(2)) - (torch.exp(2 * z_a_log_std))).sum(1)) / num_features
+                (1 + 2 * z_a_log_std - (z_a_mean.pow(2)) - (torch.exp(2 * z_a_log_std))).sum(1)) / self.num_features
             kl = kl_u + kl_a
             cost = log_lik - kl
             correct_prediction_u = torch.sum(
@@ -233,26 +229,20 @@ class CAN(Models):
         print("Optimization Finished!")
 
         preds_sub_u, preds_sub_a, z_u_mean, z_u_log_std, z_a_mean, z_a_log_std = model(features, adj_norm)
-        roc_score, ap_score =  self.get_roc_score(test_edges, test_edges_false, preds_sub_u)
-        roc_score_a, ap_score_a =  self.get_roc_score_a(test_feas, test_feas_false, preds_sub_a)
+        # roc_score, ap_score =  self.get_roc_score(test_edges, test_edges_false, preds_sub_u)
+        # roc_score_a, ap_score_a =  self.get_roc_score_a(test_feas, test_feas_false, preds_sub_a)
 
         if use_gpu:
             z_u_mean = z_u_mean.cpu()
             z_a_mean = z_a_mean.cpu()
             z_u_log_std = z_u_log_std.cpu()
             z_a_log_std = z_a_log_std.cpu()
-        print(os.getcwd())
-        np.save(embedding_node_mean_result_file, z_u_mean.data.numpy())
-        np.save(embedding_attr_mean_result_file, z_a_mean.data.numpy())
-        np.save(embedding_node_var_result_file, z_u_log_std.data.numpy())
-        np.save(embedding_attr_var_result_file, z_a_log_std.data.numpy())
-        print('Test edge ROC score: ' + str(roc_score))
-        print('Test edge AP score: ' + str(ap_score))
-
-        print('--->Start node classification...')
-        embedding_node_result_file = "./result/AGAE_{}_n_mu.emb.npy".format('datasets')
-        if evaluation == "node_classification":
-           Label = self.mat_content["Label"]
-           Embeddings = np.load(embedding_node_result_file)
-           node_classifcation(np.array(Embeddings), Label)
+        # print(os.getcwd())
+        # np.save(embedding_node_mean_result_file, z_u_mean.data.numpy())
+        # np.save(embedding_attr_mean_result_file, z_a_mean.data.numpy())
+        # np.save(embedding_node_var_result_file, z_u_log_std.data.numpy())
+        # np.save(embedding_attr_var_result_file, z_a_log_std.data.numpy())
+        # print('Test edge ROC score: ' + str(roc_score))
+        # print('Test edge AP score: ' + str(ap_score))
+        return z_u_mean.data.numpy()
 

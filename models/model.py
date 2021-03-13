@@ -9,41 +9,29 @@ from hyperopt import fmin, tpe, hp, space_eval,Trials, partial
 
 
 class Models(torch.nn.Module):
-    def __init__(self, *, method, datasets, evaluation, **kwargs):
-        super(Models, self).__init__()
-        if (self.is_preprocessing == True):
-            self.preprocessing(datasets)
-        if (self.is_epoch == True):
-            self.forward()
+    def __init__(self, *, method, datasets, **kwargs):
         self.mat_content=datasets
-        self.method=method
-        space_dtree=self.check_train_parameters()
-        Label = self.mat_content["Label"]
-        trials = Trials()
-        algo = partial(tpe.suggest)
-        best = fmin(
-            fn=self.get_score, space=space_dtree, algo=algo, max_evals=2, trials=trials)
-        print(best)
-        if evaluation == "node_classification":
-            start_time = time.time()
-            emb=self.train_model(**best)
-            print("time elapsed: {:.2f}s".format(time.time() - start_time))
-            node_classifcation(np.array(emb), Label)
-            sio.savemat('emb/'+self.method + '_embedding.mat', {self.method: emb})
-        if evaluation == "link_prediction":
-            start_time = time.time()
-            emb = self.train_model(**best)
-            print("time elapsed: {:.2f}s".format(time.time() - start_time))
-            adj = datasets['Network']
-            adj_train, train_edges, val_edges, val_edges_false, test_edges, test_edges_false = pre.mask_test_edges(adj)
-            link_prediction(emb, edges_pos=test_edges,
-                            edges_neg=test_edges_false)
+        super(Models, self).__init__()
+        if self.is_preprocessing():
+            self.preprocessing(datasets)
+        if self.is_epoch():
+            self.forward()
+        if self.is_deep_model():
+            emb = self.deep_algo()
+        else:
+            emb = self.shallow_algo()
+        self.emb=emb
+
 
     def check_train_parameters(self):
         return None
 
     @classmethod
     def is_preprocessing(cls):
+        raise NotImplementedError
+
+    @classmethod
+    def is_deep_model(cls):
         raise NotImplementedError
 
     @classmethod
@@ -66,3 +54,18 @@ class Models(torch.nn.Module):
 
     def preprocessing(self, filename):
         return None
+
+    def deep_algo(self):
+        return None
+
+    def shallow_algo(self):
+        trials = Trials()
+        algo = partial(tpe.suggest)
+        space_dtree = self.check_train_parameters()
+        best = fmin(
+            fn=self.get_score, space=space_dtree, algo=algo, max_evals=2, trials=trials)
+        emb = self.train_model(**best)
+        return emb
+    def get_emb(self):
+        return self.emb
+

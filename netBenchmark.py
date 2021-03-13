@@ -9,6 +9,8 @@ from models.Node2vec import node2vec
 from models.DGI import DGI
 from models.GAE import GAE
 from models.CAN import CAN
+from evaluation.node_classification import node_classifcation
+import scipy.io as sio
 dataAddress = {'Flickr':"data/Flickr/Flickr_SDM.mat"}
 
 datasetlist = [Flickr, ACM, Cora, BlogCatalog]
@@ -20,7 +22,7 @@ def parse_args():
     parser = argparse.ArgumentParser(description='NetBenchmark(DeepLab).')
 
     parser.add_argument('--dataset', type=str,
-                        default='cora',choices=datasetdict,
+                        default='blogcatalog',choices=datasetdict,
                         help='select a available dataset (default: cora)')
     parser.add_argument('--method', type=str, default='can',
                         choices=modeldict,
@@ -42,8 +44,14 @@ def main(args):
     Graph=Graph.get_graph(Graph,variable_name= args.variable_name or 'network' )
 
     model=modeldict[args.method]
-    model(method=args.method, datasets=Graph, evaluation=args.evaluation)
+    model=model(method=args.method, datasets=Graph, evaluation=args.evaluation)
 
+    if args.evaluation == "node_classification":
+        start_time = time.time()
+        emb = model.get_emb()
+        print("time elapsed: {:.2f}s".format(time.time() - start_time))
+        node_classifcation(np.array(emb), Graph['Label'])
+        sio.savemat('result/' + args.method + '_embedding_'+args.dataset+'.mat', {args.method: emb})
 
 
 

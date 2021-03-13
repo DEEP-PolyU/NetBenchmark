@@ -154,6 +154,9 @@ class HGraph():
 
 
 class node2vec(Models):
+    @classmethod
+    def is_deep_model(cls):
+        return False
 
     def __init__(self,method,datasets,evaluation,**kwargs):
         super(node2vec, self).__init__(method=method,datasets=datasets, evaluation=evaluation,**kwargs)
