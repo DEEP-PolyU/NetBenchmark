@@ -150,28 +150,18 @@ def print_configuration(args):
 
 class GAE(Models):
 
-    def __init__(self, datasets,evaluation,**kwargs):
-        #super(GAE, self).__init__(datasets=datasets, evaluation=evaluation,**kwargs)
+    def is_preprocessing(cls):
+        return False
 
-    # def check_train_parameters(self):
-    #
-    #     #hid1,hid2,dropout,lr,weight_decay,epochs
-    #     space_dtree = {
-    #         'nhid': hp.choice('nhid', [256]),
-    #         'dropout': hp.choice('dropout', [0.6]),
-    #         'epochs': hp.choice('win_size', [1000]),
-    #         'weight_decay': hp.choice('weight_decay', [0])
-    #     }
-    #
-    #     return space_dtree
-    #
-    # def is_preprocessing(cls):
-    #     return False
-    #
-    # @classmethod
-    # def is_epoch(cls):
-    #     return False
 
+    @classmethod
+    def is_epoch(cls):
+        return False
+    @classmethod
+    def is_deep_model(cls):
+        return True
+
+    def deep_algo(self):
 
         if torch.cuda.is_available():
             cuda_name = 'cuda:' + '0'
@@ -180,22 +170,28 @@ class GAE(Models):
         else:
             device = torch.device("cpu")
             print("--> No GPU")
-        self.mat_content = datasets
+
+        link_predic_result_file = "result/GAE_{}.res".format('datasets')
+        embedding_node_mean_result_file = "result/GAE_{}_n_mu.emb".format('datasets')
+        embedding_attr_mean_result_file = "result/GAE_{}_a_mu.emb".format('datasets')
+        embedding_node_var_result_file = "result/GAE_{}_n_sig.emb".format('datasets')
+        embedding_attr_var_result_file = "result/GAE_{}_a_sig.emb".format('datasets')
+
+        #dropout =0.6 ,lr = 0.001,weight_decay = 0,epochs = 1000
+        dropout = 0.6
+        lr = 0.001
+        weight_decay = 0
+        epochs = 1000
+
+
         features, adj_norm, adj_label, val_edges, val_edges_false, test_edges, test_edges_false, norm, pos_weight = mat_import(self.mat_content)
         #features, adj, adj_label, val_edges, val_edges_false, save_path, device, pos_weight, norm,hid1,hid2,dropout,lr,weight_decay,epochs
-        embeding = train(features=features, adj = adj_norm, adj_label = adj_label, val_edges = val_edges, val_edges_false = val_edges_false, save_path='emb/GAETemp', device=device, pos_weight=pos_weight, norm=norm,hid1= 256,hid2 = 128,dropout =0.6 ,lr = 0.001,weight_decay = 0,epochs = 1000)
+        embeding = train(features=features, adj = adj_norm, adj_label = adj_label, val_edges = val_edges, val_edges_false = val_edges_false, save_path='emb/GAETemp', device=device, pos_weight=pos_weight, norm=norm,
+                         hid1= 256,hid2 = 128,dropout = dropout ,lr = lr,weight_decay = weight_decay,epochs = epochs)
 
 
-        if evaluation == "node_classification":
-            Label = self.mat_content["Label"]
-            node_classifcation(np.array(embeding), Label)
 
-        if evaluation == "link_prediction":
-            adj = datasets['Network']
-            #
-            adj_train, train_edges, val_edges, val_edges_false, test_edges, test_edges_false = process.mask_test_edges(adj)
-            link_prediction(embeding, edges_pos=test_edges,
-                            edges_neg=test_edges_false)
+        return embeding
 
 
 
