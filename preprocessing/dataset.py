@@ -6,6 +6,9 @@ logger = logging.getLogger(__name__)
 def load_adjacency_matrix(file):
     data = scipy.io.loadmat(file)
     logger.info("loading mat file %s", file)
+    if 'Features' in data:
+        data['Attributes']=data['Features']
+        del data['Features']
     return data
 
 class Datasets:
