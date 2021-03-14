@@ -32,8 +32,14 @@ class DGI_test(nn.Module):
         return h_1.detach(), c.detach()
 
 class DGI(Models):
+    @classmethod
+    def is_preprocessing(cls):
+        return False
 
-    def __init__(self, method,datasets,evaluation,**kwargs):
+    @classmethod
+    def is_deep_model(cls):
+        return True
+    def deep_algo(self):
         np.random.seed(42)
         torch.manual_seed(42)
         if torch.cuda.is_available():
@@ -53,7 +59,6 @@ class DGI(Models):
         hid_units = 128
         sparse = True
         nonlinearity = "prelu"
-        self.mat_content = datasets
         adj, features, labels, idx_train, idx_val, idx_test = process.load_citationmat(self.mat_content)
         features, _ = process.preprocess_features(features)
         nb_nodes = features.shape[0]
@@ -143,12 +148,4 @@ class DGI(Models):
         print('node_shape ', node_emb.shape)
         node_emb = node_emb.reshape(node_emb.shape[1:])
         print('node_shape_new ', node_emb.shape)
-        if evaluation == "node_classification":
-           Label = self.mat_content["Label"]
-           node_classifcation(np.array(node_emb), Label)
-
-        if evaluation == "link_prediction":
-           adj = datasets['Network']
-           adj_train, train_edges, val_edges, val_edges_false, test_edges, test_edges_false = pre.mask_test_edges(adj)
-           link_prediction(node_emb, edges_pos=test_edges,
-                           edges_neg=test_edges_false)
+        return node_emb
