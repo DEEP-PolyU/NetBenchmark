@@ -36,13 +36,10 @@ class CAN(Models):
     def is_preprocessing(cls):
         return False
 
-
-    @classmethod
-    def is_epoch(cls):
-        return False
     @classmethod
     def is_deep_model(cls):
         return True
+
     def get_roc_score(self,edges_pos, edges_neg, preds_sub_u):
         def sigmoid(x):
             x = np.clip(x, -500, 500)
@@ -105,7 +102,7 @@ class CAN(Models):
 
         return roc_score, ap_score
 
-    def weighted_cross_entropy_with_logits(self,logits, targets, pos_weight):
+    def weighted_cross_entropy_with_logits(self, logits, targets, pos_weight):
         logits = logits.clamp(-10, 10)
         return targets * -torch.log(torch.sigmoid(logits)) * pos_weight + (1 - targets) * -torch.log(
             1 - torch.sigmoid(logits))
@@ -115,7 +112,12 @@ class CAN(Models):
         hidden1=256
         hidden2=128
         dropout=0
-        epochs=2
+        epochs=200
+        seed=42
+
+        np.random.seed(seed)
+        torch.manual_seed(seed)
+
         adj=self.mat_content['Network']
         features=self.mat_content['Attributes']
         self.adj_orig = adj
@@ -129,11 +131,6 @@ class CAN(Models):
         self.features_orig = features
         features = sp.lil_matrix(features)
 
-        link_predic_result_file = "result/AGAE_{}.res".format('datasets')
-        embedding_node_mean_result_file = "result/AGAE_{}_n_mu.emb".format('datasets')
-        embedding_attr_mean_result_file = "result/AGAE_{}_a_mu.emb".format('datasets')
-        embedding_node_var_result_file = "result/AGAE_{}_n_sig.emb".format('datasets')
-        embedding_attr_var_result_file = "result/AGAE_{}_a_sig.emb".format('datasets')
 
         adj_norm = preprocess_graph(adj)
 
@@ -154,9 +151,6 @@ class CAN(Models):
         # Optimizer
 
         optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
-
-        cost_val = []
-        acc_val = []
 
         cost_val = []
         acc_val = []
@@ -234,15 +228,6 @@ class CAN(Models):
 
         if use_gpu:
             z_u_mean = z_u_mean.cpu()
-            z_a_mean = z_a_mean.cpu()
-            z_u_log_std = z_u_log_std.cpu()
-            z_a_log_std = z_a_log_std.cpu()
-        # print(os.getcwd())
-        # np.save(embedding_node_mean_result_file, z_u_mean.data.numpy())
-        # np.save(embedding_attr_mean_result_file, z_a_mean.data.numpy())
-        # np.save(embedding_node_var_result_file, z_u_log_std.data.numpy())
-        # np.save(embedding_attr_var_result_file, z_a_log_std.data.numpy())
-        # print('Test edge ROC score: ' + str(roc_score))
-        # print('Test edge AP score: ' + str(ap_score))
+
         return z_u_mean.data.numpy()
 

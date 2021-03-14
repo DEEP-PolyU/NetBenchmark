@@ -277,10 +277,6 @@ class featwalk(Models):
         return False
 
     @classmethod
-    def is_epoch(cls):
-        return False
-
-    @classmethod
     def is_deep_model(cls):
         return False
 

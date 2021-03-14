@@ -135,10 +135,6 @@ class netmf(Models):
     def is_deep_model(cls):
         return False
 
-    @classmethod
-    def is_epoch(cls):
-        return False
-
     def train_model(self, window):
         mat_content=self.mat_content
         logger.info("Running NetMF for a small window size...")

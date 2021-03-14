@@ -12,7 +12,6 @@ Node Representation Learning Benchmark
 
 We aim at building a auto,fair and systematic evaluation platform to compare the results of different Network Embedding models. 
 The implemented or modified models include [DeepWalk](https://github.com/phanein/deepwalk),  [node2vec](https://github.com/aditya-grover/node2vec), 
-[GraRep](https://github.com/ShelsonCao/GraRep), 
 [GCN](https://github.com/tkipf/gcn), [NetMF](https://github.com/xptree/NetMF), GAE, [featWalk](https://github.com/xhuang31/FeatWalk_AAAI19), CAN and DGI.
 
 Also, we imported several classic dataset, which includes Flickr, ACM, Cora, BlogCatalog.
@@ -24,7 +23,7 @@ Specifically, we welcome other researchers to contribute NE models into this pla
 
 ### Parser system workflow
 
-The system selects data sets and algorithms through the parameters provided by the command system,which can view detailes by
+The system selects datasets and algorithms through the parameters provided by the command system,which can view details by
 ```bash
     python netBenchmark.py -h
 ```

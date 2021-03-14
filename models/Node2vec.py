@@ -180,10 +180,6 @@ class node2vec(Models):
     def is_preprocessing(cls):
         return False
 
-    @classmethod
-    def is_epoch(cls):
-        return False
-
     def train_model(self, **kwargs):
         embbeding = newprocess(input=self.mat_content, directed=False, d=128,workers=12,
                             output=None, content='Network',**kwargs)

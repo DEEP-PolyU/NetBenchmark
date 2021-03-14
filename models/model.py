@@ -14,8 +14,6 @@ class Models(torch.nn.Module):
         super(Models, self).__init__()
         if self.is_preprocessing():
             self.preprocessing(datasets)
-        if self.is_epoch():
-            self.forward()
         if self.is_deep_model():
             emb = self.deep_algo()
         else:
@@ -32,10 +30,6 @@ class Models(torch.nn.Module):
 
     @classmethod
     def is_deep_model(cls):
-        raise NotImplementedError
-
-    @classmethod
-    def is_epoch(cls):
         raise NotImplementedError
 
     def forward(self):
