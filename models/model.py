@@ -9,7 +9,7 @@ from hyperopt import fmin, tpe, hp, space_eval,Trials, partial
 
 
 class Models(torch.nn.Module):
-    def __init__(self, *, method, datasets, **kwargs):
+    def __init__(self, *, datasets, **kwargs):
         self.mat_content=datasets
         super(Models, self).__init__()
         if self.is_preprocessing():

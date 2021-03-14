@@ -255,11 +255,6 @@ def alias_draw(J, q):
 
 class featwalk(Models):
 
-    def __init__(self,method,datasets,evaluation,**kwargs):
-        super(featwalk, self).__init__(method=method,datasets=datasets, evaluation=evaluation ,**kwargs)
-
-
-
     def check_train_parameters(self):
 
         space_dtree = {

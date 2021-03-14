@@ -75,9 +75,6 @@ def deepwalk_fun(CombG, d, number_walks, walk_length,window_size):
 
 class deepwalk(Models):
 
-    def __init__(self, method,datasets,evaluation,**kwargs):
-        super(deepwalk, self).__init__(method=method,datasets=datasets, evaluation=evaluation,**kwargs)
-
 
     def check_train_parameters(self):
 
