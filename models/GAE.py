@@ -73,6 +73,7 @@ def mat_import(mat):
     return features, adj_norm, adj_label, val_edges, val_edges_false, test_edges, test_edges_false, norm, pos_weight
 
 def train(features, adj, adj_label, val_edges, val_edges_false, save_path, device, pos_weight, norm,hid1,hid2,dropout,lr,weight_decay,epochs):
+
     model = GCNTra(nfeat=features.shape[1],
                 nhid=hid1,
                 nhid2=hid2,
@@ -93,6 +94,7 @@ def train(features, adj, adj_label, val_edges, val_edges_false, save_path, devic
     max_ap = 0.0
     best_epoch = 0
     cnt_wait = 0
+    start_time = time.time()
     for epoch in range(epochs):
         model.train()
         optimizer.zero_grad()
@@ -119,8 +121,12 @@ def train(features, adj, adj_label, val_edges, val_edges_false, save_path, devic
               'valid_acu: %.4f' % auc_,
               'valid_ap: %.4f' % ap_)
 
-        if cnt_wait == 3000 and best_epoch != 0:
+        if cnt_wait == 6000 and best_epoch != 0:
             print('Early stopping!')
+            break
+
+        if (time.time() - start_time) >= 10: #Change in Time stoping
+            print('times up,Time setting is: {:.2f}'.format(time.time()-start_time))
             break
 
         loss.backward()
@@ -181,7 +187,7 @@ class GAE(Models):
         dropout = 0.6
         lr = 0.001
         weight_decay = 0
-        epochs = 1000
+        epochs = 2000
 
 
         features, adj_norm, adj_label, val_edges, val_edges_false, test_edges, test_edges_false, norm, pos_weight = mat_import(self.mat_content)

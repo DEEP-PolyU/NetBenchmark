@@ -12,10 +12,10 @@ def node_classifcation(feature, labels):
     shape = len(labels.shape)
     if shape == 2:
         labels = np.argmax(labels, axis=1)
-    i = 1
+    i = 0
     f1_mac = []
     f1_mic = []
-    for i in range(0):
+    for i in range(10):
         f1_mic_fold = []
         f1_mac_fold = []
         kf = KFold(n_splits=5, shuffle=True,random_state=0)

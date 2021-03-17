@@ -49,6 +49,8 @@ class DGI(Models):
         else:
             device = torch.device("cpu")
             print("--> No GPU")
+
+
         # training params
         batch_size = 1
         nb_epochs = 10000
@@ -99,6 +101,7 @@ class DGI(Models):
         best = 1e9
         best_t = 0
 
+        start_time = time.time()
         for epoch in range(nb_epochs):
             model.train()
             optimiser.zero_grad()
@@ -131,6 +134,11 @@ class DGI(Models):
             if cnt_wait == patience:
                 print('Early stopping!')
                 break
+
+            if (time.time() - start_time) >= 10:  # Change in Time stoping
+                print('times up,Time setting is: {:.2f}'.format(time.time() - start_time))
+                break
+
 
             loss.backward()
             optimiser.step()

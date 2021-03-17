@@ -167,6 +167,7 @@ class CAN(Models):
                                             torch.FloatTensor(adj_norm[1]), adj_norm[2]).to(device)
         # Train model
         print('--->Train model...')
+        start_time = time.time()
         for epoch in range(epochs):
             model.train()
             t = time.time()
@@ -205,6 +206,13 @@ class CAN(Models):
             roc_curr_a, ap_curr_a =  self.get_roc_score_a(val_feas, val_feas_false, preds_sub_a)
             val_roc_score.append(roc_curr)
 
+
+
+            # early stop by time
+            if (time.time() - start_time) >= 50:  # Change in Time stoping
+                print('times up,Time setting is: {:.2f}'.format(time.time() - start_time))
+                break
+
             # Run backward
             avg_cost.backward()
             optimizer.step()
@@ -220,7 +228,7 @@ class CAN(Models):
                   "val_attr_ap=", "{:.5f}".format(ap_curr_a),
                   "time=", "{:.5f}".format(time.time() - t))
 
-        print("Optimization Finished!")
+        #print("Optimization Finished!")
 
         preds_sub_u, preds_sub_a, z_u_mean, z_u_log_std, z_a_mean, z_a_log_std = model(features, adj_norm)
         # roc_score, ap_score =  self.get_roc_score(test_edges, test_edges_false, preds_sub_u)
