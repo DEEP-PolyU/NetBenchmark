@@ -33,7 +33,7 @@ def parse_args():
                         help='The evaluation method')
     parser.add_argument('--variable_name', type=str,
                         help='The name of features in dataset')
-    parser.add_argument('--training_time', type=int, default=20,
+    parser.add_argument('--training_time', type=int, default=200,
                         help='The total training time you want')
 
     args = parser.parse_args()
