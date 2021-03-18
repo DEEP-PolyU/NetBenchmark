@@ -107,7 +107,7 @@ class CAN(Models):
         return targets * -torch.log(torch.sigmoid(logits)) * pos_weight + (1 - targets) * -torch.log(
             1 - torch.sigmoid(logits))
 
-    def deep_algo(self):
+    def deep_algo(self,stop_time):
         learning_rate=0.01
         hidden1=256
         hidden2=128
@@ -209,9 +209,10 @@ class CAN(Models):
 
 
             # early stop by time
-            if (time.time() - start_time) >= 50:  # Change in Time stoping
+            if (time.time() - start_time) >= stop_time:  # Change in Time stoping
                 print('times up,Time setting is: {:.2f}'.format(time.time() - start_time))
                 break
+
 
             # Run backward
             avg_cost.backward()

@@ -23,19 +23,22 @@ def parse_args():
     parser = argparse.ArgumentParser(description='NetBenchmark(DeepLab).')
 
     parser.add_argument('--dataset', type=str,
-                        default='blogcatalog',choices=datasetdict,
+                        default='cora',choices=datasetdict,
                         help='select a available dataset (default: cora)')
-    parser.add_argument('--method', type=str, default='netmf',
+    parser.add_argument('--method', type=str, default='featwalk',
                         choices=modeldict,
                         help='The learning method')
-    parser.add_argument('--evaluation', type=str, default='link_prediction',
+    parser.add_argument('--evaluation', type=str, default='node_classification',
                         choices=['node_classification','link_prediction'],
                         help='The evaluation method')
     parser.add_argument('--variable_name', type=str,
                         help='The name of features in dataset')
+    parser.add_argument('--training_time', type=int, default=20,
+                        help='The total training time you want')
 
     args = parser.parse_args()
     return args
+
 
 
 def main(args):
@@ -43,9 +46,11 @@ def main(args):
     print("Loading...")
     Graph = datasetdict[args.dataset]
     Graph=Graph.get_graph(Graph,variable_name= args.variable_name or 'network' )
+    #iter = get_training_time(args.method,Graph)
 
+    Stoptime = args.training_time
     model=modeldict[args.method]
-    model=model(datasets=Graph)
+    model=model(datasets=Graph,iter = iter,Time=Stoptime)
 
     emb = model.get_emb()
     if args.evaluation == "node_classification":

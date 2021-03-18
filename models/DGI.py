@@ -39,7 +39,7 @@ class DGI(Models):
     @classmethod
     def is_deep_model(cls):
         return True
-    def deep_algo(self):
+    def deep_algo(self,stop_time):
         np.random.seed(42)
         torch.manual_seed(42)
         if torch.cuda.is_available():
@@ -135,9 +135,10 @@ class DGI(Models):
                 print('Early stopping!')
                 break
 
-            if (time.time() - start_time) >= 10:  # Change in Time stoping
+            if (time.time() - start_time) >= stop_time:  # Change in Time stoping
                 print('times up,Time setting is: {:.2f}'.format(time.time() - start_time))
                 break
+
 
 
             loss.backward()

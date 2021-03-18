@@ -72,7 +72,7 @@ def mat_import(mat):
 
     return features, adj_norm, adj_label, val_edges, val_edges_false, test_edges, test_edges_false, norm, pos_weight
 
-def train(features, adj, adj_label, val_edges, val_edges_false, save_path, device, pos_weight, norm,hid1,hid2,dropout,lr,weight_decay,epochs):
+def train(features, adj, adj_label, val_edges, val_edges_false, save_path, device, pos_weight, norm,hid1,hid2,dropout,lr,weight_decay,epochs,stop_time):
 
     model = GCNTra(nfeat=features.shape[1],
                 nhid=hid1,
@@ -125,9 +125,10 @@ def train(features, adj, adj_label, val_edges, val_edges_false, save_path, devic
             print('Early stopping!')
             break
 
-        if (time.time() - start_time) >= 10: #Change in Time stoping
+        if (time.time() - start_time) >= stop_time: #Change in Time stoping
             print('times up,Time setting is: {:.2f}'.format(time.time()-start_time))
             break
+
 
         loss.backward()
         optimizer.step()
@@ -167,7 +168,7 @@ class GAE(Models):
     def is_deep_model(cls):
         return True
 
-    def deep_algo(self):
+    def deep_algo(self,stop_time):
 
         if torch.cuda.is_available():
             cuda_name = 'cuda:' + '0'
@@ -193,7 +194,7 @@ class GAE(Models):
         features, adj_norm, adj_label, val_edges, val_edges_false, test_edges, test_edges_false, norm, pos_weight = mat_import(self.mat_content)
         #features, adj, adj_label, val_edges, val_edges_false, save_path, device, pos_weight, norm,hid1,hid2,dropout,lr,weight_decay,epochs
         embeding = train(features=features, adj = adj_norm, adj_label = adj_label, val_edges = val_edges, val_edges_false = val_edges_false, save_path='emb/GAETemp', device=device, pos_weight=pos_weight, norm=norm,
-                         hid1= 256,hid2 = 128,dropout = dropout ,lr = lr,weight_decay = weight_decay,epochs = epochs)
+                         hid1= 256,hid2 = 128,dropout = dropout ,lr = lr,weight_decay = weight_decay,epochs = epochs,stop_time=stop_time)
 
 
 

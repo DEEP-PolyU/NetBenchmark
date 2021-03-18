@@ -9,16 +9,19 @@ from hyperopt import fmin, tpe, hp, space_eval,Trials, partial
 
 
 class Models(torch.nn.Module):
-    def __init__(self, *, datasets, **kwargs):
+    def __init__(self, *, datasets,Time, **kwargs):
         self.mat_content=datasets
+        self.stop_time = Time
         super(Models, self).__init__()
         if self.is_preprocessing():
             self.preprocessing(datasets)
+        start_time = time.time()
         if self.is_deep_model():
-            emb = self.deep_algo()
+            emb = self.deep_algo(self.stop_time)
         else:
             emb = self.shallow_algo()
-        self.emb=emb
+        self.emb = emb
+        self.end_time = time.time()-start_time
 
 
     def check_train_parameters(self):
@@ -57,9 +60,15 @@ class Models(torch.nn.Module):
         algo = partial(tpe.suggest)
         space_dtree = self.check_train_parameters()
         best = fmin(
-            fn=self.get_score, space=space_dtree, algo=algo, max_evals=2, trials=trials)
+            fn=self.get_score, space=space_dtree, algo=algo, max_evals=150, trials=trials, timeout=self.stop_time)
         emb = self.train_model(**best)
         return emb
+
     def get_emb(self):
         return self.emb
+
+    def get_time(self):
+        return self.end_time
+
+
 
