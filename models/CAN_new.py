@@ -12,20 +12,19 @@ from sklearn.metrics import roc_auc_score
 from sklearn.metrics import average_precision_score
 import scipy.io
 import argparse
-from .CAN_package.optimizer import  OptimizerCAN
-from .CAN_package.model import CAN_original
-from .CAN_package.preprocessing import preprocess_graph, construct_feed_dict, sparse_to_tuple, mask_test_edges, mask_test_feas
+from .CAN_new_package.optimizer import  OptimizerCAN
+from .CAN_new_package.model import CAN_original
+from .CAN_new_package.preprocessing import preprocess_graph, construct_feed_dict, sparse_to_tuple, mask_test_edges, mask_test_feas
 from .model import *
 
 
 # Train on CPU (hide GPU) due to memory constraints
 os.environ['CUDA_VISIBLE_DEVICES'] = ""
 use_gpu = torch.cuda.is_available()
+print(use_gpu)
 device = torch.device('cpu')
 
-
-
-class CAN(Models):
+class CAN_new(Models):
 
     num_nodes=None
     adj_orig=None
