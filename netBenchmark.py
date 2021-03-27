@@ -35,11 +35,16 @@ def parse_args():
                         help='The name of features in dataset')
     parser.add_argument('--training_time', type=int, default=200,
                         help='The total training time you want')
+    parser.add_argument('--input_file', type=str, default=None,
+                        help='The input datasets you want')
 
     args = parser.parse_args()
     return args
 
-
+def prase_input_file(args):
+    if(args.input_file):
+        return None
+# TODO(Qian): input file prase
 
 def main(args):
 
@@ -55,10 +60,11 @@ def main(args):
     emb = model.get_emb()
     if args.evaluation == "node_classification":
         node_classifcation(np.array(emb), Graph['Label'])
-        sio.savemat('result/' + args.method + '_embedding_'+args.dataset+'.mat', {args.method: emb})
+        np.save('result/' + args.method + '_embedding_' + args.dataset + '.npy', emb)
     elif args.evaluation == "link_prediction":
         adj_train, train_edges, val_edges, val_edges_false, test_edges, test_edges_false = pre.mask_test_edges(Graph['Network'])
         link_prediction(emb, edges_pos=test_edges,edges_neg=test_edges_false)
+        np.save('result/' + args.method + '_embedding_' + args.dataset + '.npy', emb)
 
 
 if __name__ == "__main__":
