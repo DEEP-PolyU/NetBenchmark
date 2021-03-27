@@ -27,7 +27,7 @@ def parse_args():
     parser.add_argument('--dataset', type=str,
                         default='blogcatalog',choices=datasetdict,
                         help='select a available dataset (default: cora)')
-    parser.add_argument('--method', type=str, default='can_original',
+    parser.add_argument('--method', type=str, default='featwalk',
                         choices=modeldict,
                         help='The learning method')
     parser.add_argument('--evaluation', type=str, default='node_classification',
@@ -35,7 +35,7 @@ def parse_args():
                         help='The evaluation method')
     parser.add_argument('--variable_name', type=str,
                         help='The name of features in dataset')
-    parser.add_argument('--training_time', type=int, default=20,
+    parser.add_argument('--training_time', type=float, default=1.4,
                         help='The total training time you want')
     parser.add_argument('--input_file', type=str, default=None,
                         help='The input datasets you want')
