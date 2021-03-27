@@ -75,7 +75,7 @@ def main(args):
     Graph=Graph.get_graph(Graph,variable_name= args.variable_name or 'network' )
     #iter = get_training_time(args.method,Graph)
 
-    Stoptime = args.training_time
+    Stoptime = time_calculating(Graph,args.training_time)
     model=modeldict[args.method]
     model=model(datasets=Graph,iter = iter,Time=Stoptime)
 
