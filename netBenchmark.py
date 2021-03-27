@@ -1,6 +1,9 @@
 import argparse
 import numpy as np
 import time
+import os
+from preprocessing.dataset import load_adjacency_matrix
+from preprocessing.loadCora import load_citation
 from models.FeatWalk import featwalk
 from models.NetMF import netmf
 from models.deepwalk import deepwalk
@@ -42,29 +45,37 @@ def parse_args():
     return args
 
 def prase_input_file(args):
-    if(args.input_file):
-        return None
+    if(os.path.splitext(args.input_file)[-1] == ".mat"):
+        Graph = load_adjacency_matrix(dir)
+        return Graph
+    if(os.path.splitext(args.input_file)[-1] == ".txt"):
+        adj, features, labels, idx_train, idx_val, idx_test = load_citation(dataset_str=os.path.splitext(args.input_file)[0])
+        Graph = {"Network": adj, "Label": labels, "Attributes": features}
+        return Graph
+    return None
+
 # TODO(Qian): input file prase
 
 def main(args):
 
     print("Loading...")
-    Graph = datasetdict[args.dataset]
-    Graph=Graph.get_graph(Graph,variable_name= args.variable_name or 'network' )
+    prase_input_file(args)
+    if(args.input_file==None):
+       Graph = datasetdict[args.dataset]
+       Graph=Graph.get_graph(Graph,variable_name= args.variable_name or 'network' )
     #iter = get_training_time(args.method,Graph)
-
     Stoptime = args.training_time
     model=modeldict[args.method]
     model=model(datasets=Graph,iter = iter,Time=Stoptime)
 
     emb = model.get_emb()
-    if args.evaluation == "node_classification":
-        node_classifcation(np.array(emb), Graph['Label'])
-        np.save('result/' + args.method + '_embedding_' + args.dataset + '.npy', emb)
-    elif args.evaluation == "link_prediction":
-        adj_train, train_edges, val_edges, val_edges_false, test_edges, test_edges_false = pre.mask_test_edges(Graph['Network'])
-        link_prediction(emb, edges_pos=test_edges,edges_neg=test_edges_false)
-        np.save('result/' + args.method + '_embedding_' + args.dataset + '.npy', emb)
+    # if args.evaluation == "node_classification":
+    #     node_classifcation(np.array(emb), Graph['Label'])
+    #     np.save('result/' + args.method + '_embedding_' + args.dataset + '.npy', emb)
+    # elif args.evaluation == "link_prediction":
+    #     adj_train, train_edges, val_edges, val_edges_false, test_edges, test_edges_false = pre.mask_test_edges(Graph['Network'])
+    #     link_prediction(emb, edges_pos=test_edges,edges_neg=test_edges_false)
+    #     np.save('result/' + args.method + '_embedding_' + args.dataset + '.npy', emb)
 
 
 if __name__ == "__main__":
