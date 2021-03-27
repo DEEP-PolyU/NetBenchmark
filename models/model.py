@@ -61,6 +61,7 @@ class Models(torch.nn.Module):
         space_dtree = self.check_train_parameters()
         best = fmin(
             fn=self.get_score, space=space_dtree, algo=algo, max_evals=150, trials=trials, timeout=self.stop_time)
+        print('end of training:{:.2f}s'.format(self.stop_time))
         emb = self.train_model(**best)
         return emb
 

@@ -58,7 +58,7 @@ def read_graph(input_path, directed=False):
     for node in G.nodes():
         probs[node]['probabilities'] = dict()
 
-    print(nx.info(G) + "\n---------------------------------------\n")
+    #print(nx.info(G) + "\n---------------------------------------\n")
     return G, probs
 
 
