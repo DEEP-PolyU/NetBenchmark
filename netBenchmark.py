@@ -2,6 +2,9 @@ import argparse
 import numpy as np
 import networkx as nx
 import time
+import os
+from preprocessing.dataset import load_adjacency_matrix
+from preprocessing.loadCora import load_citation
 from models.FeatWalk import featwalk
 from models.NetMF import netmf
 from models.deepwalk import deepwalk
@@ -27,7 +30,7 @@ def parse_args():
     parser.add_argument('--dataset', type=str,
                         default='blogcatalog',choices=datasetdict,
                         help='select a available dataset (default: cora)')
-    parser.add_argument('--method', type=str, default='featwalk',
+    parser.add_argument('--method', type=str, default='can_original',
                         choices=modeldict,
                         help='The learning method')
     parser.add_argument('--evaluation', type=str, default='node_classification',
@@ -35,7 +38,7 @@ def parse_args():
                         help='The evaluation method')
     parser.add_argument('--variable_name', type=str,
                         help='The name of features in dataset')
-    parser.add_argument('--training_time', type=float, default=1.4,
+    parser.add_argument('--training_time', type=int, default=20,
                         help='The total training time you want')
     parser.add_argument('--input_file', type=str, default=None,
                         help='The input datasets you want')
@@ -44,8 +47,15 @@ def parse_args():
     return args
 
 def prase_input_file(args):
-    if(args.input_file):
-        return None
+    if(os.path.splitext(args.input_file)[-1] == ".mat"):
+        Graph = load_adjacency_matrix(dir)
+        return Graph
+    if(os.path.splitext(args.input_file)[-1] == ".txt"):
+        adj, features, labels, idx_train, idx_val, idx_test = load_citation(dataset_str=os.path.splitext(args.input_file)[0])
+        Graph = {"Network": adj, "Label": labels, "Attributes": features}
+        return Graph
+    return None
+
 # TODO(Qian): input file prase
 
 def time_calculating(Graph,training_time_rate):
@@ -71,11 +81,13 @@ def time_calculating(Graph,training_time_rate):
 def main(args):
 
     print("Loading...")
-    Graph = datasetdict[args.dataset]
-    Graph=Graph.get_graph(Graph,variable_name= args.variable_name or 'network' )
+    prase_input_file(args)
+    if(args.input_file==None):
+       Graph = datasetdict[args.dataset]
+       Graph=Graph.get_graph(Graph,variable_name= args.variable_name or 'network' )
     #iter = get_training_time(args.method,Graph)
 
-    Stoptime = time_calculating(Graph,args.training_time)
+    Stoptime = args.training_time
     model=modeldict[args.method]
     model=model(datasets=Graph,iter = iter,Time=Stoptime)
 
