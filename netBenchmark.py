@@ -1,5 +1,6 @@
 import argparse
 import numpy as np
+import networkx as nx
 import time
 from models.FeatWalk import featwalk
 from models.NetMF import netmf
@@ -33,7 +34,7 @@ def parse_args():
                         help='The evaluation method')
     parser.add_argument('--variable_name', type=str,
                         help='The name of features in dataset')
-    parser.add_argument('--training_time', type=int, default=200,
+    parser.add_argument('--training_time_rate', type=float, default=1.4,
                         help='The total training time you want')
     parser.add_argument('--input_file', type=str, default=None,
                         help='The input datasets you want')
@@ -46,14 +47,33 @@ def prase_input_file(args):
         return None
 # TODO(Qian): input file prase
 
+def time_calculating(Graph,training_time_rate):
+    edges = list()
+    nodes = Graph['Network'].tolil()
+    G = nx.DiGraph()
+    for start_node, end_nodes in enumerate(nodes.rows, start=0):
+        for end_node in end_nodes:
+            edges.append((start_node, end_node))
+
+    G.add_edges_from(edges)
+
+    G = G.to_undirected()
+
+    num_of_nodes = G.number_of_nodes()
+    num_of_edges = G.number_of_edges()
+    time = int(training_time_rate * num_of_nodes)
+    print("\n----------Graph infomation-------------\n", nx.info(G) +"\n"+ "training Time: {}".format(time) +"\n---------------------------------------\n")
+
+
+    return time
+
 def main(args):
 
     print("Loading...")
     Graph = datasetdict[args.dataset]
     Graph=Graph.get_graph(Graph,variable_name= args.variable_name or 'network' )
     #iter = get_training_time(args.method,Graph)
-
-    Stoptime = args.training_time
+    Stoptime = time_calculating(Graph,args.training_time_rate)
     model=modeldict[args.method]
     model=model(datasets=Graph,iter = iter,Time=Stoptime)
 
