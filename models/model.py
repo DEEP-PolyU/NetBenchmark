@@ -9,7 +9,7 @@ from hyperopt import fmin, tpe, hp, space_eval,Trials, partial
 
 
 class Models(torch.nn.Module):
-    def __init__(self, *, datasets,Time, **kwargs):
+    def __init__(self, *, datasets, Time, **kwargs):
         self.mat_content=datasets
         self.stop_time = Time
         super(Models, self).__init__()
@@ -52,7 +52,7 @@ class Models(torch.nn.Module):
     def preprocessing(self, filename):
         return None
 
-    def deep_algo(self):
+    def deep_algo(self,stop_time):
         return None
 
     def shallow_algo(self):

@@ -12,6 +12,7 @@ from preprocessing.dataset import Flickr,ACM,Cora,BlogCatalog
 from models.Node2vec import node2vec
 from models.DGI import DGI
 from models.GAE import GAE
+from models.GCN import GCN
 from models.CAN_new import CAN_new
 from models.CAN_original import CAN_original
 from evaluation.node_classification import node_classifcation
@@ -22,7 +23,7 @@ from evaluation.link_prediction import link_prediction
 datasetlist = [Flickr, ACM, Cora, BlogCatalog]
 datasetdict = {Cls.__name__.lower(): Cls for Cls in datasetlist}
 
-modellist=[featwalk, netmf, deepwalk, node2vec, DGI, GAE, CAN_new, CAN_original]
+modellist=[featwalk, netmf, deepwalk, node2vec, DGI, GAE, CAN_new, CAN_original,GCN]
 modeldict = {Cls.__name__.lower(): Cls for Cls in modellist}
 def parse_args():
     parser = argparse.ArgumentParser(description='NetBenchmark(DeepLab).')
@@ -30,7 +31,7 @@ def parse_args():
     parser.add_argument('--dataset', type=str,
                         default='blogcatalog',choices=datasetdict,
                         help='select a available dataset (default: cora)')
-    parser.add_argument('--method', type=str, default='can_original',
+    parser.add_argument('--method', type=str, default='gcn',
                         choices=modeldict,
                         help='The learning method')
     parser.add_argument('--evaluation', type=str, default='node_classification',
@@ -38,7 +39,7 @@ def parse_args():
                         help='The evaluation method')
     parser.add_argument('--variable_name', type=str,
                         help='The name of features in dataset')
-    parser.add_argument('--training_time', type=int, default=20,
+    parser.add_argument('--training_time', type=int, default=20000,
                         help='The total training time you want')
     parser.add_argument('--input_file', type=str, default=None,
                         help='The input datasets you want')

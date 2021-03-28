@@ -604,3 +604,60 @@ def mask_test_edges_fast(adj):
 
     # NOTE: these edge lists only contain single direction of edge!
     return adj_train, train_edges, val_edges, val_edges_false, test_edges, test_edges_false
+
+from .normalization import *
+
+def preprocess_citation(adj, features, normalization="FirstOrderGCN"):
+    adj_normalizer = fetch_normalization(normalization)
+    adj = adj_normalizer(adj)
+    features = row_normalize(features)
+    return adj, features
+
+import math
+import os
+def load_normalized_format(datasets, semi_rate=0.1, normalization="AugNormAdj",cuda=True):
+
+    features = datasets['Attributes']
+    labels = datasets['Label'].reshape(-1)
+    adj = datasets['Network']
+    adj, features = preprocess_citation(adj, features, normalization)
+    #features = row_normalize(features)
+
+    label_min = np.min(labels)
+    if label_min != 0:
+        labels = labels - 1
+
+    mask = np.unique(labels)
+    label_count = [np.sum(labels == v) for v in mask]
+    idx_train = []
+    idx_val = []
+    idx_test = []
+    for i, v in enumerate(mask):
+        cnt = label_count[i]
+        idx_all = np.where(labels == v)[0]
+        np.random.shuffle(idx_all)
+        idx_all = idx_all.tolist()
+        test_len = math.ceil(cnt * 0.2)
+        valid_len = math.ceil(cnt * 0.2)
+        train_len = math.ceil(cnt * semi_rate)
+        idx_test.extend(idx_all[-test_len:])
+        idx_val.extend(idx_all[-(test_len + valid_len):-test_len])
+        train_len_ = min(train_len, cnt - test_len - valid_len)
+        idx_train.extend(idx_all[:train_len_])
+
+    idx_train = np.array(idx_train)
+    idx_val = np.array(idx_val)
+    idx_test = np.array(idx_test)
+
+    # adj = sparse_mx_to_torch_sparse_tensor(adj).float()
+
+    features = torch.FloatTensor(np.array(features.todense())).float()
+    #features = sparse_mx_to_torch_sparse_tensor(features)
+    labels = torch.LongTensor(labels)
+    # labels = torch.max(labels, dim=1)[1]
+    adj = sparse_mx_to_torch_sparse_tensor(adj).float()
+    idx_train = torch.LongTensor(idx_train)
+    idx_val = torch.LongTensor(idx_val)
+    idx_test = torch.LongTensor(idx_test)
+
+    return adj, features, labels, idx_train, idx_val, idx_test

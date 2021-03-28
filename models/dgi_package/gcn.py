@@ -39,9 +39,9 @@ class GCN(nn.Module):
         return self.act(out)
 
 #
-# class GCN(nn.Module):
+# class GCN_package(nn.Module):
 #     def __init__(self, in_ft, out_ft, act, bias=True):
-#         super(GCN, self).__init__()
+#         super(GCN_package, self).__init__()
 #         self.fc = nn.Linear(in_ft, out_ft, bias=False)
 #         self.act = nn.PReLU() if act == 'prelu' else act
 #
