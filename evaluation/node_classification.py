@@ -44,6 +44,7 @@ def node_classifcation(feature, labels):
     print('Testing based on svm: ',
           'f1_micro=%.4f' % np.mean(f1_mic),
           'f1_macro=%.4f' % np.mean(f1_mac))
+    return np.mean(f1_mic),np.mean(f1_mac)
 
 def node_classifcation_test(feature, labels):
     labels = labels.reshape(-1)

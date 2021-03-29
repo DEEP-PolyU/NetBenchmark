@@ -15,24 +15,22 @@ from models.GAE import GAE
 from models.GCN import GCN
 from models.CAN_new import CAN_new
 from models.CAN_original import CAN_original
-from evaluation.node_classification import node_classifcation
-import scipy.io as sio
-import preprocessing.preprocessing as pre
-from evaluation.link_prediction import link_prediction
+from evaluation.evaluation import evaluation
 
 datasetlist = [Flickr, ACM, Cora, BlogCatalog]
 datasetdict = {Cls.__name__.lower(): Cls for Cls in datasetlist}
-
 modellist=[featwalk, netmf, deepwalk, node2vec, DGI, GAE, CAN_new, CAN_original,GCN]
 modeldict = {Cls.__name__.lower(): Cls for Cls in modellist}
+modeldict_all=modeldict
+modeldict_all['all']=1
 def parse_args():
     parser = argparse.ArgumentParser(description='NetBenchmark(DeepLab).')
 
     parser.add_argument('--dataset', type=str,
                         default='blogcatalog',choices=datasetdict,
                         help='select a available dataset (default: cora)')
-    parser.add_argument('--method', type=str, default='gcn',
-                        choices=modeldict,
+    parser.add_argument('--method', type=str, default='all',
+                        choices=modeldict_all,
                         help='The learning method')
     parser.add_argument('--evaluation', type=str, default='node_classification',
                         choices=['node_classification','link_prediction'],
@@ -82,23 +80,29 @@ def time_calculating(Graph,training_time_rate):
 def main(args):
 
     print("Loading...")
-    prase_input_file(args)
+    # prase_input_file(args)
     if(args.input_file==None):
        Graph = datasetdict[args.dataset]
-       Graph=Graph.get_graph(Graph,variable_name= args.variable_name or 'network' )
+       Graph=Graph.get_graph(Graph)
     #iter = get_training_time(args.method,Graph)
+    Stoptime = time_calculating(Graph, args.training_time)
 
-    Stoptime = time_calculating(Graph,args.training_time)
-    model=modeldict[args.method]
-    model=model(datasets=Graph,iter = iter,Time=Stoptime)
-
-    emb = model.get_emb()
-    if args.evaluation == "node_classification":
-        node_classifcation(np.array(emb), Graph['Label'])
-        np.save('result/' + args.method + '_embedding_' + args.dataset + '.npy', emb)
-    elif args.evaluation == "link_prediction":
-        adj_train, train_edges, val_edges, val_edges_false, test_edges, test_edges_false = pre.mask_test_edges(Graph['Network'])
-        link_prediction(emb, edges_pos=test_edges,edges_neg=test_edges_false)
+    result_dict={}
+    if args.method=='all':
+        for key in modeldict:
+            print(key)
+            model = modeldict[key]
+            model = model(datasets=Graph, iter=iter, Time=Stoptime)
+            emb = model.get_emb()
+            value1, value2 = evaluation(emb, Graph, args.evaluation)
+            result_dict[key]=[value1, value2]
+            np.save('result/' + args.method + '_embedding_' + args.dataset + '.npy', emb)
+    else:
+        model=modeldict[args.method]
+        model=model(datasets=Graph, iter= iter, Time=Stoptime)
+        emb = model.get_emb()
+        value1,value2=evaluation(emb, Graph, args.evaluation)
+        result_dict[args.method] = [value1, value2]
         np.save('result/' + args.method + '_embedding_' + args.dataset + '.npy', emb)
 
 

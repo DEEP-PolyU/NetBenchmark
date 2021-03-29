@@ -25,6 +25,7 @@ def link_prediction(emb,edges_pos, edges_neg):
     ap_score = average_precision_score(labels_all, preds_all)
     print("roc_score=",roc_score)
     print("ap_score=",ap_score)
+    return roc_score,ap_score
 
 def link_prediction_Automatic_tuning(emb, edges_pos, edges_neg):
     adj_rec = np.matmul(emb, emb.T)
