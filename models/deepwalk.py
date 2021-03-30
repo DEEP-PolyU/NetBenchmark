@@ -5,6 +5,7 @@ import random
 import numpy as np
 import time
 import scipy.io as sio
+from word2veckeras import word2veckeras
 from evaluation.node_classification import node_classifcation_test
 from .model import *
 from hyperopt import fmin, tpe, hp, space_eval,Trials, partial
@@ -18,15 +19,16 @@ def deepwalk_fun(CombG, d, number_walks, walk_length,window_size):
     vertex_freq_degree = False
 
     G = graph.from_numpy(CombG)
-    print("Number of nodes: {}".format(len(G.nodes())))
+    #print("Number of nodes: {}".format(len(G.nodes())))
 
     num_walks = len(G.nodes()) * number_walks
 
-    print("Number of walks: {}".format(num_walks))
+    #print("Number of walks: {}".format(num_walks))
 
     data_size = num_walks * walk_length
 
-    print("Data size (walks*length): {}".format(data_size))
+    #print("Data size (walks*length): {}".format(data_size))
+
 
     if data_size < max_memory_data_size:
         print("Walking...")
