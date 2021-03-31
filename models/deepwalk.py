@@ -5,7 +5,6 @@ import random
 import numpy as np
 import time
 import scipy.io as sio
-from word2veckeras import word2veckeras
 from evaluation.node_classification import node_classifcation_test
 from .model import *
 from hyperopt import fmin, tpe, hp, space_eval,Trials, partial
