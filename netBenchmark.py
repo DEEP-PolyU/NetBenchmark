@@ -16,6 +16,9 @@ from models.GCN import GCN
 from models.CAN_new import CAN_new
 from models.CAN_original import CAN_original
 from evaluation.evaluation import evaluation
+from evaluation.link_prediction import link_prediction
+from evaluation.node_classification import node_classifcation
+import preprocessing.preprocessing as pre
 
 datasetlist = [Flickr, ACM, Cora, BlogCatalog]
 datasetdict = {Cls.__name__.lower(): Cls for Cls in datasetlist}
@@ -27,7 +30,7 @@ def parse_args():
     parser = argparse.ArgumentParser(description='NetBenchmark(DeepLab).')
 
     parser.add_argument('--dataset', type=str,
-                        default='blogcatalog',choices=datasetdict,
+                        default='cora',choices=datasetdict,
                         help='select a available dataset (default: cora)')
     parser.add_argument('--method', type=str, default='all',
                         choices=modeldict_all,
@@ -71,7 +74,8 @@ def time_calculating(Graph,training_time_rate):
 
     num_of_nodes = G.number_of_nodes()
     num_of_edges = G.number_of_edges()
-    time = int(training_time_rate * num_of_nodes)
+    # time = int(training_time_rate * num_of_nodes)
+    time=int(180)
     print("\n----------Graph infomation-------------\n", nx.info(G) +"\n"+ "training Time: {}".format(time) +"\n---------------------------------------\n")
 
 
@@ -90,13 +94,23 @@ def main(args):
     result_dict={}
     if args.method=='all':
         for key in modeldict:
-            print(key)
             model = modeldict[key]
             model = model(datasets=Graph, iter=iter, Time=Stoptime)
             emb = model.get_emb()
-            value1, value2 = evaluation(emb, Graph, args.evaluation)
-            result_dict[key]=[value1, value2]
-            np.save('result/' + args.method + '_embedding_' + args.dataset + '.npy', emb)
+            best = model.get_best()
+            f1_mic, f1_mac = node_classifcation(np.array(emb), Graph['Label'])
+            adj_train, train_edges, val_edges, val_edges_false, test_edges, test_edges_false = pre.mask_test_edges(
+                Graph['Network'])
+            roc_score, ap_score = link_prediction(emb, edges_pos=test_edges, edges_neg=test_edges_false)
+            result_dict[key]=[key,f1_mic, f1_mac,roc_score,ap_score,best]
+            fileObject = open('result/result.txt', 'w')
+            for result in result_dict:
+                fileObject.write(str(result_dict[result]))
+                fileObject.write('\n')
+            fileObject.close()
+            # fileObject1 = open('result/data.txt', 'w')
+            # fileObject1.close()
+            np.save('result/' + key + '_embedding_' + args.dataset + '.npy', emb)
     else:
         model=modeldict[args.method]
         model=model(datasets=Graph, iter= iter, Time=Stoptime)

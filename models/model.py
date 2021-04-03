@@ -11,6 +11,7 @@ from hyperopt import fmin, tpe, hp, space_eval,Trials, partial
 class Models(torch.nn.Module):
     def __init__(self, *, datasets, Time, **kwargs):
         self.mat_content=datasets
+        self.best = {}
         self.stop_time = Time
         super(Models, self).__init__()
         if self.is_preprocessing():
@@ -19,7 +20,8 @@ class Models(torch.nn.Module):
         if self.is_deep_model():
             emb = self.deep_algo(self.stop_time)
         else:
-            emb = self.shallow_algo()
+            emb,best = self.shallow_algo()
+            self.best = best
         self.emb = emb
         self.end_time = time.time()-start_time
 
@@ -63,11 +65,12 @@ class Models(torch.nn.Module):
             fn=self.get_score, space=space_dtree, algo=algo, max_evals=150, trials=trials, timeout=self.stop_time)
         print('end of training:{:.2f}s'.format(self.stop_time))
         emb = self.train_model(**best)
-        return emb
+        return emb,best
 
     def get_emb(self):
         return self.emb
-
+    def get_best(self):
+        return self.best
     def get_time(self):
         return self.end_time
 
