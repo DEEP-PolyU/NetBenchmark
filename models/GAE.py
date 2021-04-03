@@ -111,7 +111,7 @@ def train(features, adj, adj_label, val_edges, val_edges_false, save_path, devic
             max_ap = ap_
             best_epoch = epoch
             cnt_wait = 0
-            torch.save(model.state_dict(), save_path)
+            # torch.save(model.state_dict(), save_path)
         else:
             cnt_wait += 1
 
