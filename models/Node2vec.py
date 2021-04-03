@@ -12,6 +12,7 @@ from time import perf_counter
 from datetime import timedelta
 import argparse
 import numpy as np
+import os
 import networkx as nx
 import scipy.io
 from collections import defaultdict
@@ -63,7 +64,7 @@ def read_graph(input_path, directed=False):
 
 
 def generate_embeddings(corpus, dimensions, window_size, num_workers, p, q, input_file, output_file):
-    model = Word2Vec(corpus, size=dimensions, window=window_size, min_count=0, sg=1, workers=num_workers)
+    model = Word2Vec(corpus, size=dimensions, window=window_size, min_count=0, sg=1, workers=os.cpu_count())
     # model.wv.most_similar('1')
     w2v_emb = model.wv
 

@@ -5,6 +5,7 @@ from math import ceil
 from gensim.models import Word2Vec
 import scipy.sparse as sp
 from .model import *
+import os
 import scipy.io as sio
 from hyperopt import hp
 from preprocessing.preprocessing import mask_test_edges_fast
@@ -97,7 +98,7 @@ class featurewalk:
         return sentlist
 
     def function(self):
-        max_memory = 233000000.0/self.path_length # 235000000 For 16GB
+        max_memory = 466000000.0/self.path_length # 235000000 For 16GB
         bulidflag = True
         sentenceList = []  # All the walks will be here
 
@@ -203,7 +204,7 @@ class featurewalk:
                             sentenceList = []
                 del self.path_list, self.JListrow, self.qListrow, self.idx, self.JListcol, self.qListcol, self.idxListcol, self.allidx
         if bulidflag:
-            model = Word2Vec(sentenceList, size=self.d, window=self.win_size, min_count=0)
+            model = Word2Vec(sentenceList, size=self.d, window=self.win_size, min_count=0,workers=os.cpu_count())
         else:
             model.build_vocab(sentenceList, update=True)
             model.train(sentenceList, total_examples=len(sentenceList), epochs=model.iter)
