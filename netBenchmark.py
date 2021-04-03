@@ -74,8 +74,7 @@ def time_calculating(Graph,training_time_rate):
 
     num_of_nodes = G.number_of_nodes()
     num_of_edges = G.number_of_edges()
-    # time = int(training_time_rate * num_of_nodes)
-    time=int(180)
+    time = int(training_time_rate * num_of_nodes)
     print("\n----------Graph infomation-------------\n", nx.info(G) +"\n"+ "training Time: {}".format(time) +"\n---------------------------------------\n")
 
 
