@@ -127,7 +127,7 @@ class DGI(Models):
                 best = loss
                 best_t = epoch
                 cnt_wait = 0
-                torch.save(model.state_dict(), 'best_dgi_%d.pkl' % (hid_units))
+                torch.save(model.state_dict(), 'models/dgi_package/best_dgi_%d.pkl' % (hid_units))
             else:
                 cnt_wait += 1
 
@@ -145,7 +145,7 @@ class DGI(Models):
             optimiser.step()
 
         print('Loading {}th epoch'.format(best_t))
-        model.load_state_dict(torch.load('best_dgi_%d.pkl' % (hid_units)))
+        model.load_state_dict(torch.load('models/dgi_package/best_dgi_%d.pkl' % (hid_units)))
 
         embeds, _ = model.embed(features, sp_adj if sparse else adj, sparse, None)
 

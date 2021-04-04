@@ -31,18 +31,18 @@ def deepwalk_fun(CombG, d, number_walks, walk_length,window_size):
 
 
     if data_size < max_memory_data_size:
-        print("Walking...")
+        # print("Walking...")
         start_time = time.time()
         walks = graph.build_deepwalk_corpus(G, num_paths=number_walks,
                                             path_length=walk_length, alpha=0, rand=random.Random(seed))
-        print("time elapsed: {:.2f}s".format(time.time() - start_time))
-        print("Training...")
+        # print("time elapsed: {:.2f}s".format(time.time() - start_time))
+        # print("Training...")
         walks = [list(map(str, walk)) for walk in walks]
         model = Word2Vec(walks, size=d, window=window_size, min_count=0, workers=os.cpu_count())
-        print("time elapsed: {:.2f}s".format(time.time() - start_time))
+        # print("time elapsed: {:.2f}s".format(time.time() - start_time))
     else:
-        print("Data size {} is larger than limit (max-memory-data-size: {}).  Dumping walks to disk.".format(data_size, max_memory_data_size))
-        print("Walking...")
+        # print("Data size {} is larger than limit (max-memory-data-size: {}).  Dumping walks to disk.".format(data_size, max_memory_data_size))
+        # print("Walking...")
 
         walks_filebase = "deepwalk_cache" + ".walks"
         walk_files = serialized_walks.write_walks_to_disk(G, walks_filebase, num_paths=number_walks,
