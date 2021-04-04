@@ -188,7 +188,7 @@ class GAE(Models):
         dropout = 0.6
         lr = 0.001
         weight_decay = 0
-        epochs = 100
+        epochs = 2000
 
 
         features, adj_norm, adj_label, val_edges, val_edges_false, test_edges, test_edges_false, norm, pos_weight = mat_import(self.mat_content)
