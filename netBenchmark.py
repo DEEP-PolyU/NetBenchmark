@@ -19,12 +19,13 @@ from evaluation.evaluation import evaluation
 from evaluation.link_prediction import link_prediction
 from evaluation.node_classification import node_classifcation
 import preprocessing.preprocessing as pre
+import copy
 
 datasetlist = [Flickr, ACM, Cora, BlogCatalog]
 datasetdict = {Cls.__name__.lower(): Cls for Cls in datasetlist}
 modellist=[featwalk, netmf, deepwalk, node2vec, DGI, GAE, CAN_new, CAN_original,GCN]
 modeldict = {Cls.__name__.lower(): Cls for Cls in modellist}
-modeldict_all=modeldict
+modeldict_all=copy.deepcopy(modeldict)
 modeldict_all['all']=1
 def parse_args():
     parser = argparse.ArgumentParser(description='NetBenchmark(DeepLab).')

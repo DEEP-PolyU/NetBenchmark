@@ -19,10 +19,9 @@ from .model import *
 
 
 # Train on CPU (hide GPU) due to memory constraints
-os.environ['CUDA_VISIBLE_DEVICES'] = ""
+os.environ['CUDA_VISIBLE_DEVICES'] = "0"
 use_gpu = torch.cuda.is_available()
-print(use_gpu)
-device = torch.device('cpu')
+device = torch.device('cuda' if use_gpu else 'cpu')
 
 class CAN_new(Models):
 
