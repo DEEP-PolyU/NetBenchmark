@@ -72,7 +72,7 @@ def mat_import(mat):
 
     return features, adj_norm, adj_label, val_edges, val_edges_false, test_edges, test_edges_false, norm, pos_weight
 
-def train(features, adj, adj_label, val_edges, val_edges_false, save_path, device, pos_weight, norm,hid1,hid2,dropout,lr,weight_decay,epochs,stop_time):
+def train(features, adj, adj_label, val_edges, val_edges_false, device, pos_weight, norm,hid1,hid2,dropout,lr,weight_decay,epochs,stop_time):
 
     model = GCNTra(nfeat=features.shape[1],
                 nhid=hid1,
@@ -111,7 +111,7 @@ def train(features, adj, adj_label, val_edges, val_edges_false, save_path, devic
             max_ap = ap_
             best_epoch = epoch
             cnt_wait = 0
-            torch.save(model.state_dict(), save_path)
+            # torch.save(model.state_dict(), save_path)
         else:
             cnt_wait += 1
 
@@ -133,7 +133,7 @@ def train(features, adj, adj_label, val_edges, val_edges_false, save_path, devic
         loss.backward()
         optimizer.step()
 
-    model.load_state_dict(torch.load(save_path))
+    # model.load_state_dict(torch.load(save_path))
     model.eval()
     emb = model(features, adj)
 
@@ -178,22 +178,22 @@ class GAE(Models):
             device = torch.device("cpu")
             print("--> No GPU")
 
-        link_predic_result_file = "result/GAE_{}.res".format('datasets')
-        embedding_node_mean_result_file = "result/GAE_{}_n_mu.emb".format('datasets')
-        embedding_attr_mean_result_file = "result/GAE_{}_a_mu.emb".format('datasets')
-        embedding_node_var_result_file = "result/GAE_{}_n_sig.emb".format('datasets')
-        embedding_attr_var_result_file = "result/GAE_{}_a_sig.emb".format('datasets')
+        # link_predic_result_file = "result/GAE_{}.res".format('datasets')
+        # embedding_node_mean_result_file = "result/GAE_{}_n_mu.emb".format('datasets')
+        # embedding_attr_mean_result_file = "result/GAE_{}_a_mu.emb".format('datasets')
+        # embedding_node_var_result_file = "result/GAE_{}_n_sig.emb".format('datasets')
+        # embedding_attr_var_result_file = "result/GAE_{}_a_sig.emb".format('datasets')
 
         #dropout =0.6 ,lr = 0.001,weight_decay = 0,epochs = 1000
         dropout = 0.6
         lr = 0.001
         weight_decay = 0
-        epochs = 2000
+        epochs = 100
 
 
         features, adj_norm, adj_label, val_edges, val_edges_false, test_edges, test_edges_false, norm, pos_weight = mat_import(self.mat_content)
         #features, adj, adj_label, val_edges, val_edges_false, save_path, device, pos_weight, norm,hid1,hid2,dropout,lr,weight_decay,epochs
-        embeding = train(features=features, adj = adj_norm, adj_label = adj_label, val_edges = val_edges, val_edges_false = val_edges_false, save_path='emb/GAETemp', device=device, pos_weight=pos_weight, norm=norm,
+        embeding = train(features=features, adj = adj_norm, adj_label = adj_label, val_edges = val_edges, val_edges_false = val_edges_false,  device=device, pos_weight=pos_weight, norm=norm,
                          hid1= 256,hid2 = 128,dropout = dropout ,lr = lr,weight_decay = weight_decay,epochs = epochs,stop_time=stop_time)
 
 
