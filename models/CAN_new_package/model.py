@@ -6,10 +6,10 @@ import torchvision
 import numpy as np
 
 
-class CAN_original(nn.Module):
+class CAN(nn.Module):
 
     def __init__(self,hidden1, hidden2, num_features, num_nodes, features_nonzero,dropout):
-        super(CAN_original, self).__init__()
+        super(CAN, self).__init__()
         self.input_dim = num_features
         self.features_nonzero = features_nonzero
         self.n_samples = num_nodes
