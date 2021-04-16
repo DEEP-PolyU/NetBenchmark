@@ -39,7 +39,7 @@ class GCN(Models):
         semi=0
         seed=42
         hidden=128
-        dropout=0.5
+        dropout=0.
         lr=0.01
         weight_decay=0
         epochs=200
@@ -111,7 +111,6 @@ class GCN(Models):
         t_total = time.time()
         F1_mic_tot = []
         F1_mac_tot = []
-        start_time = time.time()
         for train_index, test_index in kf.split(features):
             train_index = torch.LongTensor(train_index)
             test_index = torch.LongTensor(test_index)
@@ -119,22 +118,18 @@ class GCN(Models):
             test_index.to(device)
             for epoch in range(epochs):
                 train(epoch, train_index)
-                if (time.time() - start_time) >= stop_time:  # Change in Time stoping
-                    print('times up,Time setting is: {:.2f}'.format(time.time() - start_time))
-                    break
             print("Optimization Finished!")
             print("Total time elapsed: {:.4f}s".format(time.time() - t_total))
             # Testing
             F1_mic, F1_mac = test(test_index, labels)
             F1_mic_tot.append(F1_mic)
             F1_mac_tot.append(F1_mac)
-        print(F1_mic_tot)
-        print(F1_mac_tot)
-        print("Optimization Finished!")
-        output = model(features, adj)
+        F1_mic_tot = np.array(F1_mic_tot)
+        F1_mac_tot = np.array(F1_mac_tot)
+        F1_mic_mean = np.mean(F1_mic_tot)
+        F1_mac_mean = np.mean(F1_mac_tot)
+        print('F1_mic:', F1_mic_mean)
+        print('F1_mac:', F1_mac_mean)
 
 
-        if use_gpu:
-            output = output.cpu()
-
-        return output.data.numpy()
+        return 0

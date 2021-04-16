@@ -53,6 +53,8 @@ class CAN_new(Models):
 
         adj=self.mat_content['Network']
         features=self.mat_content['Attributes']
+
+
         adj_orig = adj
         adj_orig = adj_orig - sp.dia_matrix((adj_orig.diagonal()[np.newaxis, :], [0]), shape=adj_orig.shape)
         adj_orig.eliminate_zeros()
