@@ -23,7 +23,7 @@ import copy
 
 datasetlist = [Flickr, ACM, Cora, BlogCatalog]
 datasetdict = {Cls.__name__.lower(): Cls for Cls in datasetlist}
-modellist=[featwalk, netmf, deepwalk, node2vec, DGI, GAE, CAN_new, CAN_original,GCN]
+modellist=[featwalk, netmf, deepwalk, node2vec, DGI, GAE, CAN_new, CAN_original]
 modeldict = {Cls.__name__.lower(): Cls for Cls in modellist}
 modeldict_all=copy.deepcopy(modeldict)
 modeldict_all['all']=1
@@ -33,7 +33,7 @@ def parse_args():
     parser.add_argument('--dataset', type=str,
                         default='blogcatalog',choices=datasetdict,
                         help='select a available dataset (default: cora)')
-    parser.add_argument('--method', type=str, default='can_new',
+    parser.add_argument('--method', type=str, default='all',
                         choices=modeldict_all,
                         help='The learning method')
     parser.add_argument('--evaluation', type=str, default='node_classification',
