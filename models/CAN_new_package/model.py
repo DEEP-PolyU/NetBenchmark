@@ -1,4 +1,4 @@
-from .layers  import GraphConvolution, GraphConvolutionSparse, InnerDecoder, Dense
+from .layers import GraphConvolution, GraphConvolutionSparse, InnerDecoder, Dense
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
