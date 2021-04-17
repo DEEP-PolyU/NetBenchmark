@@ -21,13 +21,14 @@ from evaluation.node_classification import node_classifcation
 import preprocessing.preprocessing as pre
 import copy
 
-datasetlist = [ ACM,Cora,Flickr, BlogCatalog]
+datasetlist = [ Cora,Flickr, BlogCatalog,ACM]
 datasetdict = {Cls.__name__.lower(): Cls for Cls in datasetlist}
 modellist=[featwalk, netmf, deepwalk, node2vec, DGI, GAE, CAN_new, CAN_original]
 modeldict = {Cls.__name__.lower(): Cls for Cls in modellist}
+
 datasetdict_all = copy.deepcopy(datasetdict)
-datasetdict['all'] = 1
-modeldict_all=copy.deepcopy(modeldict)
+datasetdict_all['all'] = 1
+modeldict_all = copy.deepcopy(modeldict)
 modeldict_all['all'] = 1
 def parse_args():
     parser = argparse.ArgumentParser(description='NetBenchmark(DeepLab).')
@@ -103,8 +104,8 @@ def main(args):
     result_dict = {}
     if args.method =='all' and args.dataset == 'all':
         i = 0
-        for mkey in modeldict:
-            for dkey in datasetdict:
+        for dkey in datasetdict:
+            for mkey in modeldict:
                 print("\n----------Train infomation-------------\n",'dataset: {} ,Algorithm:{} '.format(dkey,mkey))
                 model = modeldict[mkey]
                 Graph,Stoptime = get_graph_time(args,dkey)
