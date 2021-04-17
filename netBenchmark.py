@@ -21,7 +21,7 @@ from evaluation.node_classification import node_classifcation
 import preprocessing.preprocessing as pre
 import copy
 
-datasetlist = [Cora,Flickr, ACM, BlogCatalog]
+datasetlist = [ ACM,Cora,Flickr, BlogCatalog]
 datasetdict = {Cls.__name__.lower(): Cls for Cls in datasetlist}
 modellist=[featwalk, netmf, deepwalk, node2vec, DGI, GAE, CAN_new, CAN_original]
 modeldict = {Cls.__name__.lower(): Cls for Cls in modellist}
@@ -43,7 +43,7 @@ def parse_args():
                         help='The evaluation method')
     parser.add_argument('--variable_name', type=str,
                         help='The name of features in dataset')
-    parser.add_argument('--training_time', type=int, default=0.1,
+    parser.add_argument('--training_time', type=int, default=1.4,
                         help='The total training time you want')
     parser.add_argument('--input_file', type=str, default=None,
                         help='The input datasets you want')
@@ -86,7 +86,6 @@ def time_calculating(Graph,training_time_rate):
 
 
 def get_graph_time(args,dkey):
-    print("Loading...")
     if (args.input_file == None):
         Graph = datasetdict[dkey]
         Graph = Graph.get_graph(Graph)
@@ -130,14 +129,14 @@ def main(args):
                 np.save('result/' + mkey + '_embedding_' + args.dataset + '.npy', emb)
 
     else:
-        for dkey in datasetdict:
-            model=modeldict[args.method]
-            Graph,Stoptime = get_graph_time(args,dkey)
-            model=model(datasets=Graph, iter= iter, Time=Stoptime)
-            emb = model.get_emb()
-            value1,value2=evaluation(emb, Graph, args.evaluation)
-            result_dict[dkey] = [args.method,value1, value2]
-            np.save('result/' + args.method + '_embedding_' + args.dataset + '.npy', emb)
+        print("\n----------Train infomation-------------\n", 'dataset: {} ,Algorithm:{} '.format(args.dataset, args.method))
+        model=modeldict[args.method]
+        Graph,Stoptime = get_graph_time(args,args.dataset)
+        model=model(datasets=Graph, iter= iter, Time=Stoptime)
+        emb = model.get_emb()
+        value1,value2=evaluation(emb, Graph, args.evaluation)
+        result_dict[args.method] = [args.dataset,value1, value2]
+        np.save('result/' + args.method + '_embedding_' + args.dataset + '.npy', emb)
 
 
     np.save('result.npy',result_dict)
