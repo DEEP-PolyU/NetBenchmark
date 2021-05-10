@@ -25,11 +25,6 @@ device = torch.device('cuda' if use_gpu else 'cpu')
 
 class CAN_new(Models):
 
-    num_nodes=None
-    adj_orig=None
-    num_features=None
-    features_orig=None
-
     @classmethod
     def is_preprocessing(cls):
         return False
