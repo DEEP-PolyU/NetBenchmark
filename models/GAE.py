@@ -72,7 +72,7 @@ def mat_import(mat):
 
     return features, adj_norm, adj_label, val_edges, val_edges_false, test_edges, test_edges_false, norm, pos_weight
 
-def train(features, adj, adj_label, val_edges, val_edges_false, device, pos_weight, norm,hid1,hid2,dropout,lr,weight_decay,epochs,stop_time):
+def train(features, adj, adj_label, val_edges, val_edges_false, device, pos_weight, norm,hid1,hid2,dropout,lr,weight_decay,epochs,evaluation):
 
     model = GCNTra(nfeat=features.shape[1],
                 nhid=hid1,
@@ -125,9 +125,7 @@ def train(features, adj, adj_label, val_edges, val_edges_false, device, pos_weig
             print('Early stopping!')
             break
 
-        if (time.time() - start_time) >= stop_time: #Change in Time stoping
-            print('times up,Time setting is: {:.2f}'.format(time.time()-start_time))
-            break
+
 
 
         loss.backward()
@@ -168,7 +166,21 @@ class GAE(Models):
     def is_deep_model(cls):
         return True
 
-    def deep_algo(self,stop_time):
+
+    def check_train_parameters(self):
+
+        space_dtree = {
+
+            # 'batch_size': hp.uniformint('batch_size', 1, 100),
+            'epochs': hp.uniformint('epochs', 100, 10000),
+            'lr': hp.uniform('lr', 0.0001, 0.1),
+            'dropout': hp.uniform('dropout', 0, 1),
+            'evaluation': str(self.evaluation)
+        }
+
+        return space_dtree
+
+    def train_model(self, **kwargs):
 
         if torch.cuda.is_available():
             cuda_name = 'cuda:' + '0'
@@ -185,16 +197,16 @@ class GAE(Models):
         # embedding_attr_var_result_file = "result/GAE_{}_a_sig.emb".format('datasets')
 
         #dropout =0.6 ,lr = 0.001,weight_decay = 0,epochs = 1000
-        dropout = 0.6
-        lr = 0.001
+        # dropout = 0.6
+        # lr = 0.001
         weight_decay = 0
-        epochs = 2000
+        # epochs = 2000
 
 
         features, adj_norm, adj_label, val_edges, val_edges_false, test_edges, test_edges_false, norm, pos_weight = mat_import(self.mat_content)
         #features, adj, adj_label, val_edges, val_edges_false, save_path, device, pos_weight, norm,hid1,hid2,dropout,lr,weight_decay,epochs
         embeding = train(features=features, adj = adj_norm, adj_label = adj_label, val_edges = val_edges, val_edges_false = val_edges_false,  device=device, pos_weight=pos_weight, norm=norm,
-                         hid1= 256,hid2 = 128,dropout = dropout ,lr = lr,weight_decay = weight_decay,epochs = epochs,stop_time=stop_time)
+                         hid1= 256,hid2 = 128,weight_decay = weight_decay,**kwargs)
 
 
 

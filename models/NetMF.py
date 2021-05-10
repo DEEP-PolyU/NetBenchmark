@@ -157,7 +157,7 @@ class netmf(Models):
         space_dtree = {
             # unifrom 就是隨機抽取數字，按document說是完成了random search
             'window': hp.uniformint('window', 5, 15),
-            'evaluation': hp.choice('evaluation', self.evaluation)
+            'evaluation': str(self.evaluation)
         }
 
 

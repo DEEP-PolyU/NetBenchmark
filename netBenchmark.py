@@ -36,10 +36,10 @@ def parse_args():
     parser.add_argument('--dataset', type=str,
                         default='cora',choices=datasetdict_all,
                         help='select a available dataset (default: cora)')
-    parser.add_argument('--method', type=str, default='featwalk',
+    parser.add_argument('--method', type=str, default='gae',
                         choices=modeldict_all,
                         help='The learning method')
-    parser.add_argument('--evaluation', type=str, default='node_classification',
+    parser.add_argument('--evaluation', type=str, default='link_prediction',
                         choices=['node_classification','link_prediction'],
                         help='The evaluation method')
     parser.add_argument('--variable_name', type=str,

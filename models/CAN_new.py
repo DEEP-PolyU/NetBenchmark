@@ -33,14 +33,24 @@ class CAN_new(Models):
     def is_deep_model(cls):
         return True
 
+    def check_train_parameters(self):
+        space_dtree = {
+
+            'batch_size': hp.uniformint('batch_size', 1, 100),
+            'nb_epochs': hp.uniformint('nb_epochs', 100, 10000),
+            'lr': hp.uniform('lr', 0.0001, 0.1), # walk_length,window_size
+            'evaluation': str(self.evaluation)
+        }
+
+        return space_dtree
 
 
-    def deep_algo(self,stop_time):
-        learning_rate=0.01
+    def train_model(self, **kwargs):
+        learning_rate=kwargs["lr"]
         hidden1=256
         hidden2=128
         dropout=0
-        epochs=200
+        epochs=int(kwargs["nb_epochs"])
         seed=42
 
         np.random.seed(seed)

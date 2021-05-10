@@ -169,7 +169,7 @@ class node2vec(Models):
             'walks': hp.uniformint('walks', 5, 80),
             'length': hp.uniformint('length', 5, 50),
             'window': hp.uniformint('window', 5, 50),
-            'evaluation': hp.choice('evaluation', self.evaluation)
+            'evaluation': str(self.evaluation)
         }
 
 

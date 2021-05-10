@@ -85,7 +85,7 @@ class deepwalk(Models):
             'number_walks': hp.uniformint('number_walks', 5, 80),
             'walk_length': hp.uniformint('walk_length', 5, 50),
             'window_size': hp.uniformint('window_size', 5, 50), #walk_length,window_size
-            'evaluation': hp.choice('evaluation', self.evaluation)
+            'evaluation': str(self.evaluation)
         }
 
 

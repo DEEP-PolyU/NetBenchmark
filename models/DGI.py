@@ -46,7 +46,7 @@ class DGI(Models):
             'batch_size': hp.uniformint('batch_size', 1, 100),
             'nb_epochs': hp.uniformint('nb_epochs', 100, 10000),
             'lr': hp.uniform('lr', 0.0001, 0.1), # walk_length,window_size
-            'evaluation':hp.choice('evaluation',self.evaluation)
+            'evaluation': str(self.evaluation)
         }
 
         return space_dtree
