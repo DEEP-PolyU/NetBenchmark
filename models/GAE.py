@@ -95,7 +95,7 @@ def train(features, adj, adj_label, val_edges, val_edges_false, device, pos_weig
     best_epoch = 0
     cnt_wait = 0
     start_time = time.time()
-    for epoch in range(epochs):
+    for epoch in range(int(epochs)):
         model.train()
         optimizer.zero_grad()
         emb = model(features, adj)

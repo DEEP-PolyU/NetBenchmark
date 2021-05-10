@@ -35,6 +35,18 @@ class CAN_original(Models):
     def is_deep_model(cls):
         return True
 
+    def check_train_parameters(self):
+        space_dtree = {
+
+            'batch_size': hp.uniformint('batch_size', 1, 100),
+            'nb_epochs': hp.uniformint('nb_epochs', 100, 10000),
+            'lr': hp.uniform('lr', 0.0001, 0.1), # walk_length,window_size
+            'dropout': hp.uniform('dropout', 0, 1),
+            'evaluation': str(self.evaluation)
+        }
+
+        return space_dtree
+
     def get_roc_score(self, edges_pos, edges_neg, preds_sub_u):
         def sigmoid(x):
             x = np.clip(x, -500, 500)
@@ -101,13 +113,13 @@ class CAN_original(Models):
         return targets * -torch.log(torch.sigmoid(logits)) * pos_weight + (1 - targets) * -torch.log(
             1 - torch.sigmoid(logits))
 
-    def deep_algo(self, stop_time):
+    def train_model(self, **kwargs):
 
-        learning_rate = 0.01
+        learning_rate = kwargs["lr"]
         hidden1 = 256
         hidden2 = 128
-        dropout = 0
-        epochs = 200
+        dropout = kwargs["dropout"]
+        epochs = int(kwargs["nb_epochs"])
 
         # Load data
         adj = self.mat_content['Network']
@@ -208,9 +220,7 @@ class CAN_original(Models):
                   "val_attr_ap=", "{:.5f}".format(ap_curr_a),
                   "time=", "{:.5f}".format(time.time() - t))
             # early stop by time
-            if (time.time() - start_time) >= stop_time:  # Change in Time stoping
-                print('times up,Time setting is: {:.2f}'.format(time.time() - start_time))
-                break
+
 
         print("Optimization Finished!")
 
