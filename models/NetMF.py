@@ -134,7 +134,7 @@ class netmf(Models):
     def is_deep_model(cls):
         return False
 
-    def train_model(self, window):
+    def train_model(self, **kwargs):
         mat_content=self.mat_content
         logger.info("Running NetMF for a small window size...")
         logger.info("Window size is set to be %d", 5)
@@ -142,7 +142,7 @@ class netmf(Models):
         A_network=mat_content['Network']
         # directly compute deepwalk matrix
         deepwalk_matrix = direct_compute_deepwalk_matrix(A_network,
-                                                         window=int(window), b=1.0)
+                                                         window=int(kwargs['window']), b=1.0)
 
         # factorize deepwalk matrix with SVD
         deepwalk_embedding = svd_deepwalk_matrix(deepwalk_matrix, dim=128)
@@ -156,7 +156,8 @@ class netmf(Models):
 
         space_dtree = {
             # unifrom 就是隨機抽取數字，按document說是完成了random search
-            'window': hp.uniformint('window', 5, 15)
+            'window': hp.uniformint('window', 5, 15),
+            'evaluation': hp.choice('evaluation', self.evaluation)
         }
 
 

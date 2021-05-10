@@ -12,7 +12,7 @@ from hyperopt import fmin, tpe, hp, space_eval,Trials, partial
 
 
 
-def deepwalk_fun(CombG, d, number_walks, walk_length,window_size):
+def deepwalk_fun(CombG, d, number_walks, walk_length,window_size,evaluation):
 
     max_memory_data_size = 466000000.0
     seed = 0
@@ -84,7 +84,8 @@ class deepwalk(Models):
 
             'number_walks': hp.uniformint('number_walks', 5, 80),
             'walk_length': hp.uniformint('walk_length', 5, 50),
-            'window_size': hp.uniformint('window_size', 5, 50) #walk_length,window_size
+            'window_size': hp.uniformint('window_size', 5, 50), #walk_length,window_size
+            'evaluation': hp.choice('evaluation', self.evaluation)
         }
 
 

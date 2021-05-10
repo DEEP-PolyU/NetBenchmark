@@ -34,9 +34,9 @@ def parse_args():
     parser = argparse.ArgumentParser(description='NetBenchmark(DeepLab).')
 
     parser.add_argument('--dataset', type=str,
-                        default='all',choices=datasetdict_all,
+                        default='cora',choices=datasetdict_all,
                         help='select a available dataset (default: cora)')
-    parser.add_argument('--method', type=str, default='all',
+    parser.add_argument('--method', type=str, default='featwalk',
                         choices=modeldict_all,
                         help='The learning method')
     parser.add_argument('--evaluation', type=str, default='node_classification',
@@ -44,7 +44,7 @@ def parse_args():
                         help='The evaluation method')
     parser.add_argument('--variable_name', type=str,
                         help='The name of features in dataset')
-    parser.add_argument('--training_time', type=int, default=1.4,
+    parser.add_argument('--training_time', type=int, default=0.05,
                         help='The total training time you want')
     parser.add_argument('--input_file', type=str, default=None,
                         help='The input datasets you want')
@@ -109,7 +109,7 @@ def main(args):
                 print("\n----------Train infomation-------------\n",'dataset: {} ,Algorithm:{} '.format(dkey,mkey))
                 model = modeldict[mkey]
                 Graph,Stoptime = get_graph_time(args,dkey)
-                model = model(datasets=Graph, iter=iter, Time=Stoptime)
+                model = model(datasets=Graph, iter=iter, Time=Stoptime,evaluation=args.evaluation)
                 emb = model.get_emb()
                 best = model.get_best()
                 f1_mic, f1_mac = node_classifcation(np.array(emb), Graph['Label'])
@@ -129,11 +129,13 @@ def main(args):
                 # fileObject1.close()
                 np.save('result/' + mkey + '_embedding_' + args.dataset + '.npy', emb)
 
+
+
     else:
         print("\n----------Train infomation-------------\n", 'dataset: {} ,Algorithm:{} '.format(args.dataset, args.method))
         model=modeldict[args.method]
         Graph,Stoptime = get_graph_time(args,args.dataset)
-        model=model(datasets=Graph, iter= iter, Time=Stoptime)
+        model=model(datasets=Graph, iter= iter, Time=Stoptime,evaluation=args.evaluation)
         emb = model.get_emb()
         value1,value2=evaluation(emb, Graph, args.evaluation)
         result_dict[args.method] = [args.dataset,value1, value2]

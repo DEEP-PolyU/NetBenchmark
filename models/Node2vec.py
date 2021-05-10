@@ -73,7 +73,7 @@ def generate_embeddings(corpus, dimensions, window_size, num_workers, p, q, inpu
 
     return model, w2v_emb
 
-def newprocess(input, directed, p, q, d, walks, length, workers, window, output,content):
+def newprocess(input, directed, p, q, d, walks, length, workers, window, output,content,evaluation):
     input=input[content]
     Graph, init_probabilities = read_graph(input, directed)
     G = HGraph(Graph, init_probabilities, p, q, walks, length, workers)
@@ -168,7 +168,8 @@ class node2vec(Models):
             'q': hp.uniform('q', 0.1, 2),
             'walks': hp.uniformint('walks', 5, 80),
             'length': hp.uniformint('length', 5, 50),
-            'window': hp.uniformint('window', 5, 50)
+            'window': hp.uniformint('window', 5, 50),
+            'evaluation': hp.choice('evaluation', self.evaluation)
         }
 
 

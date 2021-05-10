@@ -69,4 +69,4 @@ def node_classifcation_test(feature, labels):
     f1_mac = np.array(f1_mac)
     f1_mic = np.mean(f1_mic)
     f1_mac = np.mean(f1_mac)
-    return (f1_mic + f1_mac) / 2
+    return f1_mic

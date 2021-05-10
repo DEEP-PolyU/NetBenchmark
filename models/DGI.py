@@ -39,7 +39,20 @@ class DGI(Models):
     @classmethod
     def is_deep_model(cls):
         return True
-    def deep_algo(self,stop_time):
+
+    def check_train_parameters(self):
+        space_dtree = {
+
+            'batch_size': hp.uniformint('batch_size', 1, 100),
+            'nb_epochs': hp.uniformint('nb_epochs', 100, 10000),
+            'lr': hp.uniform('lr', 0.0001, 0.1), # walk_length,window_size
+            'evaluation':hp.choice('evaluation',self.evaluation)
+        }
+
+        return space_dtree
+
+
+    def train_model(self, **kwargs):
         np.random.seed(42)
         torch.manual_seed(42)
         if torch.cuda.is_available():
@@ -53,9 +66,9 @@ class DGI(Models):
 
         # training params
         batch_size = 1
-        nb_epochs = 10000
+        nb_epochs = int(kwargs["nb_epochs"])
         patience = 20
-        lr = 0.001
+        lr = kwargs["lr"]
         l2_coef = 0.0
         drop_prob = 0.0
         hid_units = 128
@@ -135,9 +148,7 @@ class DGI(Models):
                 print('Early stopping!')
                 break
 
-            if (time.time() - start_time) >= stop_time:  # Change in Time stoping
-                print('times up,Time setting is: {:.2f}'.format(time.time() - start_time))
-                break
+
 
 
 
