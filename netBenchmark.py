@@ -44,10 +44,12 @@ def parse_args():
                         help='The evaluation method')
     parser.add_argument('--variable_name', type=str,
                         help='The name of features in dataset')
-    parser.add_argument('--training_time', type=int, default=0.05,
+    parser.add_argument('--training_time', type=int, default=1.4,
                         help='The total training time you want')
     parser.add_argument('--input_file', type=str, default=None,
                         help='The input datasets you want')
+    parser.add_argument('--tunning_method', type=str, default='random',
+                        help='random search/ tpe search')
 
     args = parser.parse_args()
     return args
@@ -109,7 +111,7 @@ def main(args):
                 print("\n----------Train infomation-------------\n",'dataset: {} ,Algorithm:{} '.format(dkey,mkey))
                 model = modeldict[mkey]
                 Graph,Stoptime = get_graph_time(args,dkey)
-                model = model(datasets=Graph, iter=iter, Time=Stoptime,evaluation=args.evaluation)
+                model = model(datasets=Graph, iter=iter, Time=Stoptime,evaluation=args.evaluation,tuning=args.tunning_method)
                 emb = model.get_emb()
                 best = model.get_best()
                 f1_mic, f1_mac = node_classifcation(np.array(emb), Graph['Label'])
@@ -135,7 +137,7 @@ def main(args):
         print("\n----------Train infomation-------------\n", 'dataset: {} ,Algorithm:{} '.format(args.dataset, args.method))
         model=modeldict[args.method]
         Graph,Stoptime = get_graph_time(args,args.dataset)
-        model=model(datasets=Graph, iter= iter, Time=Stoptime,evaluation=args.evaluation)
+        model=model(datasets=Graph, iter= iter, Time=Stoptime,evaluation=args.evaluation,tuning=args.tunning_method)
         emb = model.get_emb()
         value1,value2=evaluation(emb, Graph, args.evaluation)
         result_dict[args.method] = [args.dataset,value1, value2]

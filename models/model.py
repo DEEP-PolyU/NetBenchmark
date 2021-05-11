@@ -6,15 +6,17 @@ from evaluation.node_classification import node_classifcation
 from evaluation.link_prediction import link_prediction,link_prediction_Automatic_tuning
 from evaluation.node_classification import node_classifcation_test
 import numpy as np
+import hyperopt
 from hyperopt import fmin, tpe, hp, space_eval,Trials, partial
 
 
 class Models(torch.nn.Module):
-    def __init__(self, *, datasets, Time, evaluation,**kwargs):
+    def __init__(self, *, datasets, Time, evaluation,tuning,**kwargs):
         self.mat_content=datasets
         self.best = {}
         self.stop_time = Time
         self.evaluation = evaluation
+        self.tuning = tuning
         super(Models, self).__init__()
         if self.is_preprocessing():
             self.preprocessing(datasets)
@@ -67,7 +69,10 @@ class Models(torch.nn.Module):
     #hyperparameter tuning
     def deep_algo(self):
         trials = Trials()
-        algo = partial(tpe.suggest)
+        if self.tuning == 'random':
+            algo = partial(hyperopt.rand.suggest)
+        else:
+            algo = partial(tpe.suggest)
         space_dtree = self.check_train_parameters()
         best = fmin(fn=self.get_score, space=space_dtree, algo=algo, max_evals=150, trials=trials, timeout=self.stop_time)
         print(best)
@@ -78,7 +83,10 @@ class Models(torch.nn.Module):
 
     def shallow_algo(self):
         trials = Trials()
-        algo = partial(tpe.suggest)
+        if self.tuning == 'random':
+            algo = partial(hyperopt.rand.suggest)
+        else:
+            algo = partial(tpe.suggest)
         space_dtree = self.check_train_parameters()
         best = fmin(
             fn=self.get_score, space=space_dtree, algo=algo, max_evals=150, trials=trials, timeout=self.stop_time)
