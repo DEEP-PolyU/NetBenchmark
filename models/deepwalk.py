@@ -12,11 +12,15 @@ from hyperopt import fmin, tpe, hp, space_eval,Trials, partial
 
 
 
-def deepwalk_fun(CombG, d, number_walks, walk_length,window_size,evaluation):
+def deepwalk_fun(CombG,d,**kwargs):
 
     max_memory_data_size = 466000000.0
     seed = 0
     vertex_freq_degree = False
+
+    number_walks = kwargs['number_walks']
+    walk_length = kwargs['walk_length']
+    window_size = kwargs['window_size']
 
     G = graph.from_numpy(CombG)
     #print("Number of nodes: {}".format(len(G.nodes())))
@@ -101,22 +105,12 @@ class deepwalk(Models):
 
     def train_model(self, **kwargs): #(self,rootdir,variable_name,number_walks):
 
-
+        d = 128
         ComG = self.mat_content['Network']
 
-        embbeding = deepwalk_fun(ComG, d = 128,**kwargs)
+        embbeding = deepwalk_fun(CombG=ComG, d = 128,**kwargs)
 
-        # sio.savemat('Deepwalk_Embedding.mat', {"Deepwalk": embbeding})
-        #
-        # return 'Deepwalk_Embedding.mat',"Deepwalk"
+
         return embbeding
 
-    # def get_score(self, params):
-    #     ComG = self.mat_content['Network']
-    #
-    #     embbeding = deepwalk_fun(ComG, d=128, **params)
-    #
-    #     Label = self.mat_content["Label"]
-    #     score=node_classifcation_test(np.array(embbeding),Label)
-    #
-    #     return -score
+
