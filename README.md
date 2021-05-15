@@ -5,14 +5,14 @@ Node Representation Learning Benchmark
 | Status        | Developing      |
 :-------------- |:---------------------------------------------------- |
 | **Author(s)** | QIAN Zhiqiang (zhiqiang.qian@connect.polyu.hk), QUO Zhihao (zhi-hao.guo@connect.polyu.hk), YU Rico (ricoyu.yu@connect.polyu.hk) , LIAN, Amber (amber.lian@connect.polyu.hk) |
-| **Updated**   | 2021-03                                           |
+| **Updated**   | 2021-05                                           |
 
 
 ## Objective
 
 We aim at building a auto,fair and systematic evaluation platform to compare the results of different Network Embedding models. 
 The implemented or modified models include [DeepWalk](https://github.com/phanein/deepwalk),  [node2vec](https://github.com/aditya-grover/node2vec), 
-[GCN](https://github.com/tkipf/gcn), [NetMF](https://github.com/xptree/NetMF), GAE, [featWalk](https://github.com/xhuang31/FeatWalk_AAAI19), CAN and DGI.
+[GCN](https://github.com/tkipf/gcn), [NetMF](https://github.com/xptree/NetMF), GAE, [featWalk](https://github.com/xhuang31/FeatWalk_AAAI19), CAN.
 
 Also, we imported several classic dataset, which includes Flickr, ACM, Cora, BlogCatalog.
 We will implement more representative NE models continuously. 
@@ -27,6 +27,25 @@ The system selects datasets and algorithms through the parameters provided by th
 ```bash
     python netBenchmark.py -h
 ```
+optional arguments:
+
+- -h, --help           
+  show this help message and exit
+-  --dataset {cora,flickr,blogcatalog,acm,all}      
+   select a available dataset (default: cora)
+-  --method {featwalk,netmf,deepwalk,node2vec,dgi,gae,can_new,can_original,all}         
+   The learning method
+-  --evaluation {node_classification,link_prediction}       
+   The evaluation method
+-  --variable_name VARIABLE_NAME        
+   The name of features in dataset
+-  --training_time TRAINING_TIME        
+   The total training time you want
+-  --input_file INPUT_FILE      
+   The input datasets you want
+-  --tunning_method TUNNING_METHOD      
+   The method of parameter tuning.(now includes Random search and tpe search)
+
 
 After choosing the dataset in `datasetdict` and methods in `modeldict`, the parser system will run the following code.
 
@@ -67,45 +86,54 @@ The main idea of this class is to tune parameters and obtain the best result, wh
 
 ```python
 class Models(torch.nn.Module):
-    def __init__(self, *, output=None, save=True, **kwargs)
     
-    @classmethod
-    def check_train_parameters(cls, **kwargs):
-        return kwargs
-    
-    @classmethod
-    def is_preprocessing(cls):
+    def __init__(self, *, datasets, Time, evaluation,tuning,**kwargs)
+
+    def check_train_parameters(self)
+
+    def is_preprocessing(cls)
         raise NotImplementedError
-    
-    @classmethod
-    def is_epoch(cls):
+
+    def is_deep_model(cls)
         raise NotImplementedError
+
+    def get_score(self,params)
+
+    def preprocessing(self, filename)
+
+    def hyperparameter_tuning(self)
+
+    def get_emb(self)
+        
+    def get_best(self)
+        
+    def get_time(self)
     
-    def forward(self, graph, **kwargs)
-    
-    def train_model(self, rootdir, **kwargs):
-        raise NotImplementedError
-    
-    def preprocessing(self,filename)
+    def train_model
 ```
 The following 3 methods should be overridden:
 
-- `__init__` constructor of the layer, used to configure its behavior.
-
 - `is_preprocessing(cls)` Determine whether the model needs to be preprocessed, if it needs to be preprocessed, jump to the preprocessing function for processing
 
-- `is_epoch(cls)` Determine whether an epoch is involved
+- `is_deep_model(cls)` Determine whether an algorithm is deep model
 
 - `train_model(self, rootdir, **kwargs)`Training according to different models
 
 #### Automatic parameter tuning
 Each algorithm's parameters are different, and it will be recorded in `check_train_parameters`
 ```python
-space_dtree=self.check_train_parameters()
 trials = Trials()
-algo = partial(tpe.suggest)
+if self.tuning == 'random':
+    algo = partial(hyperopt.rand.suggest)
+else:
+    algo = partial(tpe.suggest)
+space_dtree = self.check_train_parameters()
 best = fmin(
-    fn=self.get_score, space=space_dtree, algo=algo, max_evals=150, trials=trials)
+    fn=self.get_score, space=space_dtree, algo=algo, max_evals=150, trials=trials, timeout=self.stop_time)
+print(best)
+print('end of training:{:.2f}s'.format(self.stop_time))
+emb = self.train_model(**best)
+return emb,best
 ```
 
 ### Evaluation class: `Evaluation layer`
