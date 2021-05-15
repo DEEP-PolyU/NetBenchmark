@@ -36,7 +36,7 @@ def parse_args():
     parser.add_argument('--dataset', type=str,
                         default='all',choices=datasetdict_all,
                         help='select a available dataset (default: cora)')
-    parser.add_argument('--method', type=str, default='can_new',
+    parser.add_argument('--method', type=str, default='all',
                         choices=modeldict_all,
                         help='The learning method')
     parser.add_argument('--evaluation', type=str, default='link_prediction',

@@ -73,7 +73,8 @@ def generate_embeddings(corpus, dimensions, window_size, num_workers, p, q, inpu
 
     return model, w2v_emb
 
-def newprocess(input, directed, p, q, d, walks, length, workers, window, output,content,evaluation):
+def newprocess(input, directed, p, q, d, walks, length, workers, window, output,content,**kwargs):
+
     input=input[content]
     Graph, init_probabilities = read_graph(input, directed)
     G = HGraph(Graph, init_probabilities, p, q, walks, length, workers)
@@ -180,11 +181,9 @@ class node2vec(Models):
         return False
 
     def train_model(self, **kwargs):
-        embbeding = newprocess(input=self.mat_content, directed=False, d=128,workers=12,
+        embbeding = newprocess(input=self.mat_content, directed=False, d=128,workers=os.cpu_count(),
                             output=None, content='Network',**kwargs)
-        # scipy.io.savemat('node2vec_Embedding.mat', {"node2vec": embbeding})
-        #
-        # return 'node2vec_Embedding.mat', "node2vec"
+
         return embbeding
 
 
