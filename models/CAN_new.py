@@ -37,7 +37,7 @@ class CAN_new(Models):
         space_dtree = {
 
             'batch_size': hp.uniformint('batch_size', 1, 100),
-            'nb_epochs': hp.uniformint('nb_epochs', 100, 10000),
+            'nb_epochs': hp.uniformint('nb_epochs', 100, 5000),
             'lr': hp.uniform('lr', 0.0001, 0.1), # walk_length,window_size
             'evaluation': str(self.evaluation)
         }
@@ -219,14 +219,14 @@ class CAN_new(Models):
             optimizer.step()
 
             print("Epoch:", '%04d' % (epoch + 1),
-                  "train_loss=", "{:.5f}".format(avg_cost),
-                  "log_lik=", "{:.5f}".format(log_lik),
-                  "KL=", "{:.5f}".format(kl),
-                  "train_acc=", "{:.5f}".format(avg_accuracy),
-                  "val_edge_roc=", "{:.5f}".format(val_roc_score[-1]),
-                  "val_edge_ap=", "{:.5f}".format(ap_curr),
-                  "val_attr_roc=", "{:.5f}".format(roc_curr_a),
-                  "val_attr_ap=", "{:.5f}".format(ap_curr_a),
+                  # "train_loss=", "{:.5f}".format(avg_cost),
+                  # "log_lik=", "{:.5f}".format(log_lik),
+                  # "KL=", "{:.5f}".format(kl),
+                  # "train_acc=", "{:.5f}".format(avg_accuracy),
+                  # "val_edge_roc=", "{:.5f}".format(val_roc_score[-1]),
+                  # "val_edge_ap=", "{:.5f}".format(ap_curr),
+                  # "val_attr_roc=", "{:.5f}".format(roc_curr_a),
+                  # "val_attr_ap=", "{:.5f}".format(ap_curr_a),
                   "time=", "{:.5f}".format(time.time() - t))
 
         print("Optimization Finished!")

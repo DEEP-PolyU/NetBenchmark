@@ -72,7 +72,7 @@ def mat_import(mat):
 
     return features, adj_norm, adj_label, val_edges, val_edges_false, test_edges, test_edges_false, norm, pos_weight
 
-def train(features, adj, adj_label, val_edges, val_edges_false, device, pos_weight, norm,hid1,hid2,dropout,lr,weight_decay,epochs,evaluation):
+def train(features, adj, adj_label, val_edges, val_edges_false, device, pos_weight, norm,hid1,hid2,dropout,lr,weight_decay,epochs,**kwargs):
 
     model = GCNTra(nfeat=features.shape[1],
                 nhid=hid1,
@@ -115,11 +115,11 @@ def train(features, adj, adj_label, val_edges, val_edges_false, device, pos_weig
         else:
             cnt_wait += 1
 
-        print('Epoch %d / %d' % (epoch, epochs),
-              'current_best_epoch: %d' % best_epoch,
-              'train_loss: %.4f' % loss_train,
-              'valid_acu: %.4f' % auc_,
-              'valid_ap: %.4f' % ap_)
+        # print('Epoch %d / %d' % (epoch, epochs),
+        #       'current_best_epoch: %d' % best_epoch,
+        #       'train_loss: %.4f' % loss_train,
+        #       'valid_acu: %.4f' % auc_,
+        #       'valid_ap: %.4f' % ap_)
 
         if cnt_wait == 6000 and best_epoch != 0:
             print('Early stopping!')
@@ -172,7 +172,7 @@ class GAE(Models):
         space_dtree = {
 
             # 'batch_size': hp.uniformint('batch_size', 1, 100),
-            'epochs': hp.uniformint('epochs', 100, 10000),
+            'epochs': hp.uniformint('epochs', 100, 5000),
             'lr': hp.uniform('lr', 0.0001, 0.1),
             'dropout': hp.uniform('dropout', 0, 1),
             'evaluation': str(self.evaluation)
