@@ -37,7 +37,7 @@ def parse_args():
     parser.add_argument('--dataset', type=str,
                         default='all',choices=datasetdict_all,
                         help='select a available dataset (default: cora)')
-    parser.add_argument('--method', type=str, default='all',
+    parser.add_argument('--method', type=str, default='dgi',
                         choices=modeldict_all,
                         help='The learning method')
     parser.add_argument('--evaluation', type=str, default='link_prediction',
@@ -125,15 +125,21 @@ def main(args):
             model = model(datasets=Graph, iter=iter, Time=Stoptime,evaluation=args.evaluation,tuning=args.tunning_method)
             emb = model.get_emb()
             best = model.get_best()
-            f1_mic, f1_mac = node_classifcation(np.array(emb), Graph['Label'])
-            adj_train, train_edges, val_edges, val_edges_false, test_edges, test_edges_false = pre.mask_test_edges(
-                Graph['Network'])
-            roc_score, ap_score = link_prediction(emb, edges_pos=test_edges, edges_neg=test_edges_false)
 
-            result_dict[i]= {'Dataset': dkey,'model' : mkey,'f1_micro':f1_mic, 'f1_macro':f1_mac, 'roc_score':roc_score,'ap_score':ap_score,'best':best}
+            if args.evaluation == 'node_classification':
+
+                f1_mic, f1_mac = node_classifcation(np.array(emb), Graph['Label'])
+                result_dict[i]= {'Dataset': dkey,'model' : mkey,'f1_micro':f1_mic, 'f1_macro':f1_mac, 'roc_score':0,'ap_score':0,'best':best}
+            else:
+                adj_train, train_edges, val_edges, val_edges_false, test_edges, test_edges_false = pre.mask_test_edges(
+                    Graph['Network'])
+                roc_score, ap_score = link_prediction(emb, edges_pos=test_edges, edges_neg=test_edges_false)
+
+                result_dict[i] = {'Dataset': dkey, 'model': mkey, 'f1_micro': 0, 'f1_macro': 0, 'roc_score': roc_score, 'ap_score': ap_score, 'best': best}
+
             # print(result_dict[i])
             i += 1
-            fileObject = open('result/result'+str(today)+'_'+str(args.evaluation)+'.txt', 'w')
+            fileObject = open('result/result_'+str(args.method)+'_'+str(today)+'_'+str(args.evaluation)+'.txt', 'w')
             for result in result_dict:
                 fileObject.write(str(result_dict[result]))
                 fileObject.write('\n')
