@@ -20,6 +20,7 @@ from evaluation.link_prediction import link_prediction
 from evaluation.node_classification import node_classifcation
 import preprocessing.preprocessing as pre
 import copy
+from datetime import date
 
 datasetlist = [ Cora,Flickr, BlogCatalog,ACM]
 datasetdict = {Cls.__name__.lower(): Cls for Cls in datasetlist}
@@ -34,9 +35,9 @@ def parse_args():
     parser = argparse.ArgumentParser(description='NetBenchmark(DeepLab).')
 
     parser.add_argument('--dataset', type=str,
-                        default='cora',choices=datasetdict_all,
+                        default='all',choices=datasetdict_all,
                         help='select a available dataset (default: cora)')
-    parser.add_argument('--method', type=str, default='can_new',
+    parser.add_argument('--method', type=str, default='all',
                         choices=modeldict_all,
                         help='The learning method')
     parser.add_argument('--evaluation', type=str, default='link_prediction',
@@ -50,6 +51,7 @@ def parse_args():
                         help='The input datasets you want')
     parser.add_argument('--tunning_method', type=str, default='random',
                         help='random search/ tpe search')
+    parser.add_argument('--CUDA_Device',type=str,default='0',)
 
     args = parser.parse_args()
     return args
@@ -101,6 +103,8 @@ def main(args):
     global modeldict
 
 
+    today = date.today()
+
     # prase_input_file(args)
 
     result_dict = {}
@@ -129,7 +133,7 @@ def main(args):
             result_dict[i]= {'Dataset': dkey,'model' : mkey,'f1_micro':f1_mic, 'f1_macro':f1_mac, 'roc_score':roc_score,'ap_score':ap_score,'best':best}
             # print(result_dict[i])
             i += 1
-            fileObject = open('result/result.txt', 'w')
+            fileObject = open('result/result'+str(today)+'_'+str(args.evaluation)+'.txt', 'w')
             for result in result_dict:
                 fileObject.write(str(result_dict[result]))
                 fileObject.write('\n')
