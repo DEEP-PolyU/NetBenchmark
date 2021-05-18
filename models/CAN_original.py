@@ -13,11 +13,7 @@ from .CAN_original_package.model import CAN
 from .CAN_original_package.preprocessing import preprocess_graph, construct_feed_dict, sparse_to_tuple, mask_test_edges, mask_test_feas
 from .model import *
 
-# Train on CPU (hide GPU) due to memory constraints
-os.environ['CUDA_VISIBLE_DEVICES'] = "0"
-use_gpu = torch.cuda.is_available()
-device = torch.device('cuda' if use_gpu else 'cpu')
-# Settings
+
 
 
 class CAN_original(Models):
@@ -54,7 +50,7 @@ class CAN_original(Models):
 
         # Predict on test set of edges
         # adj_rec = sess.run(model.reconstructions[0], feed_dict=feed_dict).reshape([self.num_nodes, self.num_nodes])
-        if (use_gpu):
+        if (self.use_gpu):
             adj_rec = preds_sub_u.view(self.num_nodes, self.num_nodes).cpu().data.numpy()
         else:
             adj_rec = preds_sub_u.view(self.num_nodes, self.num_nodes).data.numpy()
@@ -85,7 +81,7 @@ class CAN_original(Models):
 
         # Predict on test set of edges
         # fea_rec = sess.run(model.reconstructions[1], feed_dict=feed_dict).reshape([self.num_nodes, self.num_features])
-        if (use_gpu):
+        if (self.use_gpu):
             fea_rec = preds_sub_a.view(self.num_nodes, self.num_features).cpu().data.numpy()
         else:
             fea_rec = preds_sub_a.view(self.num_nodes, self.num_features).data.numpy()
@@ -114,6 +110,8 @@ class CAN_original(Models):
             1 - torch.sigmoid(logits))
 
     def train_model(self, **kwargs):
+
+        device= self.device
 
         learning_rate = kwargs["lr"]
         hidden1 = 256
@@ -225,7 +223,7 @@ class CAN_original(Models):
         print("Optimization Finished!")
 
         preds_sub_u, preds_sub_a, z_u_mean, z_u_log_std, z_a_mean, z_a_log_std = model(features, adj_norm)
-        if use_gpu:
+        if self.use_gpu:
             z_u_mean = z_u_mean.cpu()
         return z_u_mean.data.numpy()
 

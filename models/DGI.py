@@ -55,12 +55,11 @@ class DGI(Models):
     def train_model(self, **kwargs):
         np.random.seed(42)
         torch.manual_seed(42)
-        if torch.cuda.is_available():
-            cuda_name = 'cuda:' + '0'
-            device = torch.device(cuda_name)
+        if self.use_gpu:
+            device = self.device
             torch.cuda.manual_seed(42)
         else:
-            device = torch.device("cpu")
+            device = self.device
             print("--> No GPU")
 
 

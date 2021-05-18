@@ -18,10 +18,7 @@ from .CAN_new_package.preprocessing import preprocess_graph, construct_feed_dict
 from .model import *
 
 
-# Train on CPU (hide GPU) due to memory constraints
-os.environ['CUDA_VISIBLE_DEVICES'] = "0"
-use_gpu = torch.cuda.is_available()
-device = torch.device('cuda' if use_gpu else 'cpu')
+
 
 class CAN_new(Models):
 
@@ -46,12 +43,14 @@ class CAN_new(Models):
 
 
     def train_model(self, **kwargs):
+        device= self.device
         learning_rate=kwargs["lr"]
         hidden1=256
         hidden2=128
         dropout=0
         epochs=int(kwargs["nb_epochs"])
         seed=42
+        use_gpu = self.use_gpu
 
         np.random.seed(seed)
         torch.manual_seed(seed)

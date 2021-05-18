@@ -8,10 +8,19 @@ from evaluation.node_classification import node_classifcation_test
 import numpy as np
 import hyperopt
 from hyperopt import fmin, tpe, hp, space_eval,Trials, partial
+import os
+
 
 
 class Models(torch.nn.Module):
-    def __init__(self, *, datasets, Time, evaluation,tuning,**kwargs):
+    device=None
+    use_gpu=None
+    def __init__(self, *, datasets, Time, evaluation,tuning,cuda,**kwargs):
+        # Train on CPU (hide GPU) due to memory constraints
+        os.environ['CUDA_VISIBLE_DEVICES'] = cuda
+        self.use_gpu = torch.cuda.is_available()
+        cuda_name = 'cuda:' + cuda
+        self.device = torch.device(cuda_name if self.use_gpu else 'cpu')
         self.mat_content=datasets
         self.best = {}
         self.stop_time = Time

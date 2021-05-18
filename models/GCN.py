@@ -19,11 +19,6 @@ from sklearn.model_selection import KFold
 from sklearn.metrics import f1_score
 # This is the graphsage version of GCN_package paper
 
-os.environ['CUDA_VISIBLE_DEVICES'] = "0"
-use_gpu = torch.cuda.is_available()
-device = torch.device('cuda' if use_gpu else 'cpu')
-
-
 class GCN(Models):
 
     @classmethod
@@ -34,7 +29,7 @@ class GCN(Models):
     def is_deep_model(cls):
         return True
 
-    def deep_algo(self,stop_time):
+    def train_model(self, **kwargs):
 
         semi=0
         seed=42
@@ -44,7 +39,8 @@ class GCN(Models):
         weight_decay=0
         epochs=200
         semi_rate=0.6
-        cuda=use_gpu
+        device=self.device
+        cuda=kwargs['cuda']
 
         np.random.seed(seed)
         torch.manual_seed(seed)

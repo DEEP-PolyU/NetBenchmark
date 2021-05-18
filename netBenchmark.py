@@ -37,7 +37,7 @@ def parse_args():
     parser.add_argument('--dataset', type=str,
                         default='all',choices=datasetdict_all,
                         help='select a available dataset (default: cora)')
-    parser.add_argument('--method', type=str, default='dgi',
+    parser.add_argument('--method', type=str, default='gae',
                         choices=modeldict_all,
                         help='The learning method')
     parser.add_argument('--evaluation', type=str, default='link_prediction',
@@ -51,7 +51,7 @@ def parse_args():
                         help='The input datasets you want')
     parser.add_argument('--tunning_method', type=str, default='random',
                         help='random search/ tpe search')
-    parser.add_argument('--CUDA_Device',type=str,default='0',)
+    parser.add_argument('--cuda_device',type=str,default='0',)
 
     args = parser.parse_args()
     return args
@@ -122,7 +122,7 @@ def main(args):
             print("\n----------Train information-------------\n",'dataset: {} ,Algorithm:{} '.format(dkey,mkey))
             model = modeldict[mkey]
             Graph,Stoptime = get_graph_time(args,dkey)
-            model = model(datasets=Graph, iter=iter, Time=Stoptime,evaluation=args.evaluation,tuning=args.tunning_method)
+            model = model(datasets=Graph, iter=iter, Time=Stoptime,evaluation=args.evaluation,tuning=args.tunning_method,cuda=args.cuda_device)
             emb = model.get_emb()
             best = model.get_best()
 
