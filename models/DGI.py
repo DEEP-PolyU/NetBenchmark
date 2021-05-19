@@ -97,7 +97,7 @@ class DGI(Models):
         model = DGI_test(ft_size, hid_units, nonlinearity)
         optimiser = torch.optim.Adam(model.parameters(), lr=lr, weight_decay=l2_coef)
         if torch.cuda.is_available():
-            print('Using CUDA')
+            # print('Using CUDA')
             model.to(device)
             features = features.to(device)
             if sparse:
@@ -144,7 +144,7 @@ class DGI(Models):
                 cnt_wait += 1
 
             if cnt_wait == patience:
-                print('Early stopping!')
+                # print('Early stopping!')
                 break
 
             loss.backward()
