@@ -1,9 +1,5 @@
 from __future__ import division
 from __future__ import print_function
-import time
-import os
-import tensorflow as tf
-import numpy as np
 import scipy.sparse as sp
 from sklearn.metrics import roc_auc_score
 from sklearn.metrics import average_precision_score
