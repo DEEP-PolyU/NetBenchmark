@@ -150,7 +150,7 @@ class DGI(Models):
             loss.backward()
             optimiser.step()
 
-        print('Loading {}th epoch'.format(best_t))
+        # print('Loading {}th epoch'.format(best_t))
         model.load_state_dict(torch.load('models/dgi_package/best_dgi_%d.pkl' % (hid_units)))
 
         embeds, _ = model.embed(features, sp_adj if sparse else adj, sparse, None)
@@ -160,7 +160,7 @@ class DGI(Models):
         test_embs = embeds[0, idx_test]
 
         node_emb = embeds.data.cpu().numpy()
-        print('node_shape ', node_emb.shape)
+        # print('node_shape ', node_emb.shape)
         node_emb = node_emb.reshape(node_emb.shape[1:])
-        print('node_shape_new ', node_emb.shape)
+        # print('node_shape_new ', node_emb.shape)
         return node_emb
