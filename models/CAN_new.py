@@ -217,7 +217,7 @@ class CAN_new(Models):
             avg_cost.backward()
             optimizer.step()
 
-            print("Epoch:", '%04d' % (epoch + 1),
+            print("Epoch:"+ str(epoch + 1)+" time={:.5f}".format(time.time() - t))
                   # "train_loss=", "{:.5f}".format(avg_cost),
                   # "log_lik=", "{:.5f}".format(log_lik),
                   # "KL=", "{:.5f}".format(kl),
@@ -226,7 +226,7 @@ class CAN_new(Models):
                   # "val_edge_ap=", "{:.5f}".format(ap_curr),
                   # "val_attr_roc=", "{:.5f}".format(roc_curr_a),
                   # "val_attr_ap=", "{:.5f}".format(ap_curr_a),
-                  "time=", "{:.5f}".format(time.time() - t))
+
 
         print("Optimization Finished!")
 

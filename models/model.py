@@ -10,14 +10,11 @@ import hyperopt
 from hyperopt import fmin, tpe, hp, space_eval,Trials, partial
 import os
 
-
-
 class Models(torch.nn.Module):
-    device=None
-    use_gpu=None
+
     def __init__(self, *, datasets, Time, evaluation,tuning,cuda,**kwargs):
         # Train on CPU (hide GPU) due to memory constraints
-        os.environ['CUDA_VISIBLE_DEVICES'] = cuda
+        # os.environ['CUDA_VISIBLE_DEVICES'] = [0,1,2,3,4,5,6]
         self.use_gpu = torch.cuda.is_available()
         cuda_name = 'cuda:' + cuda
         self.device = torch.device(cuda_name if self.use_gpu else 'cpu')

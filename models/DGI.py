@@ -147,10 +147,6 @@ class DGI(Models):
                 print('Early stopping!')
                 break
 
-
-
-
-
             loss.backward()
             optimiser.step()
 

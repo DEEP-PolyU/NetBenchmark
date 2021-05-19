@@ -46,15 +46,16 @@ optional arguments:
 -  --tunning_method TUNNING_METHOD      
    The method of parameter tuning.(now includes Random search and tpe search)
 
-
-After choosing the dataset in `datasetdict` and methods in `modeldict`, the parser system will run the following code.
+An example
+```bash
+CUDA_VISIBLE_DEVICE="0,1,2,3,4,5" python netBenchmark.py --method=all --dataset=all --cuda_device=1 
+```
+After choosing the dataset in `datasetdict` and methods in `modeldict`, the parser system will calculate the upper limits of running time and run the following code.
 
 ```python
-Graph = datasetdict[args.dataset]
-Graph=Graph.get_graph(Graph,variable_name= args.variable_name or 'network' )
-
-model=modeldict[args.method]
-model(Graph, args.evaluation)
+model = modeldict[mkey]
+Graph,Stoptime = get_graph_time(args,dkey)
+model = model(datasets=Graph, iter=iter, Time=Stoptime,evaluation=args.evaluation,tuning=args.tunning_method,cuda=args.cuda_device)
 ```
 
 
@@ -109,7 +110,7 @@ class Models(torch.nn.Module):
         
     def get_time(self)
     
-    def train_model
+    def train_model(self, **kwargs)
 ```
 The following 3 methods should be overridden:
 
@@ -117,10 +118,10 @@ The following 3 methods should be overridden:
 
 - `is_deep_model(cls)` Determine whether an algorithm is deep model
 
-- `train_model(self, rootdir, **kwargs)`Training according to different models
+- `train_model(self, **kwargs)`Training the datasets and obtain the embedding matrix according to different settings
 
 #### Automatic parameter tuning
-Each algorithm's parameters are different, and it will be recorded in `check_train_parameters`
+Each algorithm's parameters are different, and it will be recorded in `check_train_parameters`.And
 ```python
 trials = Trials()
 if self.tuning == 'random':
