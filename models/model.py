@@ -80,7 +80,7 @@ class Models(torch.nn.Module):
         else:
             algo = partial(tpe.suggest)
         space_dtree = self.check_train_parameters()
-        best = fmin(fn=self.get_score, space=space_dtree, algo=algo, max_evals=150, trials=trials, timeout=self.stop_time)
+        best = fmin(fn=self.get_score, space=space_dtree, algo=algo, max_evals=1000, trials=trials, timeout=self.stop_time)
         print(best)
         print('end of training:{:.2f}s'.format(self.stop_time))
         emb = self.train_model(**best)
@@ -95,7 +95,7 @@ class Models(torch.nn.Module):
             algo = partial(tpe.suggest)
         space_dtree = self.check_train_parameters()
         best = fmin(
-            fn=self.get_score, space=space_dtree, algo=algo, max_evals=150, trials=trials, timeout=self.stop_time)
+            fn=self.get_score, space=space_dtree, algo=algo, max_evals=1000, trials=trials, timeout=self.stop_time)
         print(best)
         print('end of training:{:.2f}s'.format(self.stop_time))
         emb = self.train_model(**best)

@@ -22,7 +22,7 @@ import preprocessing.preprocessing as pre
 import copy
 from datetime import date
 
-datasetlist = [ Cora,Flickr, BlogCatalog,ACM]
+datasetlist = [Cora, Flickr, BlogCatalog,ACM]
 datasetdict = {Cls.__name__.lower(): Cls for Cls in datasetlist}
 modellist=[featwalk, netmf, deepwalk, node2vec, DGI, GAE, CAN_new, CAN_original]
 modeldict = {Cls.__name__.lower(): Cls for Cls in modellist}
@@ -37,7 +37,7 @@ def parse_args():
     parser.add_argument('--dataset', type=str,
                         default='all',choices=datasetdict_all,
                         help='select a available dataset (default: cora)')
-    parser.add_argument('--method', type=str, default='gae',
+    parser.add_argument('--method', type=str, default='all',
                         choices=modeldict_all,
                         help='The learning method')
     parser.add_argument('--evaluation', type=str, default='link_prediction',
@@ -45,7 +45,7 @@ def parse_args():
                         help='The evaluation method')
     parser.add_argument('--variable_name', type=str,
                         help='The name of features in dataset')
-    parser.add_argument('--training_time', type=int, default=0.01,
+    parser.add_argument('--training_time', type=int, default=1.4,
                         help='The total training time you want')
     parser.add_argument('--input_file', type=str, default=None,
                         help='The input datasets you want')
@@ -100,14 +100,9 @@ def get_graph_time(args,dkey):
     return Graph, Stoptime
 
 def main(args):
-    global modeldict
-
-
     today = date.today()
 
-    # prase_input_file(args)
-
-    result_dict = {}
+    # deal with the option is not all
     if args.method !='all':
         temp=modeldict[args.method]
         modeldict.clear()
@@ -116,81 +111,37 @@ def main(args):
         temp = datasetdict[args.dataset]
         datasetdict.clear()
         datasetdict[args.dataset] = temp
-    i = 0
-    for dkey in datasetdict:
-        for mkey in modeldict:
+
+    # initial variable to store the final result and clean the file
+
+    resultList=[]
+    eval_file_name='result/result_' + str(args.method) + '_' + str(today) + '_' + str(args.evaluation) + '.txt'
+    fileObject = open(eval_file_name, 'w')
+    fileObject.close()
+
+
+    for mkey in modeldict:
+        for dkey in datasetdict:
             print("\n----------Train information-------------\n",'dataset: {} ,Algorithm:{} '.format(dkey,mkey))
             model = modeldict[mkey]
             Graph,Stoptime = get_graph_time(args,dkey)
             model = model(datasets=Graph, iter=iter, Time=Stoptime,evaluation=args.evaluation,tuning=args.tunning_method,cuda=args.cuda_device)
             emb = model.get_emb()
             best = model.get_best()
+            f1_mic, f1_mac = node_classifcation(np.array(emb), Graph['Label'])
+            adj_train, train_edges, val_edges, val_edges_false, test_edges, test_edges_false = pre.mask_test_edges(
+                Graph['Network'])
+            roc_score, ap_score = link_prediction(emb, edges_pos=test_edges, edges_neg=test_edges_false)
 
-            if args.evaluation == 'node_classification':
+            temp_result = {'Dataset': dkey, 'model': mkey, 'f1_micro': f1_mic, 'f1_macro': f1_mac,
+                              'roc_score': roc_score, 'ap_score': ap_score, 'best': best}
+            resultList.append(temp_result)
 
-                f1_mic, f1_mac = node_classifcation(np.array(emb), Graph['Label'])
-                result_dict[i]= {'Dataset': dkey,'model' : mkey,'f1_micro':f1_mic, 'f1_macro':f1_mac, 'roc_score':0,'ap_score':0,'best':best}
-            else:
-                adj_train, train_edges, val_edges, val_edges_false, test_edges, test_edges_false = pre.mask_test_edges(
-                    Graph['Network'])
-                roc_score, ap_score = link_prediction(emb, edges_pos=test_edges, edges_neg=test_edges_false)
-
-                result_dict[i] = {'Dataset': dkey, 'model': mkey, 'f1_micro': 0, 'f1_macro': 0, 'roc_score': roc_score, 'ap_score': ap_score, 'best': best}
-
-            # print(result_dict[i])
-            i += 1
-            fileObject = open('result/result_'+str(args.method)+'_'+str(today)+'_'+str(args.evaluation)+'.txt', 'w')
-            for result in result_dict:
-                fileObject.write(str(result_dict[result]))
-                fileObject.write('\n')
+            # save it in result file by using 'add' model
+            fileObject = open(eval_file_name, 'a+')
+            fileObject.write(str(temp_result)+'\n')
             fileObject.close()
-            # fileObject1 = open('result/data.txt', 'w')
-            # fileObject1.close()
             np.save('result/' + mkey + '_embedding_' + args.dataset + '.npy', emb)
-    np.save('result.npy', result_dict)
-
-    # result_dict = {}
-    # if args.method =='all' and args.dataset == 'all':
-    #     i = 0
-    #     for dkey in datasetdict:
-    #         for mkey in modeldict:
-    #             print("\n----------Train information-------------\n",'dataset: {} ,Algorithm:{} '.format(dkey,mkey))
-    #             model = modeldict[mkey]
-    #             Graph,Stoptime = get_graph_time(args,dkey)
-    #             model = model(datasets=Graph, iter=iter, Time=Stoptime,evaluation=args.evaluation,tuning=args.tunning_method)
-    #             emb = model.get_emb()
-    #             best = model.get_best()
-    #             f1_mic, f1_mac = node_classifcation(np.array(emb), Graph['Label'])
-    #             adj_train, train_edges, val_edges, val_edges_false, test_edges, test_edges_false = pre.mask_test_edges(
-    #                 Graph['Network'])
-    #             roc_score, ap_score = link_prediction(emb, edges_pos=test_edges, edges_neg=test_edges_false)
-    #
-    #             result_dict[i]= {'Dataset': dkey,'model' : mkey,'f1_micro':f1_mic, 'f1_macro':f1_mac, 'roc_score':roc_score,'ap_score':ap_score,'best':best}
-    #             # print(result_dict[i])
-    #             i += 1
-    #             fileObject = open('result/result.txt', 'w')
-    #             for result in result_dict:
-    #                 fileObject.write(str(result_dict[result]))
-    #                 fileObject.write('\n')
-    #             fileObject.close()
-    #             # fileObject1 = open('result/data.txt', 'w')
-    #             # fileObject1.close()
-    #             np.save('result/' + mkey + '_embedding_' + args.dataset + '.npy', emb)
-    #
-    #
-    #
-    # else:
-    #     print("\n----------Train infomation-------------\n", 'dataset: {} ,Algorithm:{} '.format(args.dataset, args.method))
-    #     model=modeldict[args.method]
-    #     Graph,Stoptime = get_graph_time(args,args.dataset)
-    #     model=model(datasets=Graph, iter= iter, Time=Stoptime,evaluation=args.evaluation,tuning=args.tunning_method)
-    #     emb = model.get_emb()
-    #     value1,value2=evaluation(emb, Graph, args.evaluation)
-    #     result_dict[args.method] = [args.dataset,value1, value2]
-    #     np.save('result/' + args.method + '_embedding_' + args.dataset + '.npy', emb)
-
-
-
 
 
 if __name__ == "__main__":
