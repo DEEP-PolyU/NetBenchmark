@@ -205,19 +205,7 @@ class CAN_original(Models):
             # Run backward
             avg_cost.backward()
             optimizer.step()
-            print("Epoch:" + str(epoch + 1) + " time={:.5f}".format(time.time() - t))
-            # print("Epoch:", '%04d' % (epoch + 1),
-            #       "train_loss=", "{:.5f}".format(avg_cost),
-            #       "log_lik=", "{:.5f}".format(log_lik),
-            #       "KL=", "{:.5f}".format(kl),
-            #       "train_acc=", "{:.5f}".format(avg_accuracy),
-            #       "val_edge_roc=", "{:.5f}".format(val_roc_score[-1]),
-            #       "val_edge_ap=", "{:.5f}".format(ap_curr),
-            #       "val_attr_roc=", "{:.5f}".format(roc_curr_a),
-            #       "val_attr_ap=", "{:.5f}".format(ap_curr_a),
-            #       "time=", "{:.5f}".format(time.time() - t))
-            # early stop by time
-
+            # print("Epoch:" + str(epoch + 1) + " time={:.5f}".format(time.time() - t))
 
         print("Optimization Finished!")
 

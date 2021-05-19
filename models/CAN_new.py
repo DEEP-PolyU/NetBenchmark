@@ -216,18 +216,7 @@ class CAN_new(Models):
             # Run backward
             avg_cost.backward()
             optimizer.step()
-
-            print("Epoch:"+ str(epoch + 1)+" time={:.5f}".format(time.time() - t))
-                  # "train_loss=", "{:.5f}".format(avg_cost),
-                  # "log_lik=", "{:.5f}".format(log_lik),
-                  # "KL=", "{:.5f}".format(kl),
-                  # "train_acc=", "{:.5f}".format(avg_accuracy),
-                  # "val_edge_roc=", "{:.5f}".format(val_roc_score[-1]),
-                  # "val_edge_ap=", "{:.5f}".format(ap_curr),
-                  # "val_attr_roc=", "{:.5f}".format(roc_curr_a),
-                  # "val_attr_ap=", "{:.5f}".format(ap_curr_a),
-
-
+            # print("Epoch:"+ str(epoch + 1)+" time={:.5f}".format(time.time() - t))
         print("Optimization Finished!")
 
         preds_sub_u, preds_sub_a, z_u_mean, z_u_log_std, z_a_mean, z_a_log_std = model(features, adj_norm)

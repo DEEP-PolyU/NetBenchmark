@@ -133,7 +133,7 @@ class DGI(Models):
 
             loss = b_xent(logits, lbl)
 
-            print('Loss:'+str(loss))
+            # print('Loss:'+str(loss))
 
             if loss < best:
                 best = loss
