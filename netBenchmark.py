@@ -115,7 +115,7 @@ def main(args):
     # initial variable to store the final result and clean the file
 
     resultList=[]
-    eval_file_name='result/result_'+str(args.tunning_method)+'_' +str(args.method) + '_' + str(today) + '_' + str(args.evaluation) + '.txt'
+    eval_file_name='result/evalFiles/result_'+str(args.tunning_method)+'_' +str(args.method) + '_' + str(today) + '_' + str(args.evaluation) + '.txt'
     fileObject = open(eval_file_name, 'w')
     fileObject.close()
 
@@ -141,7 +141,7 @@ def main(args):
             fileObject = open(eval_file_name, 'a+')
             fileObject.write(str(temp_result)+'\n')
             fileObject.close()
-            np.save('result/' + mkey + '_embedding_' + args.dataset + '.npy', emb)
+            np.save('result/embFiles/' + mkey + '_embedding_' + args.dataset + '.npy', emb)
 
 
 if __name__ == "__main__":
