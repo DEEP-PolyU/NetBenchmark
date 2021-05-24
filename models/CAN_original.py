@@ -102,6 +102,8 @@ class CAN_original(Models):
 
     def weighted_cross_entropy_with_logits(self, logits, targets, pos_weight):
         logits = logits.clamp(-10, 10)
+        if hasattr(torch.cuda, 'empty_cache'):
+            torch.cuda.empty_cache()
         return targets * -torch.log(torch.sigmoid(logits)) * pos_weight + (1 - targets) * -torch.log(
             1 - torch.sigmoid(logits))
 
@@ -110,8 +112,8 @@ class CAN_original(Models):
         device= self.device
 
         learning_rate = kwargs["lr"]
-        hidden1 = 256
-        hidden2 = 128
+        hidden1 = 64
+        hidden2 = 32
         dropout = kwargs["dropout"]
         epochs = int(kwargs["nb_epochs"])
 
@@ -197,11 +199,23 @@ class CAN_original(Models):
             roc_curr, ap_curr = self.get_roc_score(val_edges, val_edges_false, preds_sub_u)
             roc_curr_a, ap_curr_a = self.get_roc_score_a(val_feas, val_feas_false, preds_sub_a)
             val_roc_score.append(roc_curr)
-
+            if avg_cost> 10000:
+                print('Early stopping!')
+                break
             # Run backward
             avg_cost.backward()
             optimizer.step()
             # print("Epoch:" + str(epoch + 1) + " time={:.5f}".format(time.time() - t))
+            # print("Epoch:", '%04d' % (epoch + 1),
+            #       "train_loss=", "{:.5f}".format(avg_cost),
+            #       "log_lik=", "{:.5f}".format(log_lik),
+            #       "KL=", "{:.5f}".format(kl),
+            #       "train_acc=", "{:.5f}".format(avg_accuracy),
+            #       "val_edge_roc=", "{:.5f}".format(val_roc_score[-1]),
+            #       "val_edge_ap=", "{:.5f}".format(ap_curr),
+            #       "val_attr_roc=", "{:.5f}".format(roc_curr_a),
+            #       "val_attr_ap=", "{:.5f}".format(ap_curr_a),
+            #       "time=", "{:.5f}".format(time.time() - t))
 
         print("Optimization Finished!")
 
