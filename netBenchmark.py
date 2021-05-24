@@ -13,6 +13,7 @@ from models.Node2vec import node2vec
 from models.DGI import DGI
 from models.GAE import GAE
 from models.GCN import GCN
+from models.ProNE import ProNE
 from models.CAN_new import CAN_new
 from models.CAN_original import CAN_original
 from evaluation.evaluation import evaluation
@@ -24,7 +25,7 @@ from datetime import date
 
 datasetlist = [Cora, Flickr, BlogCatalog,ACM]
 datasetdict = {Cls.__name__.lower(): Cls for Cls in datasetlist}
-modellist=[featwalk, netmf, deepwalk, node2vec, DGI, GAE, CAN_new, CAN_original]
+modellist=[featwalk, netmf, deepwalk, node2vec, DGI, GAE, CAN_new, CAN_original, ProNE]
 modeldict = {Cls.__name__.lower(): Cls for Cls in modellist}
 
 datasetdict_all = copy.deepcopy(datasetdict)
@@ -125,6 +126,7 @@ def main(args):
             print("\n----------Train information-------------\n",'dataset: {} ,Algorithm:{} '.format(dkey,mkey))
             model = modeldict[mkey]
             Graph,Stoptime = get_graph_time(args,dkey)
+
             model = model(datasets=Graph, iter=iter, Time=Stoptime,evaluation=args.evaluation,tuning=args.tunning_method,cuda=args.cuda_device)
             emb = model.get_emb()
             best = model.get_best()
