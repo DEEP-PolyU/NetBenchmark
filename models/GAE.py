@@ -54,8 +54,8 @@ def get_roc_score(net, features, adj, edges_pos, edges_neg):
 
 def mat_import(mat):
 
-    adj, features, labels, idx_train, idx_val, idx_test = process.load_citationmat(mat)
-    features = process.sparse_mx_to_torch_sparse_tensor(features).float()
+    adj, features, labels, idx_train, idx_val, idx_test = process.load_citationmat_feature(mat)
+    # features = process.sparse_mx_to_torch_sparse_tensor(features).float()
     adj_orig = adj
     adj_orig = adj_orig - sp.dia_matrix((adj_orig.diagonal()[np.newaxis, :], [0]), shape=adj_orig.shape)
     adj_orig.eliminate_zeros()
@@ -115,13 +115,13 @@ def train(features, adj, adj_label, val_edges, val_edges_false, device, pos_weig
         else:
             cnt_wait += 1
 
-        # print('Epoch %d / %d' % (epoch, epochs),
-        #       'current_best_epoch: %d' % best_epoch,
-        #       'train_loss: %.4f' % loss_train,
-        #       'valid_acu: %.4f' % auc_,
-        #       'valid_ap: %.4f' % ap_)
+        print('Epoch %d / %d' % (epoch, epochs),)
+              # 'current_best_epoch: %d' % best_epoch,
+              # 'train_loss: %.4f' % loss_train,
+              # 'valid_acu: %.4f' % auc_,
+              # 'valid_ap: %.4f' % ap_)
 
-        if cnt_wait == 6000 and best_epoch != 0:
+        if cnt_wait == 2800 and best_epoch != 0:
             print('Early stopping!')
             break
 
@@ -173,7 +173,7 @@ class GAE(Models):
 
             # 'batch_size': hp.uniformint('batch_size', 1, 100),
             'epochs': hp.uniformint('epochs', 100, 5000),
-            'lr': hp.uniform('lr', 0.0001, 0.1),
+            'lr': hp.uniform('lr', 0.001, 0.1),
             'dropout': hp.uniform('dropout', 0, 1),
             'evaluation': str(self.evaluation)
         }
@@ -196,7 +196,7 @@ class GAE(Models):
         # embedding_attr_var_result_file = "result/GAE_{}_a_sig.emb".format('datasets')
 
         #dropout =0.6 ,lr = 0.001,weight_decay = 0,epochs = 1000
-        # dropout = 0.6
+        dropout = 0
         # lr = 0.001
         weight_decay = 0
         # epochs = 2000

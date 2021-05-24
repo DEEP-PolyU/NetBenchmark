@@ -250,6 +250,37 @@ def load_citationmat(data):
 
     return adj, features, labels, idx_train, idx_val, idx_test
 
+
+def load_citationmat_feature(data,use_feat=1):
+    """
+    Load Citation Networks Datasets.
+    """
+    if data == 'ACM':
+        features = data['Features']
+    else:
+        features = data['Attributes']
+    # features = data['Attributes']
+    labels = data['Label'].reshape(-1)
+    adj = data['Network']
+    features = row_normalize(features)
+
+    label_min = np.min(labels)
+    if label_min != 0:
+        labels = labels - 1
+    max_class = np.max(labels) + 1
+    class_one = np.eye(max_class)
+    labels = class_one[labels]
+    if use_feat:
+        features = sparse_mx_to_torch_sparse_tensor(features).float()
+    # else:
+        # features = create_sparse_eye_tensor(features.shape).float()
+
+    idx_train = np.array(range(500))
+    idx_val = np.array(range(500, 1000))
+    idx_test = np.array(range(1000, 1500))
+
+    return adj, features, labels, idx_train, idx_val, idx_test
+
 def mask_test_edges(adj):
     # Function to build test set with 10% positive links
     # NOTE: Splits are randomized and results might slightly deviate from reported numbers in the paper.
