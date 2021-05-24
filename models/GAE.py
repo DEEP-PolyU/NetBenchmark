@@ -115,11 +115,11 @@ def train(features, adj, adj_label, val_edges, val_edges_false, device, pos_weig
         else:
             cnt_wait += 1
 
-        print('Epoch %d / %d' % (epoch, epochs),)
-              # 'current_best_epoch: %d' % best_epoch,
-              # 'train_loss: %.4f' % loss_train,
-              # 'valid_acu: %.4f' % auc_,
-              # 'valid_ap: %.4f' % ap_)
+        print('Epoch %d / %d' % (epoch, epochs),
+              'current_best_epoch: %d' % best_epoch,
+              'train_loss: %.4f' % loss_train,
+              'valid_acu: %.4f' % auc_,
+              'valid_ap: %.4f' % ap_)
 
         if cnt_wait == 2800 and best_epoch != 0:
             print('Early stopping!')
@@ -171,9 +171,9 @@ class GAE(Models):
 
         space_dtree = {
 
-            # 'batch_size': hp.uniformint('batch_size', 1, 100),
+            'batch_size': hp.uniformint('batch_size', 1, 100),
             'epochs': hp.uniformint('epochs', 100, 5000),
-            'lr': hp.uniform('lr', 0.001, 0.1),
+            'lr': hp.loguniform('lr', np.log(0.05), np.log(0.2)),
             'dropout': hp.uniform('dropout', 0, 1),
             'evaluation': str(self.evaluation)
         }

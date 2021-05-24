@@ -32,7 +32,7 @@ class CAN_original(Models):
 
             'batch_size': hp.uniformint('batch_size', 1, 100),
             'nb_epochs': hp.uniformint('nb_epochs', 100, 5000),
-            'lr': hp.uniform('lr', 0.0001, 0.1), # walk_length,window_size
+            'lr': hp.loguniform('lr', np.log(0.05), np.log(0.2)), # walk_length,window_size
             'dropout': hp.uniform('dropout', 0, 1),
             'evaluation': str(self.evaluation)
         }
