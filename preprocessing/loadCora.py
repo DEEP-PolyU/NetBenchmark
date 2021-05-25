@@ -7,6 +7,7 @@ import scipy.sparse as sp
 import torch
 import os
 
+
 def create_sparse_eye_tensor(shape):
     row = np.array(range(shape[0])).astype(np.int64)
     col = np.array(range(shape[0])).astype(np.int64)
@@ -138,7 +139,7 @@ def load_citation(dataset_str="cora", normalization="AugNormAdj", use_feat=1, cu
         idx_val = range(len(y), len(y) + 500)
 
         # adj, features = preprocess_citation(adj, features, normalization)
-        #features = preprocess_citation_feat(features)  ##changed here
+        # features = preprocess_citation_feat(features)  ##changed here
 
     # porting to pytorch #changed heere
     # features = torch.FloatTensor(np.array(features.todense())).float()
@@ -153,10 +154,12 @@ def load_citation(dataset_str="cora", normalization="AugNormAdj", use_feat=1, cu
     # idx_train = torch.LongTensor(idx_train)
     # idx_val = torch.LongTensor(idx_val)
     # idx_test = torch.LongTensor(idx_test)
-    new_label=np.ones((len(labels),), dtype=int)
-    for i in range(len(labels)):
-        temp=np.where(labels[i] == 1)
-        new_label[i]=temp[0]
+    # new_label=np.ones((len(labels),), dtype=int)
+    # for i in range(len(labels)):
+    #     temp=np.where(labels[i] == 1)
+    #     new_label[i]=temp[0]
+
+    new_label =np.argmax(labels, axis=1)
 
     adj = adj.tocsc()
     features = features.tocsc() # change to csc

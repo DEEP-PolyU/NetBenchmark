@@ -66,7 +66,48 @@ class Cora(Datasets):
         super(Cora, self).__init__()
 
     def get_graph(self):
-        adj, features, labels, idx_train, idx_val, idx_test = load_citation()
+        adj, features, labels, idx_train, idx_val, idx_test = load_citation(dataset_str="cora")
+        data={"Network":adj,"Label":labels,"Attributes":features}
+        return data
+
+    @classmethod
+    def attributed(cls):
+        return True
+
+class Citeseer(Datasets):
+    def __init__(self):
+        super(Citeseer, self).__init__()
+
+    def get_graph(self):
+        adj, features, labels, idx_train, idx_val, idx_test = load_citation(dataset_str="citeseer")
+        data={"Network":adj,"Label":labels,"Attributes":features}
+        return data
+
+    @classmethod
+    def attributed(cls):
+        return True
+
+
+class Citeseer(Datasets):
+    def __init__(self):
+        super(Citeseer, self).__init__()
+
+    def get_graph(self):
+        adj, features, labels, idx_train, idx_val, idx_test = load_citation(dataset_str="citeseer")
+        data={"Network":adj,"Label":labels,"Attributes":features}
+        return data
+
+    @classmethod
+    def attributed(cls):
+        return True
+
+
+class neil001(Datasets):
+    def __init__(self):
+        super(neil001, self).__init__()
+
+    def get_graph(self):
+        adj, features, labels, idx_train, idx_val, idx_test = load_citation(dataset_str="nell.0.001")
         data={"Network":adj,"Label":labels,"Attributes":features}
         return data
 
