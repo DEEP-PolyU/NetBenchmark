@@ -1,6 +1,7 @@
 import scipy
 import logging
 from .loadCora import load_citation
+from .loadppi import load_ppi
 
 logger = logging.getLogger(__name__)
 def load_adjacency_matrix(file):
@@ -122,6 +123,20 @@ class pubmed(Datasets):
     def get_graph(self):
         adj, features, labels, idx_train, idx_val, idx_test = load_citation(dataset_str="pubmed")
         data={"Network":adj,"Label":labels,"Attributes":features}
+        return data
+
+    @classmethod
+    def attributed(cls):
+        return True
+
+
+class ppi(Datasets):
+    def __init__(self):
+        super(ppi, self).__init__()
+
+    def get_graph(self):
+        adj_full, adj_train, feats, new_label, role = load_ppi()
+        data={"Network":adj_full,"Label":new_label,"Attributes":feats}
         return data
 
     @classmethod

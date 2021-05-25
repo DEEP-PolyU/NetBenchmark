@@ -8,7 +8,7 @@ from preprocessing.loadCora import load_citation
 from models.FeatWalk import featwalk
 from models.NetMF import netmf
 from models.deepwalk import deepwalk
-from preprocessing.dataset import Flickr,ACM,Cora,BlogCatalog,Citeseer,neil001,pubmed
+from preprocessing.dataset import Flickr,ACM,Cora,BlogCatalog,Citeseer,neil001,pubmed,ppi
 from models.Node2vec import node2vec
 from models.DGI import DGI
 from models.GAE import GAE
@@ -23,7 +23,7 @@ import preprocessing.preprocessing as pre
 import copy
 from datetime import date
 
-datasetlist = [Cora, Flickr, BlogCatalog,ACM,Citeseer,neil001,pubmed]
+datasetlist = [Cora, Flickr, BlogCatalog,ACM,Citeseer,neil001,pubmed,ppi]
 datasetdict = {Cls.__name__.lower(): Cls for Cls in datasetlist}
 modellist=[featwalk, netmf, deepwalk, node2vec, DGI, GAE, CAN_new, CAN_original, ProNE]
 modeldict = {Cls.__name__.lower(): Cls for Cls in modellist}
@@ -36,9 +36,9 @@ def parse_args():
     parser = argparse.ArgumentParser(description='NetBenchmark(DeepLab).')
 
     parser.add_argument('--dataset', type=str,
-                        default='all',choices=datasetdict_all,
+                        default='ppi',choices=datasetdict_all,
                         help='select a available dataset (default: cora)')
-    parser.add_argument('--method', type=str, default='all',
+    parser.add_argument('--method', type=str, default='dgi',
                         choices=modeldict_all,
                         help='The learning method')
     parser.add_argument('--evaluation', type=str, default='link_prediction',
@@ -46,7 +46,7 @@ def parse_args():
                         help='The evaluation method')
     parser.add_argument('--variable_name', type=str,
                         help='The name of features in dataset')
-    parser.add_argument('--training_time', type=int, default=1.4   ,
+    parser.add_argument('--training_time', type=int, default=0.01   ,
                         help='The total training time you want')
     parser.add_argument('--input_file', type=str, default=None,
                         help='The input datasets you want')
