@@ -114,3 +114,16 @@ class neil001(Datasets):
     @classmethod
     def attributed(cls):
         return True
+
+class pubmed(Datasets):
+    def __init__(self):
+        super(pubmed, self).__init__()
+
+    def get_graph(self):
+        adj, features, labels, idx_train, idx_val, idx_test = load_citation(dataset_str="pubmed")
+        data={"Network":adj,"Label":labels,"Attributes":features}
+        return data
+
+    @classmethod
+    def attributed(cls):
+        return True
