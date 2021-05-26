@@ -1,7 +1,7 @@
 import scipy
 import logging
 from .loadCora import load_citation
-from .loadppi import load_ppi
+from .loadppi import load_saintdata
 
 logger = logging.getLogger(__name__)
 def load_adjacency_matrix(file):
@@ -135,7 +135,33 @@ class ppi(Datasets):
         super(ppi, self).__init__()
 
     def get_graph(self):
-        adj_full, adj_train, feats, new_label, role = load_ppi()
+        adj_full, adj_train, feats, new_label, role = load_saintdata('ppi')
+        data={"Network":adj_full,"Label":new_label,"Attributes":feats}
+        return data
+
+    @classmethod
+    def attributed(cls):
+        return True
+
+class reddit(Datasets):
+    def __init__(self):
+        super(reddit, self).__init__()
+
+    def get_graph(self):
+        adj_full, adj_train, feats, new_label, role = load_saintdata('reddit')
+        data={"Network":adj_full,"Label":new_label,"Attributes":feats}
+        return data
+
+    @classmethod
+    def attributed(cls):
+        return True
+
+class yelp(Datasets):
+    def __init__(self):
+        super(yelp, self).__init__()
+
+    def get_graph(self):
+        adj_full, adj_train, feats, new_label, role = load_saintdata('yelp')
         data={"Network":adj_full,"Label":new_label,"Attributes":feats}
         return data
 

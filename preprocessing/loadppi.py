@@ -138,15 +138,15 @@ def index_to_mask(index, size):
     mask[index] = True
     return mask
 
-def load_ppi():
+def load_saintdata(dataset_name):
 
 
-    adj_full = sp.load_npz('data/ppi/adj_full.npz').astype(np.bool)
-    adj_train = sp.load_npz('data/ppi/adj_train.npz').astype(np.bool)
-    role = json.load(open('data/ppi/role.json'))
-    feats = np.load('data/ppi/feats.npy')
+    adj_full = sp.load_npz('data/{}/adj_full.npz'.format(dataset_name)).astype(np.bool)
+    adj_train = sp.load_npz('data/{}/adj_train.npz'.format(dataset_name)).astype(np.bool)
+    role = json.load(open('data/{}/role.json'.format(dataset_name)))
+    feats = np.load('data/{}/feats.npy'.format(dataset_name))
 
-    class_map = json.load(open('data/ppi/class_map.json'))
+    class_map = json.load(open('data/{}/class_map.json'.format(dataset_name)))
 
     class_map = {int(k):v for k,v in class_map.items()}
     assert len(class_map) == feats.shape[0]
