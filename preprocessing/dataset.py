@@ -168,3 +168,17 @@ class yelp(Datasets):
     @classmethod
     def attributed(cls):
         return True
+
+
+class ogbn_arxiv(Datasets):
+    def __init__(self):
+        super(ogbn_arxiv, self).__init__()
+
+    def get_graph(self):
+        adj_full, adj_train, feats, new_label, role = load_saintdata('ogbn-arxiv')
+        data={"Network":adj_full,"Label":new_label,"Attributes":feats}
+        return data
+
+    @classmethod
+    def attributed(cls):
+        return True
