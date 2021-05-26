@@ -107,8 +107,7 @@ class Models(torch.nn.Module):
         emb = self.train_model(**best)
         return emb,best
 
-    def end2end(self):
-        trials
+    
 
     def get_emb(self):
         return self.emb
