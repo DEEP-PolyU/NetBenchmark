@@ -7,7 +7,7 @@ from evaluation.link_prediction import link_prediction,link_prediction_Automatic
 from evaluation.node_classification import node_classifcation_test
 import numpy as np
 import hyperopt
-from hyperopt import fmin, tpe, hp, space_eval,Trials, partial
+from hyperopt import fmin, tpe, hp, space_eval,Trials, partial,atpe
 import os
 
 class Models(torch.nn.Module):
@@ -77,8 +77,11 @@ class Models(torch.nn.Module):
         trials = Trials()
         if self.tuning == 'random':
             algo = partial(hyperopt.rand.suggest)
-        else:
+        elif self.tuning== 'tpe':
             algo = partial(tpe.suggest)
+        else:
+            algo = partial(atpe.suggest)
+
         space_dtree = self.check_train_parameters()
         best = fmin(fn=self.get_score, space=space_dtree, algo=algo, max_evals=1000, trials=trials, timeout=self.stop_time)
         print(best)
@@ -91,8 +94,11 @@ class Models(torch.nn.Module):
         trials = Trials()
         if self.tuning == 'random':
             algo = partial(hyperopt.rand.suggest)
-        else:
+        elif self.tuning == 'tpe':
             algo = partial(tpe.suggest)
+        else:
+            algo = partial(atpe.suggest)
+
         space_dtree = self.check_train_parameters()
         best = fmin(
             fn=self.get_score, space=space_dtree, algo=algo, max_evals=1000, trials=trials, timeout=self.stop_time)
@@ -100,6 +106,9 @@ class Models(torch.nn.Module):
         print('end of training:{:.2f}s'.format(self.stop_time))
         emb = self.train_model(**best)
         return emb,best
+
+    def end2end(self):
+        trials
 
     def get_emb(self):
         return self.emb

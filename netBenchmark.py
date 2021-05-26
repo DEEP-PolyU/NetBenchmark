@@ -46,12 +46,13 @@ def parse_args():
                         help='The evaluation method')
     parser.add_argument('--variable_name', type=str,
                         help='The name of features in dataset')
-    parser.add_argument('--training_time', type=int, default=1.4   ,
+    parser.add_argument('--training_time', type=float, default=1.4   ,
                         help='The total training time you want')
     parser.add_argument('--input_file', type=str, default=None,
                         help='The input datasets you want')
     parser.add_argument('--tunning_method', type=str, default='random',
-                        help='random search/ tpe search')
+                        choices=['random','tpe','atpe'],
+                        help='random search/ tpe search/adaptive tpe search')
     parser.add_argument('--cuda_device',type=str,default='0')
 
     args = parser.parse_args()
