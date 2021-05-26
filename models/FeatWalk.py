@@ -277,7 +277,9 @@ class featwalk(Models):
     def is_deep_model(cls):
         return False
 
-
+    @classmethod
+    def is_end2end(cls):
+        return False
 
     def train_model(self, **kwargs):
 

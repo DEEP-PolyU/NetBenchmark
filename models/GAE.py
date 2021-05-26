@@ -166,6 +166,9 @@ class GAE(Models):
     def is_deep_model(cls):
         return True
 
+    @classmethod
+    def is_end2end(cls):
+        return False
 
     def check_train_parameters(self):
 
@@ -174,7 +177,7 @@ class GAE(Models):
             'batch_size': hp.uniformint('batch_size', 1, 100),
             'epochs': hp.uniformint('epochs', 100, 5000),
             'lr': hp.loguniform('lr', np.log(0.05), np.log(0.2)),
-            'dropout': hp.uniform('dropout', 0, 1),
+            'dropout': hp.uniform('dropout', 0, 0.75),
             'evaluation': str(self.evaluation)
         }
 

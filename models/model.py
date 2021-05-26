@@ -32,11 +32,14 @@ class Models(torch.nn.Module):
             self.best = best
             self.emb = emb
             self.end_time = time.time() - start_time
+        elif self.is_end2end():
+            self.F1_mic, self.F1_mac, self.best = self.end2end()
+            self.end_time = time.time() - start_time
         else:
             emb,best = self.shallow_algo()
             self.best = best
-        self.emb = emb
-        self.end_time = time.time()-start_time
+            self.emb = emb
+            self.end_time = time.time()-start_time
 
 
     def check_train_parameters(self):
@@ -48,6 +51,9 @@ class Models(torch.nn.Module):
 
     @classmethod
     def is_deep_model(cls):
+        raise NotImplementedError
+    @classmethod
+    def is_end2end(cls):
         raise NotImplementedError
 
     def forward(self):
@@ -67,6 +73,10 @@ class Models(torch.nn.Module):
             score=node_classifcation_test(np.array(emb),self.mat_content['Label'])
 
         return -score
+    def en2end_get_score(self,params):
+        F1_mic,F1_mac = self.train_model(**params)
+
+        return -F1_mic
 
     def preprocessing(self, filename):
         return None
@@ -107,12 +117,33 @@ class Models(torch.nn.Module):
         emb = self.train_model(**best)
         return emb,best
 
-    
+    def end2end(self):
+        trials = Trials()
+        if self.tuning == 'random':
+            algo = partial(hyperopt.rand.suggest)
+        elif self.tuning == 'tpe':
+            algo = partial(tpe.suggest)
+        else:
+            algo = partial(atpe.suggest)
+
+        space_dtree = self.check_train_parameters()
+        best = fmin(
+            fn=self.en2end_get_score, space=space_dtree, algo=algo, max_evals=1000, trials=trials, timeout=self.stop_time)
+        print(best)
+        print('end of training:{:.2f}s'.format(self.stop_time))
+        F1_mic, F1_mac = self.train_model(**best)
+
+        return F1_mic, F1_mac, best
+
+    def end2endsocre(self):
+        return self.F1_mic,self.F1_mac
 
     def get_emb(self):
         return self.emb
+
     def get_best(self):
         return self.best
+
     def get_time(self):
         return self.end_time
 

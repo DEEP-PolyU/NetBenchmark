@@ -25,7 +25,7 @@ from datetime import date
 
 datasetlist = [Cora, Flickr, BlogCatalog,ACM,Citeseer,neil001,pubmed,ppi,ogbn_arxiv] #yelp,reddit
 datasetdict = {Cls.__name__.lower(): Cls for Cls in datasetlist}
-modellist=[featwalk, netmf, deepwalk, node2vec, DGI, GAE, CAN_new, CAN_original, ProNE]
+modellist=[featwalk, netmf, deepwalk, node2vec, DGI, GAE, CAN_new, CAN_original, ProNE,GCN]
 modeldict = {Cls.__name__.lower(): Cls for Cls in modellist}
 
 datasetdict_all = copy.deepcopy(datasetdict)
@@ -36,9 +36,9 @@ def parse_args():
     parser = argparse.ArgumentParser(description='NetBenchmark(DeepLab).')
 
     parser.add_argument('--dataset', type=str,
-                        default='ogbn_arxiv',choices=datasetdict_all,
+                        default='cora',choices=datasetdict_all,
                         help='select a available dataset (default: cora)')
-    parser.add_argument('--method', type=str, default='dgi',
+    parser.add_argument('--method', type=str, default='gcn',
                         choices=modeldict_all,
                         help='The learning method')
     parser.add_argument('--evaluation', type=str, default='link_prediction',
@@ -46,7 +46,7 @@ def parse_args():
                         help='The evaluation method')
     parser.add_argument('--variable_name', type=str,
                         help='The name of features in dataset')
-    parser.add_argument('--training_time', type=float, default=1.4   ,
+    parser.add_argument('--training_time', type=float, default=0.01   ,
                         help='The total training time you want')
     parser.add_argument('--input_file', type=str, default=None,
                         help='The input datasets you want')
@@ -129,22 +129,34 @@ def main(args):
             Graph,Stoptime = get_graph_time(args,dkey)
 
             model = model(datasets=Graph, iter=iter, Time=Stoptime,evaluation=args.evaluation,tuning=args.tunning_method,cuda=args.cuda_device)
-            emb = model.get_emb()
-            best = model.get_best()
-            f1_mic, f1_mac = node_classifcation(np.array(emb), Graph['Label'])
-            adj_train, train_edges, val_edges, val_edges_false, test_edges, test_edges_false = pre.mask_test_edges(
-                Graph['Network'])
-            roc_score, ap_score = link_prediction(emb, edges_pos=test_edges, edges_neg=test_edges_false)
+            if str(mkey) == 'gcn':
+                f1_mic,f1_mac = model.end2endsocre()
+                best = model.get_best()
+                temp_result = {'Dataset': dkey, 'model': mkey, 'f1_micro': f1_mic, 'f1_macro': f1_mac,
+                               'roc_score': 0, 'ap_score': 0, 'best': best}
+                resultList.append(temp_result)
+                # save it in result file by using 'add' model
+                fileObject = open(eval_file_name, 'a+')
+                fileObject.write(str(temp_result) + '\n')
+                fileObject.close()
 
-            temp_result = {'Dataset': dkey, 'model': mkey, 'f1_micro': f1_mic, 'f1_macro': f1_mac,
-                              'roc_score': roc_score, 'ap_score': ap_score, 'best': best}
-            resultList.append(temp_result)
+            else:
+                emb = model.get_emb()
+                best = model.get_best()
+                f1_mic, f1_mac = node_classifcation(np.array(emb), Graph['Label'])
+                adj_train, train_edges, val_edges, val_edges_false, test_edges, test_edges_false = pre.mask_test_edges(
+                    Graph['Network'])
+                roc_score, ap_score = link_prediction(emb, edges_pos=test_edges, edges_neg=test_edges_false)
 
-            # save it in result file by using 'add' model
-            fileObject = open(eval_file_name, 'a+')
-            fileObject.write(str(temp_result)+'\n')
-            fileObject.close()
-            np.save('result/embFiles/' + mkey + '_embedding_' + args.dataset + '.npy', emb)
+                temp_result = {'Dataset': dkey, 'model': mkey, 'f1_micro': f1_mic, 'f1_macro': f1_mac,
+                                  'roc_score': roc_score, 'ap_score': ap_score, 'best': best}
+                resultList.append(temp_result)
+
+                # save it in result file by using 'add' model
+                fileObject = open(eval_file_name, 'a+')
+                fileObject.write(str(temp_result)+'\n')
+                fileObject.close()
+                np.save('result/embFiles/' + mkey + '_embedding_' + args.dataset + '.npy', emb)
 
 
 if __name__ == "__main__":

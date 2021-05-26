@@ -134,6 +134,10 @@ class netmf(Models):
     def is_deep_model(cls):
         return False
 
+    @classmethod
+    def is_end2end(cls):
+        return False
+
     def train_model(self, **kwargs):
         mat_content=self.mat_content
         logger.info("Running NetMF for a small window size...")

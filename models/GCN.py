@@ -24,32 +24,48 @@ class GCN(Models):
     @classmethod
     def is_preprocessing(cls):
         return False
-
     @classmethod
     def is_deep_model(cls):
+        return False
+    @classmethod
+    def is_end2end(cls):
         return True
+
+    def check_train_parameters(self):
+        space_dtree = {
+
+            'batch_size': hp.uniformint('batch_size', 1, 100),
+            'nb_epochs': hp.uniformint('nb_epochs', 100, 120),
+            'lr': hp.loguniform('lr', np.log(0.05), np.log(0.2)), # walk_length,window_size
+            'dropout': hp.uniform('dropout', 0, 0.75),
+            'evaluation': str(self.evaluation)
+        }
+
+        return space_dtree
 
     def train_model(self, **kwargs):
 
         semi=0
         seed=42
         hidden=128
-        dropout=0.
-        lr=0.01
+        dropout=kwargs["dropout"]
+        lr=kwargs["lr"]
         weight_decay=0
-        epochs=200
+        epochs=int(kwargs["nb_epochs"])
         semi_rate=0.6
-        device=self.device
-        cuda=kwargs['cuda']
 
         np.random.seed(seed)
-        torch.manual_seed(seed)
-        if torch.cuda.is_available():
-            torch.cuda.manual_seed(seed)
+
+        if self.use_gpu:
+            device = self.device
+            torch.cuda.manual_seed(42)
+        else:
+            device = self.device
+            print("--> No GPU")
         fastmode = False
         # Load data
         # adj, features, labels, idx_train, idx_val, idx_test = load_data()
-        adj, features, labels, idx_train, idx_val, idx_test=load_normalized_format(datasets=self.mat_content,semi_rate=semi_rate,cuda=cuda)
+        adj, features, labels, idx_train, idx_val, idx_test=load_normalized_format(datasets=self.mat_content,semi_rate=semi_rate)
 
         # Model and optimizer
         model = GCN_original(nfeat=features.shape[1],
@@ -86,12 +102,12 @@ class GCN(Models):
 
             # loss_val = F.nll_loss(output[idx_val], labels[idx_val])
             # acc_val = accuracy(output[idx_val], labels[idx_val])
-            print('Epoch: {:04d}'.format(epoch + 1),
-                  'loss_train: {:.4f}'.format(loss_train.item()),
-                  'acc_train: {:.4f}'.format(acc_train.item()),
-                  # 'loss_val: {:.4f}'.format(loss_val.item()),
-                  # 'acc_val: {:.4f}'.format(acc_val.item()),
-                  'time: {:.4f}s'.format(time.time() - t))
+            # print('Epoch: {:04d}'.format(epoch + 1),
+            #       'loss_train: {:.4f}'.format(loss_train.item()),
+            #       'acc_train: {:.4f}'.format(acc_train.item()),
+            #       # 'loss_val: {:.4f}'.format(loss_val.item()),
+            #       # 'acc_val: {:.4f}'.format(acc_val.item()),
+            #       'time: {:.4f}s'.format(time.time() - t))
 
         def test(idx_test, labels):
             model.eval()
@@ -128,4 +144,4 @@ class GCN(Models):
         print('F1_mac:', F1_mac_mean)
 
 
-        return 0
+        return F1_mic_mean,F1_mac_mean

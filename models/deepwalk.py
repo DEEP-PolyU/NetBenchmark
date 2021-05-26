@@ -103,6 +103,10 @@ class deepwalk(Models):
     def is_deep_model(cls):
         return False
 
+    @classmethod
+    def is_end2end(cls):
+        return False
+
     def train_model(self, **kwargs): #(self,rootdir,variable_name,number_walks):
 
         d = 128

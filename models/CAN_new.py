@@ -22,6 +22,10 @@ class CAN_new(Models):
     def is_deep_model(cls):
         return True
 
+    @classmethod
+    def is_end2end(cls):
+        return False
+
     def check_train_parameters(self):
         space_dtree = {
             'nb_epochs': hp.uniformint('nb_epochs', 100, 5000),

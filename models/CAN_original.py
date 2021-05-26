@@ -27,13 +27,17 @@ class CAN_original(Models):
     def is_deep_model(cls):
         return True
 
+    @classmethod
+    def is_end2end(cls):
+        return False
+
     def check_train_parameters(self):
         space_dtree = {
 
             'batch_size': hp.uniformint('batch_size', 1, 100),
             'nb_epochs': hp.uniformint('nb_epochs', 100, 5000),
             'lr': hp.loguniform('lr', np.log(0.05), np.log(0.2)), # walk_length,window_size
-            'dropout': hp.uniform('dropout', 0, 1),
+            'dropout': hp.uniform('dropout', 0, 0.75),
             'evaluation': str(self.evaluation)
         }
 
@@ -112,8 +116,8 @@ class CAN_original(Models):
         device= self.device
 
         learning_rate = kwargs["lr"]
-        hidden1 = 64
-        hidden2 = 32
+        hidden1 = 256
+        hidden2 = 128
         dropout = kwargs["dropout"]
         epochs = int(kwargs["nb_epochs"])
 

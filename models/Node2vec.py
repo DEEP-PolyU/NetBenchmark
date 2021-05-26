@@ -161,6 +161,10 @@ class node2vec(Models):
     def is_deep_model(cls):
         return False
 
+    @classmethod
+    def is_end2end(cls):
+        return False
+
     def check_train_parameters(self):
 
         space_dtree = {
