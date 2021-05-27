@@ -119,7 +119,7 @@ class GCN(Models):
 
         # if __name__ == '__main__':
         # Train model
-        kf = KFold(n_splits=10, random_state=seed, shuffle=True)
+        kf = KFold(n_splits=5, random_state=seed, shuffle=True)
         t_total = time.time()
         F1_mic_tot = []
         F1_mac_tot = []
