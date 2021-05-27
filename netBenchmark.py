@@ -47,7 +47,7 @@ def parse_args():
                         help='The evaluation method')
     parser.add_argument('--variable_name', type=str,
                         help='The name of features in dataset')
-    parser.add_argument('--training_time', type=float, default=1.4  ,
+    parser.add_argument('--training_time', type=float, default=1.4,
                         help='The total training time you want')
     parser.add_argument('--input_file', type=str, default=None,
                         help='The input datasets you want')
@@ -130,17 +130,11 @@ def main(args):
             Graph,Stoptime = get_graph_time(args,dkey)
 
             model = model(datasets=Graph, iter=iter, Time=Stoptime,evaluation=args.evaluation,tuning=args.tunning_method,cuda=args.cuda_device)
-            if str(mkey) == 'gcn':
+            roc_score=0
+            ap_score=0
+            if model.is_end2end():
                 f1_mic,f1_mac = model.end2endsocre()
                 best = model.get_best()
-                temp_result = {'Dataset': dkey, 'model': mkey, 'f1_micro': f1_mic, 'f1_macro': f1_mac,
-                               'roc_score': 0, 'ap_score': 0, 'best': best}
-                resultList.append(temp_result)
-                # save it in result file by using 'add' model
-                fileObject = open(eval_file_name, 'a+')
-                fileObject.write(str(temp_result) + '\n')
-                fileObject.close()
-
             else:
                 emb = model.get_emb()
                 best = model.get_best()
@@ -148,16 +142,13 @@ def main(args):
                 adj_train, train_edges, val_edges, val_edges_false, test_edges, test_edges_false = pre.mask_test_edges(
                     Graph['Network'])
                 roc_score, ap_score = link_prediction(emb, edges_pos=test_edges, edges_neg=test_edges_false)
-
-                temp_result = {'Dataset': dkey, 'model': mkey, 'f1_micro': f1_mic, 'f1_macro': f1_mac,
-                                  'roc_score': roc_score, 'ap_score': ap_score, 'best': best}
-                resultList.append(temp_result)
-
-                # save it in result file by using 'add' model
-                fileObject = open(eval_file_name, 'a+')
-                fileObject.write(str(temp_result)+'\n')
-                fileObject.close()
                 np.save('result/embFiles/' + mkey + '_embedding_' + args.dataset + '.npy', emb)
+            temp_result = {'Dataset': dkey, 'model': mkey, 'f1_micro': f1_mic, 'f1_macro': f1_mac,
+                              'roc_score': roc_score, 'ap_score': ap_score, 'best': best}
+            # save it in result file by using 'add' model
+            fileObject = open(eval_file_name, 'a+')
+            fileObject.write(str(temp_result) + '\n')
+            fileObject.close()
 
 
 if __name__ == "__main__":
