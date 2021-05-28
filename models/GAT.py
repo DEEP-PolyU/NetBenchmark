@@ -126,8 +126,6 @@ class GATModel(Models):
             #       # 'acc_val: {:.4f}'.format(acc_val.item()),
             #       'time: {:.4f}s'.format(time.time() - t))
 
-
-
         def test(idx_test, labels):
             model.eval()
             output = model(features, adj)

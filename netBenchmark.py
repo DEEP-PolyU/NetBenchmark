@@ -116,19 +116,15 @@ def main(args):
         datasetdict[args.dataset] = temp
 
     # initial variable to store the final result and clean the file
-
-    resultList=[]
     eval_file_name='result/evalFiles/result_'+str(args.tunning_method)+'_' +str(args.method) + '_' + str(today) + '_' + str(args.evaluation) + '.txt'
     fileObject = open(eval_file_name, 'w')
     fileObject.close()
-
 
     for mkey in modeldict:
         for dkey in datasetdict:
             print("\n----------Train information-------------\n",'dataset: {} ,Algorithm:{} '.format(dkey,mkey))
             model = modeldict[mkey]
             Graph,Stoptime = get_graph_time(args,dkey)
-
             model = model(datasets=Graph, iter=iter, Time=Stoptime,evaluation=args.evaluation,tuning=args.tunning_method,cuda=args.cuda_device)
             roc_score=0
             ap_score=0
@@ -149,7 +145,6 @@ def main(args):
             fileObject = open(eval_file_name, 'a+')
             fileObject.write(str(temp_result) + '\n')
             fileObject.close()
-
 
 if __name__ == "__main__":
     # np.random.seed(32)

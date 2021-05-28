@@ -12,7 +12,7 @@ import os
 
 class Models(torch.nn.Module):
 
-    def __init__(self, *, datasets, Time, evaluation,tuning,cuda,**kwargs):
+    def __init__(self, *, datasets, time_setting, evaluation,tuning,cuda,**kwargs):
         # Train on CPU (hide GPU) due to memory constraints
         # os.environ['CUDA_VISIBLE_DEVICES'] = [0,1,2,3,4,5,6]
         self.use_gpu = torch.cuda.is_available()
@@ -20,7 +20,7 @@ class Models(torch.nn.Module):
         self.device = torch.device(cuda_name if self.use_gpu else 'cpu')
         self.mat_content=datasets
         self.best = {}
-        self.stop_time = Time
+        self.stop_time = time_setting
         self.evaluation = evaluation
         self.tuning = tuning
         super(Models, self).__init__()
@@ -28,7 +28,7 @@ class Models(torch.nn.Module):
             self.preprocessing(datasets)
         start_time = time.time()
         if self.is_deep_model():
-            emb,best = self.deep_algo()
+            emb, best = self.deep_algo()
             self.best = best
             self.emb = emb
             self.end_time = time.time() - start_time
@@ -36,11 +36,10 @@ class Models(torch.nn.Module):
             self.F1_mic, self.F1_mac, self.best = self.end2end()
             self.end_time = time.time() - start_time
         else:
-            emb,best = self.shallow_algo()
+            emb, best = self.shallow_algo()
             self.best = best
             self.emb = emb
             self.end_time = time.time()-start_time
-
 
     def check_train_parameters(self):
         return None
