@@ -17,7 +17,8 @@ from models.ProNE import ProNE
 from models.CAN_new import CAN_new
 from models.CAN_original import CAN_original
 from models.GAT import GATModel
-from evaluation.evaluation import evaluation
+from models.HOPE import HOPE
+from models.Grarep import Grarep
 from evaluation.link_prediction import link_prediction
 from evaluation.node_classification import node_classifcation
 import preprocessing.preprocessing as pre
@@ -26,7 +27,7 @@ from datetime import date
 
 datasetlist = [Cora, Flickr, BlogCatalog,ACM,Citeseer,neil001,pubmed,ppi,ogbn_arxiv] #yelp,reddit
 datasetdict = {Cls.__name__.lower(): Cls for Cls in datasetlist}
-modellist=[featwalk, netmf, deepwalk, node2vec, DGI, GAE, CAN_new, CAN_original, ProNE,GCN,GATModel]
+modellist=[featwalk, netmf, deepwalk, node2vec, DGI, GAE, CAN_new, CAN_original, ProNE,GCN,GATModel,HOPE,Grarep]
 modeldict = {Cls.__name__.lower(): Cls for Cls in modellist}
 
 datasetdict_all = copy.deepcopy(datasetdict)
