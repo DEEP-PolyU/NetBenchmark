@@ -29,7 +29,7 @@ from datetime import date
 
 datasetlist = [Cora, Flickr, BlogCatalog,ACM,Citeseer,neil001,pubmed,ppi,ogbn_arxiv] #yelp,reddit
 datasetdict = {Cls.__name__.lower(): Cls for Cls in datasetlist}
-modellist=[featwalk, netmf, deepwalk, node2vec, DGI, GAE, CAN_new, CAN_original, ProNE,GCN,GATModel,HOPE,Grarep,LINE,NetSMF]
+modellist=[featwalk, netmf, deepwalk, node2vec, DGI, GAE, CAN_new, CAN_original, ProNE,GCN,GCN2,GATModel,HOPE,Grarep,LINE,NetSMF]
 modeldict = {Cls.__name__.lower(): Cls for Cls in modellist}
 
 datasetdict_all = copy.deepcopy(datasetdict)
