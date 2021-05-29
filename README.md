@@ -58,10 +58,7 @@ Graph,Stoptime = get_graph_time(args,dkey)
 model = model(datasets=Graph, iter=iter, Time=Stoptime,evaluation=args.evaluation,tuning=args.tunning_method,cuda=args.cuda_device)
 ```
 
-
-
 ## Design detail
-
 ### Dataset class: `Dataset`
 
 All the input datasets inherit from a base class: Dataset.
@@ -88,7 +85,10 @@ The main idea of this class is to tune parameters and obtain the best result, wh
 ```python
 class Models(torch.nn.Module):
     
-    def __init__(self, *, datasets, Time, evaluation,tuning,**kwargs)
+    def __init__(self, *, datasets, time_setting, evaluation,tuning,**kwargs):
+       
+    def is_end2end(cls):
+        raise NotImplementedError
 
     def check_train_parameters(self)
 
@@ -118,6 +118,8 @@ The following 3 methods should be overridden:
 
 - `is_deep_model(cls)` Determine whether an algorithm is deep model
 
+- `is_deep_model(cls)` Determine whether an algorithm is deep model
+
 - `train_model(self, **kwargs)`Training the datasets and obtain the embedding matrix according to different settings
 
 #### Automatic parameter tuning
@@ -140,7 +142,6 @@ return emb,best
 ### Evaluation class: `Evaluation layer`
 
 - `node_classifcation(feature, labels)` 10-fold Node classification
-
 - `link_prediction(emb_name,variable_name, edges_pos, edges_neg)`
 
 Examples:

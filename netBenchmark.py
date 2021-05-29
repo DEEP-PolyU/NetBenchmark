@@ -125,7 +125,7 @@ def main(args):
             print("\n----------Train information-------------\n",'dataset: {} ,Algorithm:{} '.format(dkey,mkey))
             model = modeldict[mkey]
             Graph,Stoptime = get_graph_time(args,dkey)
-            model = model(datasets=Graph, iter=iter, Time=Stoptime,evaluation=args.evaluation,tuning=args.tunning_method,cuda=args.cuda_device)
+            model = model(datasets=Graph, iter=iter, time_setting=Stoptime,evaluation=args.evaluation,tuning=args.tunning_method,cuda=args.cuda_device)
             roc_score=0
             ap_score=0
             if model.is_end2end():
