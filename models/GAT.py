@@ -90,16 +90,18 @@ class GATModel(Models):
                                lr=lr,
                                weight_decay=weight_decay)
 
+
+
         model.to(device)
         features = features.to(device)
-        adj = adj.to_dense().to(device)
+        adj = adj.to(device)
         labels = labels.to(device)
 
 
         # idx_train = idx_train.to(device)
         # idx_val = idx_val.to(device)
         # idx_test = idx_test.to(device)
-        features, adj, labels = Variable(features), Variable(adj), Variable(labels)
+        # features, adj, labels = Variable(features), Variable(adj), Variable(labels)
 
         def train(epochs, idx_train):
             t = time.time()
