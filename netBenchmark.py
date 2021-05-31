@@ -8,7 +8,7 @@ from preprocessing.loadCora import load_citation
 from models.FeatWalk import featwalk
 from models.NetMF import netmf
 from models.deepwalk import deepwalk
-from preprocessing.dataset import Flickr,ACM,Cora,BlogCatalog,Citeseer,neil001,pubmed,ppi,reddit,yelp,ogbn_arxiv
+from preprocessing.dataset import Flickr,ACM,Cora,BlogCatalog,Citeseer,neil001,pubmed,ppi,reddit,yelp,ogbn_arxiv,chameleon,wisconsin,film,squirrel,texas,cornell
 from models.Node2vec import node2vec
 from models.DGI import DGI
 from models.GAE import GAE
@@ -27,7 +27,7 @@ import preprocessing.preprocessing as pre
 import copy
 from datetime import date
 
-datasetlist = [Cora, Flickr, BlogCatalog,ACM,Citeseer,neil001,pubmed,ppi,ogbn_arxiv] #yelp,reddit
+datasetlist = [Cora, Flickr, BlogCatalog,ACM,Citeseer,neil001,pubmed,ppi,ogbn_arxiv,chameleon,wisconsin,film,squirrel] #yelp,reddit,cornell
 datasetdict = {Cls.__name__.lower(): Cls for Cls in datasetlist}
 modellist=[featwalk, netmf, deepwalk, node2vec, DGI, GAE, CAN_new, CAN_original, ProNE,GCN,GCN2,GATModel,HOPE,Grarep,LINE,NetSMF]
 modeldict = {Cls.__name__.lower(): Cls for Cls in modellist}

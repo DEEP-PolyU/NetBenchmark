@@ -84,7 +84,7 @@ def load_citation(dataset_str="cora", normalization="AugNormAdj", use_feat=1, cu
         idx_val = range(len(y), len(y) + 500)
 
         # adj, features = preprocess_citation(adj, features, normalization)
-        features = preprocess_citation_feat(features)
+        # features = preprocess_citation_feat(features)
 
     elif dataset_str == 'nell.0.001':
         # Find relation nodes, add them as zero-vecs into the right position
@@ -124,7 +124,7 @@ def load_citation(dataset_str="cora", normalization="AugNormAdj", use_feat=1, cu
         idx_val = range(len(y), len(y) + 500)
 
         # adj, features = preprocess_citation(adj, features, normalization)
-        features = preprocess_citation_feat(features)
+        # features = preprocess_citation_feat(features)
 
     else:
         features = sp.vstack((allx, tx)).tolil()

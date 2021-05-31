@@ -2,6 +2,7 @@ import scipy
 import logging
 from .loadCora import load_citation
 from .loadppi import load_saintdata
+from .load_edge import load_edgedata
 
 logger = logging.getLogger(__name__)
 def load_adjacency_matrix(file):
@@ -177,6 +178,98 @@ class ogbn_arxiv(Datasets):
     def get_graph(self):
         adj_full, adj_train, feats, new_label, role = load_saintdata('ogbn-arxiv')
         data={"Network":adj_full,"Label":new_label,"Attributes":feats}
+        return data
+
+    @classmethod
+    def attributed(cls):
+        return True
+
+class chameleon(Datasets):
+    def __init__(self):
+        super(chameleon, self).__init__()
+
+    def get_graph(self):
+        adj, feature,labels= load_edgedata('chameleon')
+        data={"Network":adj,"Label":labels,"Attributes":feature}
+        return data
+
+    @classmethod
+    def attributed(cls):
+        return True
+
+class cornell(Datasets):
+    def __init__(self):
+        super(cornell, self).__init__()
+
+    def get_graph(self):
+        adj, feature,labels= load_edgedata('cornell')
+        data={"Network":adj,"Label":labels,"Attributes":feature}
+        return data
+
+    @classmethod
+    def attributed(cls):
+        return True
+
+class texas(Datasets):
+    def __init__(self):
+        super(texas, self).__init__()
+
+    def get_graph(self):
+        adj, feature,labels= load_edgedata('texas')
+        data={"Network":adj,"Label":labels,"Attributes":feature}
+        return data
+
+    @classmethod
+    def attributed(cls):
+        return True
+
+class texas(Datasets):
+    def __init__(self):
+        super(texas, self).__init__()
+
+    def get_graph(self):
+        adj, feature,labels= load_edgedata('texas')
+        data={"Network":adj,"Label":labels,"Attributes":feature}
+        return data
+
+    @classmethod
+    def attributed(cls):
+        return True
+
+class squirrel(Datasets):
+    def __init__(self):
+        super(squirrel, self).__init__()
+
+    def get_graph(self):
+        adj, feature,labels= load_edgedata('squirrel')
+        data={"Network":adj,"Label":labels,"Attributes":feature}
+        return data
+
+    @classmethod
+    def attributed(cls):
+        return True
+
+class wisconsin(Datasets):
+    def __init__(self):
+        super(wisconsin, self).__init__()
+
+    def get_graph(self):
+        adj, feature,labels= load_edgedata('wisconsin')
+        data={"Network":adj,"Label":labels,"Attributes":feature}
+        return data
+
+    @classmethod
+    def attributed(cls):
+        return True
+
+
+class film(Datasets):
+    def __init__(self):
+        super(film, self).__init__()
+
+    def get_graph(self):
+        adj, feature, labels = load_edgedata('film')
+        data = {"Network": adj, "Label": labels, "Attributes": feature}
         return data
 
     @classmethod
