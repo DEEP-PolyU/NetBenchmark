@@ -3,7 +3,6 @@ import itertools
 import os
 import os.path as osp
 import random
-import numba
 import shutil
 from collections import defaultdict
 from typing import Optional
