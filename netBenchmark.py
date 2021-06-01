@@ -21,6 +21,7 @@ from models.HOPE import HOPE
 from models.Grarep import Grarep
 from models.LINE import LINE
 from models.NetSMF import NetSMF
+from models.GCN2 import GCN2
 from evaluation.link_prediction import link_prediction
 from evaluation.node_classification import node_classifcation
 import preprocessing.preprocessing as pre
