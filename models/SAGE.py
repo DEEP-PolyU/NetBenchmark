@@ -139,7 +139,7 @@ class SAGE(Models):
         lr = kwargs["lr"]
         weight_decay = 0
         epochs = int(kwargs["nb_epochs"])
-        # epochs = 1
+        # epochs = 20
         semi_rate = 1
         kwargs['use_feat'] = 0
         layer_num = '4,10'
