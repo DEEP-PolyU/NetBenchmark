@@ -62,7 +62,7 @@ class GraphInput(object):
     """
 
     def __init__(
-            self, flag
+            self, dataset,usefeat=0,layer_num='4,10',semi=1
     ):
         self.graph = None
         self.graph_value = None
@@ -75,15 +75,16 @@ class GraphInput(object):
         self.node_num = None
         self.node_dim = None
         self.node_iter = None
+        self.semi = semi
         self.node_iter_valid = None
         self.node_iter_test = None
         self.neigbor_sampler = None
-        self.batch_size = flag.batch_size
-        self.dataset = flag.dataset
-        self.use_feat = flag.use_feat
-        self.para = flag
+        self.batch_size = 60
+        self.dataset = dataset
+        self.use_feat = usefeat
+        self.lay_num = layer_num
         self.u_node_iter = None
-        self.u_neighs_num = [] if flag.layer_num == '' else [int(x) for x in flag.layer_num.split(',')]
+        self.u_neighs_num = [] if self.lay_num == '' else [int(x) for x in self.lay_num.split(',')]
         self.u_depth = len(self.u_neighs_num)
         self.avg_neigh = None
         self.read_data_from_edges()
@@ -103,9 +104,9 @@ class GraphInput(object):
         # with open(data_file, 'rb') as f:
         #     graph_, self.graph_value, self.X, self.Y, self.train_index,\
         #     self.valid_index, self.test_index = pickle.load(f)
-
+        from preprocessing.preprocessing import load_normalized_agrc
         graph_, self.graph_value, self.X, self.Y, self.train_index, self.valid_index, self.test_index \
-            = load_citation_agcr(self.para.dataset, self.para.normalization)
+            = load_normalized_agrc(datasets=self.dataset,semi_rate=self.semi)
 
 
         self.node_num, self.node_dim = self.X.shape
@@ -116,7 +117,7 @@ class GraphInput(object):
         src, dest = graph_[0], graph_[1]
         self.graph = HomeGraph(src, dest)
         self.avg_neigh = int(self.graph.avg_neigh)
-        if self.para.semi == 0:
+        if self.semi == 0:
             self.generate_train_index()
 
         print('{} # of node {} dim {} edges {} avg_num={}'.format(self.dataset, self.node_num, self.node_dim,
@@ -124,12 +125,12 @@ class GraphInput(object):
         print('train_set: {} valid_set: {} test_set: {}'.format(self.train_index.shape[0],
                                                                 self.valid_index.shape[0], self.test_index.shape[0]))
 
-    def init_server(self):
+    def init_server(self, train_index, valid_index, test_index):
         batch_size = self.batch_size
         self.neigbor_sampler = RandomNHopNeighborSampler_homoge(self.u_neighs_num)
-        self.node_iter = NodeSampler(self.train_index, self.Y, batch_size, remain_delet=True, shuffle=True)
-        self.node_iter_valid = NodeSampler(self.valid_index, self.Y, batch_size, remain_delet=False, shuffle=False)
-        self.node_iter_test = NodeSampler(self.test_index, self.Y, batch_size, remain_delet=False, shuffle=False)
+        self.node_iter = NodeSampler(train_index, self.Y, len(train_index), remain_delet=True, shuffle=True)
+        self.node_iter_valid = NodeSampler(valid_index, self.Y, len(valid_index), remain_delet=False, shuffle=False)
+        self.node_iter_test = NodeSampler(test_index, self.Y, len(test_index), remain_delet=False, shuffle=False)
 
     def _next_sample_public(self, node_iter):
         src_ids, src_y = node_iter.next()

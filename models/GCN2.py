@@ -74,7 +74,7 @@ class GCN2(Models):
 
         # Model and optimizer
         model = GCNII(nfeat=features.shape[1],
-                      nlayers=256,
+                      nlayers=64,
                       nhidden=hidden,
                       nclass=int(labels.max()) + 1,
                       dropout=dropout,

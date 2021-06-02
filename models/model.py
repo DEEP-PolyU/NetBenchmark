@@ -93,9 +93,10 @@ class Models(torch.nn.Module):
 
         space_dtree = self.check_train_parameters()
         best = fmin(fn=self.get_score, space=space_dtree, algo=algo, max_evals=1000, trials=trials, timeout=self.stop_time)
-        print(best)
+        hyperparam = hyperopt.space_eval(space_dtree,best)
+        print(hyperparam)
         print('end of training:{:.2f}s'.format(self.stop_time))
-        emb = self.train_model(**best)
+        emb = self.train_model(**hyperparam)
 
         return emb,best
 

@@ -22,6 +22,7 @@ from models.Grarep import Grarep
 from models.LINE import LINE
 from models.NetSMF import NetSMF
 from models.GCN2 import GCN2
+from models.SAGE import SAGE
 from evaluation.link_prediction import link_prediction
 from evaluation.node_classification import node_classifcation
 import preprocessing.preprocessing as pre
@@ -30,7 +31,7 @@ from datetime import date
 
 datasetlist = [Cora, Flickr, BlogCatalog,ACM,Citeseer,neil001,pubmed,ppi,ogbn_arxiv,chameleon,wisconsin,film,squirrel] #yelp,reddit,cornell
 datasetdict = {Cls.__name__.lower(): Cls for Cls in datasetlist}
-modellist=[featwalk, netmf, deepwalk, node2vec, DGI, GAE, CAN_new, CAN_original, ProNE,GCN,GCN2,GATModel,HOPE,Grarep,LINE,NetSMF]
+modellist=[featwalk, netmf, deepwalk, node2vec, DGI, GAE, CAN_new, CAN_original, ProNE,GCN,GCN2,GATModel,HOPE,Grarep,LINE,NetSMF,SAGE]
 modeldict = {Cls.__name__.lower(): Cls for Cls in modellist}
 
 datasetdict_all = copy.deepcopy(datasetdict)
