@@ -114,7 +114,7 @@ def train(features, adj, adj_label, val_edges, val_edges_false, device, pos_weig
             max_ap = ap_
             best_epoch = epoch
             cnt_wait = 0
-            torch.save(model.state_dict(), 'models/SAGE_package/savepath/save.pth')
+            torch.save(model.state_dict(), 'models/GAE_package/savepath/save.pth')
         else:
             cnt_wait += 1
 
@@ -132,7 +132,7 @@ def train(features, adj, adj_label, val_edges, val_edges_false, device, pos_weig
         optimizer.step()
 
 
-    model.load_state_dict(torch.load('models/SAGE_package/savepath/save.pth'))
+    model.load_state_dict(torch.load('models/GAE_package/savepath/save.pth'))
     model.eval()
     emb = model(features, adj)
 
