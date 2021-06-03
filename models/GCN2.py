@@ -36,16 +36,20 @@ class GCN2(Models):
 
             'batch_size': hp.uniformint('batch_size', 1, 100),
             'nb_epochs': hp.uniformint('nb_epochs', 100, 120),
-            'lr': hp.loguniform('lr', np.log(0.05), np.log(0.2)), # walk_length,window_size
+            # 'lr': hp.loguniform('lr', np.log(0.05), np.log(0.2)),
+            'lr': hp.choice('lr', [0,1,2,3,4,5,6]),# walk_length,window_size
             'dropout': hp.uniform('dropout', 0, 0.75),
             'lamda': hp.uniform('lamda', 0, 0.75),
             'alpha': hp.uniform('alpha', 0, 0.75),
+            'layer': hp.randint('layer',1,64),
             'evaluation': str(self.evaluation)
         }
 
         return space_dtree
 
     def train_model(self, **kwargs):
+
+        lrrate = [0.1, 0.01, 0.001, 0.0001, 0.005, 0.05, 0.00005]
 
         semi=0
         seed=42
@@ -57,6 +61,8 @@ class GCN2(Models):
         semi_rate=0.6
         lamda=kwargs["lamda"]
         alpha = kwargs["alpha"]
+        layer = kwargs['layer']
+        lr = lrrate[lr]
 
 
         np.random.seed(seed)
@@ -74,7 +80,7 @@ class GCN2(Models):
 
         # Model and optimizer
         model = GCNII(nfeat=features.shape[1],
-                      nlayers=64,
+                      nlayers=layer,
                       nhidden=hidden,
                       nclass=int(labels.max()) + 1,
                       dropout=dropout,
