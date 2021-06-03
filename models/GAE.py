@@ -74,6 +74,9 @@ def mat_import(mat):
 
 def train(features, adj, adj_label, val_edges, val_edges_false, device, pos_weight, norm,hid1,hid2,dropout,lr,weight_decay,epochs,**kwargs):
 
+    lrrate = [0.1,0.01,0.001,0.0001,0.005,0.05]
+    lr = lrrate[lr]
+
     model = GCNTra(nfeat=features.shape[1],
                 nhid=hid1,
                 nhid2=hid2,
@@ -111,7 +114,7 @@ def train(features, adj, adj_label, val_edges, val_edges_false, device, pos_weig
             max_ap = ap_
             best_epoch = epoch
             cnt_wait = 0
-            # torch.save(model.state_dict(), save_path)
+            torch.save(model.state_dict(), 'models/SAGE_package/savepath/save.pth')
         else:
             cnt_wait += 1
 
@@ -125,13 +128,11 @@ def train(features, adj, adj_label, val_edges, val_edges_false, device, pos_weig
             print('Early stopping!')
             break
 
-
-
-
         loss.backward()
         optimizer.step()
 
-    # model.load_state_dict(torch.load(save_path))
+
+    model.load_state_dict(torch.load('models/SAGE_package/savepath/save.pth'))
     model.eval()
     emb = model(features, adj)
 
@@ -176,7 +177,8 @@ class GAE(Models):
 
             'batch_size': hp.uniformint('batch_size', 1, 100),
             'epochs': hp.uniformint('epochs', 100, 5000),
-            'lr': hp.loguniform('lr', np.log(0.05), np.log(0.2)),
+            # 'lr': hp.loguniform('lr', np.log(0.05), np.log(0.2)),
+            'lr': hp.choice('lr', [0,1,2,3,4,5]),
             'dropout': hp.uniform('dropout', 0, 0.75),
             'evaluation': str(self.evaluation)
         }
