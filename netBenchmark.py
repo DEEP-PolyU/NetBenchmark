@@ -121,7 +121,7 @@ def main(args):
         datasetdict[args.dataset] = temp
 
     # initial variable to store the final result and clean the file
-    eval_file_name='result/evalFiles/result_'+str(args.tunning_method)+'_' +str(args.method) + '_' + str(today) + '_' + str(args.evaluation) + '.txt'
+    eval_file_name='result/evalFiles/result_'+str(args.tunning_method)+'_' +str(args.method) + '_' + str(today) + '_' + str(args.evaluation) + '_' + str(args.dataset)+ '.txt'
     fileObject = open(eval_file_name, 'w')
     fileObject.close()
 
