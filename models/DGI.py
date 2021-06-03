@@ -49,7 +49,8 @@ class DGI(Models):
 
             'batch_size': hp.uniformint('batch_size', 1, 100),
             'nb_epochs': hp.uniformint('nb_epochs', 100, 120),
-            'lr': hp.loguniform('lr', np.log(0.05), np.log(0.2)), # walk_length,window_size
+            # 'lr': hp.loguniform('lr', np.log(0.05), np.log(0.2)), # walk_length,window_size
+            'lr': hp.choice('lr', [0, 1, 2, 3, 4, 5, 6]),
             'evaluation': str(self.evaluation)
         }
 
@@ -68,10 +69,12 @@ class DGI(Models):
 
 
         # training params
+        lrrate = [0.1, 0.01, 0.001, 0.0001, 0.005, 0.05, 0.00005]
         batch_size = 1
         nb_epochs = int(kwargs["nb_epochs"])
         patience = 20
         lr = kwargs["lr"]
+        lr = lrrate[lr]
         l2_coef = 0.0
         drop_prob = 0.0
         hid_units = 128
