@@ -76,7 +76,11 @@ class SDNE(Models):
             'nb_epochs': hp.uniformint('nb_epochs', 100, 5000),
             # 'lr': hp.loguniform('lr', np.log(0.05), np.log(0.2)), # walk_length,window_size
             'lr': hp.choice('lr', [0, 1, 2, 3, 4, 5, 6]),
+            'nu1': hp.choice('nu1', [0, 1, 2, 3, 4, 5, 6]),
+            'nu2': hp.choice('nu2', [0, 1, 2, 3, 4, 5, 6]),
             'dropout': hp.uniform('dropout', 0, 0.75),
+            'alpha': hp.choice('alpha', [0, 1, 2, 3, 4, 5, 6]),
+            'beta': hp.randint('beta',5,25),
             'evaluation': str(self.evaluation)
         }
 
@@ -91,6 +95,11 @@ class SDNE(Models):
 
         lr = kwargs["lr"]
         lr = lrrate[lr]
+        nu1 = lrrate[kwargs['nu1']]
+        nu2 = lrrate[kwargs['nu2']]
+        alpha = lrrate[kwargs['alpha']]
+        beta = kwargs['beta']
+
         l2_coef = 0.0
         drop_prob = kwargs["dropout"]
         hid_units = 128
@@ -101,7 +110,7 @@ class SDNE(Models):
         num_node = G.number_of_nodes()
         #TODO: Parameter range of alpha ,beta, nu1,nu2
         model = SDNE_layer(
-            num_node, hidden_size1=256, hidden_size2=128, droput=drop_prob, alpha=0.1, beta=5, nu1=1e-4, nu2=1e-3
+            num_node, hidden_size1=256, hidden_size2=128, droput=drop_prob, alpha=alpha, beta=beta, nu1=nu1, nu2=nu2
         )
 
         A = torch.from_numpy(nx.adjacency_matrix(G).todense().astype(np.float32))
@@ -111,15 +120,15 @@ class SDNE(Models):
         model = model.to(self.device)
 
         opt = torch.optim.Adam(model.parameters(), lr=lr)
-        epoch_iter = tqdm(range(nb_epochs))
-        for epoch in epoch_iter:
+        # epoch_iter = tqdm(range(nb_epochs))
+        for epoch in range(nb_epochs):
             opt.zero_grad()
             L_1st, L_2nd, L_all, L_reg = model.forward(A, L)
             Loss = L_all + L_reg
             Loss.backward()
-            epoch_iter.set_description(
-                f"Epoch: {epoch:03d}, L_1st: {L_1st:.4f}, L_2nd: {L_2nd:.4f}, L_reg: {L_reg:.4f}"
-            )
+            # epoch_iter.set_description(
+            #     f"Epoch: {epoch:03d}, L_1st: {L_1st:.4f}, L_2nd: {L_2nd:.4f}, L_reg: {L_reg:.4f}"
+            # )
             opt.step()
         embedding = model.get_emb(A)
         return embedding.detach().cpu().numpy()
