@@ -59,7 +59,7 @@ def mat_import(mat):
     adj_orig = adj
     adj_orig = adj_orig - sp.dia_matrix((adj_orig.diagonal()[np.newaxis, :], [0]), shape=adj_orig.shape)
     adj_orig.eliminate_zeros()
-    adj_train, train_edges, val_edges, val_edges_false, test_edges, test_edges_false = process.mask_test_edges(adj)
+    adj_train, train_edges, val_edges, val_edges_false, test_edges, test_edges_false = process.mask_test_edges_fast_gae(adj)
     adj = adj_train
 
     # Some preprocessing and transfer to tensor
@@ -98,6 +98,7 @@ def train(features, adj, adj_label, val_edges, val_edges_false, device, pos_weig
     best_epoch = 0
     cnt_wait = 0
     start_time = time.time()
+    file_name='models/GAE_package/savepath/'+kwargs['tuning_method']+'_save.pth'
     for epoch in range(int(epochs)):
         model.train()
         optimizer.zero_grad()
@@ -114,7 +115,7 @@ def train(features, adj, adj_label, val_edges, val_edges_false, device, pos_weig
             max_ap = ap_
             best_epoch = epoch
             cnt_wait = 0
-            torch.save(model.state_dict(), 'models/GAE_package/savepath/save.pth')
+            torch.save(model.state_dict(), file_name)
         else:
             cnt_wait += 1
 
@@ -132,7 +133,7 @@ def train(features, adj, adj_label, val_edges, val_edges_false, device, pos_weig
         optimizer.step()
 
 
-    model.load_state_dict(torch.load('models/GAE_package/savepath/save.pth'))
+    model.load_state_dict(torch.load(file_name))
     model.eval()
     emb = model(features, adj)
 
@@ -180,7 +181,8 @@ class GAE(Models):
             # 'lr': hp.loguniform('lr', np.log(0.05), np.log(0.2)),
             'lr': hp.choice('lr', [0,1,2,3,4,5,6]),
             'dropout': hp.uniform('dropout', 0, 0.75),
-            'evaluation': str(self.evaluation)
+            'evaluation': str(self.evaluation),
+            'tuning_method': str(self.tuning)
         }
 
         return space_dtree
@@ -205,7 +207,6 @@ class GAE(Models):
         # lr = 0.001
         weight_decay = 0
         # epochs = 2000
-
 
         features, adj_norm, adj_label, val_edges, val_edges_false, test_edges, test_edges_false, norm, pos_weight = mat_import(self.mat_content)
         #features, adj, adj_label, val_edges, val_edges_false, save_path, device, pos_weight, norm,hid1,hid2,dropout,lr,weight_decay,epochs
