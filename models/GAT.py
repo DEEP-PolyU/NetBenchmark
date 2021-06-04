@@ -60,7 +60,7 @@ class GATModel(Models):
         nb_heads = 8 #int(kwargs['nb_heads'])
         alpha = 0.2
 
-        sparse = False
+        sparse = True
         np.random.seed(seed)
 
         if self.use_gpu:
@@ -73,6 +73,7 @@ class GATModel(Models):
         # Load data
         # adj, features, labels, idx_train, idx_val, idx_test = load_data()
         adj, features, labels, idx_train, idx_val, idx_test = load_normalized_format(datasets=self.mat_content,semi_rate=semi_rate)
+
 
         # Model and optimizer
         if sparse == True:
@@ -97,14 +98,14 @@ class GATModel(Models):
 
         model.to(device)
         features = features.to(device)
-        adj = adj.to(device)
+        adj = adj.to_dense().to(device)
         labels = labels.to(device)
 
 
         # idx_train = idx_train.to(device)
         # idx_val = idx_val.to(device)
         # idx_test = idx_test.to(device)
-        # features, adj, labels = Variable(features), Variable(adj), Variable(labels)
+        features, adj, labels = Variable(features), Variable(adj), Variable(labels)
 
         def train(epochs, idx_train):
             t = time.time()
