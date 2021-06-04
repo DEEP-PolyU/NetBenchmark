@@ -59,7 +59,7 @@ def mat_import(mat):
     adj_orig = adj
     adj_orig = adj_orig - sp.dia_matrix((adj_orig.diagonal()[np.newaxis, :], [0]), shape=adj_orig.shape)
     adj_orig.eliminate_zeros()
-    adj_train, train_edges, val_edges, val_edges_false, test_edges, test_edges_false = process.mask_test_edges(adj)
+    adj_train, train_edges, val_edges, val_edges_false, test_edges, test_edges_false = process.mask_test_edges_fast_gae(adj)
     adj = adj_train
 
     # Some preprocessing and transfer to tensor
