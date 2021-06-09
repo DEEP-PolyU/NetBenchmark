@@ -75,10 +75,11 @@ def mat_import(mat):
 def train(features, adj, adj_label, val_edges, val_edges_false, device, pos_weight, norm,hid1,hid2,dropout,lr,weight_decay,epochs,**kwargs):
 
     lrrate = [0.1,0.01,0.001,0.0001,0.005,0.05,0.00005]
+    hidden = [64,128,256]
     lr = lrrate[lr]
-
+    hidden1 = hidden[hid1]
     model = GCNTra(nfeat=features.shape[1],
-                nhid=hid1,
+                nhid=hidden1,
                 nhid2=hid2,
                 dropout=dropout)
 
@@ -125,7 +126,7 @@ def train(features, adj, adj_label, val_edges, val_edges_false, device, pos_weig
               'valid_acu: %.4f' % auc_,
               'valid_ap: %.4f' % ap_)
 
-        if cnt_wait == 2800 and best_epoch != 0:
+        if cnt_wait == 200 and best_epoch != 0:
             print('Early stopping!')
             break
 
@@ -182,7 +183,8 @@ class GAE(Models):
             'lr': hp.choice('lr', [0,1,2,3,4,5,6]),
             'dropout': hp.uniform('dropout', 0, 0.75),
             'evaluation': str(self.evaluation),
-            'tuning_method': str(self.tuning)
+            'tuning_method': str(self.tuning),
+            'hid1':hp.choice('hid1',[0,1,2])
         }
 
         return space_dtree
@@ -211,7 +213,7 @@ class GAE(Models):
         features, adj_norm, adj_label, val_edges, val_edges_false, test_edges, test_edges_false, norm, pos_weight = mat_import(self.mat_content)
         #features, adj, adj_label, val_edges, val_edges_false, save_path, device, pos_weight, norm,hid1,hid2,dropout,lr,weight_decay,epochs
         embeding = train(features=features, adj = adj_norm, adj_label = adj_label, val_edges = val_edges, val_edges_false = val_edges_false,  device=device, pos_weight=pos_weight, norm=norm,
-                         hid1= 256,hid2 = 128,weight_decay = weight_decay,**kwargs)
+                         hid2 = 128,weight_decay = weight_decay,**kwargs)
 
 
 
