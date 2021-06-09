@@ -212,6 +212,10 @@ class CAN_new(Models):
             roc_curr_a, ap_curr_a = get_roc_score_a(val_feas, val_feas_false, preds_sub_a)
             val_roc_score.append(roc_curr)
 
+            if avg_cost> 10000:
+                print('Early stopping!')
+                break
+
             # Run backward
             avg_cost.backward()
             optimizer.step()
