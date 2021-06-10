@@ -76,7 +76,7 @@ def train(features, adj, adj_label, val_edges, val_edges_false, device, pos_weig
 
     lrrate = [0.1,0.01,0.001,0.0001,0.005,0.05,0.00005]
     hidden = [64,128,256]
-    weight = [0,5e-4]
+    weight = [0,5e-4,1e-3]
     weight1 = weight[weight_decay]
     lr = lrrate[lr]
     hidden1 = hidden[hid1]
@@ -187,7 +187,7 @@ class GAE(Models):
             'evaluation': str(self.evaluation),
             'tuning_method': str(self.tuning),
             'hid1':hp.choice('hid1',[0,1,2]),
-            'weight_decay': hp.choice('weight_decay',[0,1])
+            'weight_decay': hp.choice('weight_decay',[0,1,2])
         }
 
         return space_dtree
