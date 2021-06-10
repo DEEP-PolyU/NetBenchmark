@@ -76,6 +76,8 @@ def train(features, adj, adj_label, val_edges, val_edges_false, device, pos_weig
 
     lrrate = [0.1,0.01,0.001,0.0001,0.005,0.05,0.00005]
     hidden = [64,128,256]
+    weight = [0,5e-4]
+    weight1 = weight[weight_decay]
     lr = lrrate[lr]
     hidden1 = hidden[hid1]
     model = GCNTra(nfeat=features.shape[1],
@@ -84,7 +86,7 @@ def train(features, adj, adj_label, val_edges, val_edges_false, device, pos_weig
                 dropout=dropout)
 
     optimizer = optim.Adam(model.parameters(),
-                           lr=lr, weight_decay=weight_decay)
+                           lr=lr, weight_decay=weight1)
     pos_weight = pos_weight.to(device)
     b_xent = nn.BCEWithLogitsLoss(pos_weight=pos_weight)
 
@@ -184,7 +186,8 @@ class GAE(Models):
             'dropout': hp.uniform('dropout', 0, 0.75),
             'evaluation': str(self.evaluation),
             'tuning_method': str(self.tuning),
-            'hid1':hp.choice('hid1',[0,1,2])
+            'hid1':hp.choice('hid1',[0,1,2]),
+            'weight_decay': hp.choice('weight_decay',[0,1])
         }
 
         return space_dtree
@@ -207,13 +210,13 @@ class GAE(Models):
         #dropout =0.6 ,lr = 0.001,weight_decay = 0,epochs = 1000
         dropout = 0
         # lr = 0.001
-        weight_decay = 0
+
         # epochs = 2000
 
         features, adj_norm, adj_label, val_edges, val_edges_false, test_edges, test_edges_false, norm, pos_weight = mat_import(self.mat_content)
         #features, adj, adj_label, val_edges, val_edges_false, save_path, device, pos_weight, norm,hid1,hid2,dropout,lr,weight_decay,epochs
         embeding = train(features=features, adj = adj_norm, adj_label = adj_label, val_edges = val_edges, val_edges_false = val_edges_false,  device=device, pos_weight=pos_weight, norm=norm,
-                         hid2 = 128,weight_decay = weight_decay,**kwargs)
+                         hid2 = 128,**kwargs)
 
 
 
