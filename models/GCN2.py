@@ -1,16 +1,13 @@
 from __future__ import division
 from __future__ import print_function
 
-import time
-import argparse
-import numpy as np
+
 
 import torch
 import torch.nn.functional as F
 import torch.optim as optim
 
 from .GCN_package.utils import load_data, accuracy, load_citation,load_citationANEmat_gac,load_webANEmat_gac,F1_score
-from .GCN_package.input_graph_feed import GraphInput
 from .GCN2_package import GCNII
 from .model import *
 from preprocessing.preprocessing import load_normalized_format
@@ -37,7 +34,7 @@ class GCN2(Models):
             'batch_size': hp.uniformint('batch_size', 1, 100),
             'nb_epochs': hp.uniformint('nb_epochs', 100, 5000),
             # 'lr': hp.loguniform('lr', np.log(0.05), np.log(0.2)),
-            'lr': hp.choice('lr', [0,1,2,3,4,5,6]),# walk_length,window_size
+            'lr': hp.choice('lr', [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]),# walk_length,window_size
             'dropout': hp.uniform('dropout', 0, 0.75),
             'lamda': hp.uniform('lamda', 0, 0.75),
             'alpha': hp.uniform('alpha', 0, 0.75),
@@ -49,7 +46,7 @@ class GCN2(Models):
 
     def train_model(self, **kwargs):
 
-        lrrate = [0.1, 0.01, 0.001, 0.0001, 0.005, 0.05, 0.00005]
+        lrrate = [-5, -4.5, -4, -3.5, -3, -2.5, -2.0, -1.5, -1.0, -0.5]
 
         semi=0
         seed=42
@@ -58,11 +55,11 @@ class GCN2(Models):
         lr=kwargs["lr"]
         weight_decay=0
         epochs=int(kwargs["nb_epochs"])
-        semi_rate=0.6
+        semi_rate=0.1
         lamda=kwargs["lamda"]
         alpha = kwargs["alpha"]
         layer = kwargs['layer']
-        lr = lrrate[lr]
+        lr =10**lrrate[lr]
 
 
         np.random.seed(seed)
@@ -127,11 +124,12 @@ class GCN2(Models):
             #       'time: {:.4f}s'.format(time.time() - t))
 
         def test(idx_test, labels):
-            model.eval()
-            output = model(features, adj)
-            loss_test = F.nll_loss(output[idx_test], labels[idx_test])
-            acc_test = accuracy(output[idx_test], labels[idx_test])
-            micro, macro = F1_score(output[idx_test], labels[idx_test])
+            with torch.no_grad():
+                model.eval()
+                output = model(features, adj)
+                loss_test = F.nll_loss(output[idx_test], labels[idx_test])
+                acc_test = accuracy(output[idx_test], labels[idx_test])
+                micro, macro = F1_score(output[idx_test], labels[idx_test])
             return micro, macro
 
         # if __name__ == '__main__':

@@ -38,7 +38,7 @@ class GATModel(Models):
             'nb_epochs': hp.uniformint('nb_epochs', 100, 120),
             # 'lr': hp.loguniform('lr', np.log(0.05), np.log(0.2)), # walk_length,window_size
             'dropout': hp.uniform('dropout', 0, 0.75),
-            'lr': hp.choice('lr', [0, 1, 2, 3, 4, 5, 6]),
+            'lr': hp.choice('lr', [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]),
             # 'nb_heads': hp.uniformint('nb_heads',1,10),
             'evaluation': str(self.evaluation)
         }
@@ -47,12 +47,12 @@ class GATModel(Models):
 
     def train_model(self, **kwargs):
 
-        lrrate = [0.1, 0.01, 0.001, 0.0001, 0.005, 0.05, 0.00005]
+        lrrate = [-5, -4.5, -4, -3.5, -3, -2.5, -2.0, -1.5, -1.0, -0.5]
         semi=0
         seed=42
         hidden=128
         dropout=kwargs["dropout"]
-        lr=kwargs["lr"]
+        lr=10**kwargs["lr"]
         lr = lrrate[lr]
         weight_decay=0
         epochs=int(kwargs["nb_epochs"])

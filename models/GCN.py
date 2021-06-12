@@ -37,7 +37,8 @@ class GCN(Models):
             'batch_size': hp.uniformint('batch_size', 1, 100),
             'nb_epochs': hp.uniformint('nb_epochs', 100, 120),
             # 'lr': hp.loguniform('lr', np.log(0.05), np.log(0.2)), # walk_length,window_size
-            'lr': hp.choice('lr', [0, 1, 2, 3, 4, 5, 6]),
+            'lr': hp.choice('lr', [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]),
+            # 'lr':hp.uniform('lr',0,1),
             'dropout': hp.uniform('dropout', 0, 0.75),
             'evaluation': str(self.evaluation)
         }
@@ -46,16 +47,18 @@ class GCN(Models):
 
     def train_model(self, **kwargs):
 
-        lrrate = [0.1, 0.01, 0.001, 0.0001, 0.005, 0.05, 0.00005]
+        lrrate = [-5, -4.5, -4, -3.5, -3, -2.5, -2.0, -1.5, -1.0, -0.5]
         semi=0
         seed=42
         hidden=128
         dropout=kwargs["dropout"]
-        lr=kwargs["lr"]
-        lr = lrrate[lr]
+        # lr=np.power(10,-4*kwargs["lr"])
+        lr = kwargs["lr"]
+        lr =10**lrrate[lr]
 
         weight_decay=0
-        epochs=int(kwargs["nb_epochs"])
+        # epochs=int(kwargs["nb_epochs"])
+        epochs = 1000
         semi_rate=0.6
 
         np.random.seed(seed)
@@ -75,7 +78,7 @@ class GCN(Models):
         model = GCN_original(nfeat=features.shape[1],
                     nhid=hidden,
                     nclass=labels.max().item() + 1,
-                    dropout=dropout)
+                    dropout=0)
         optimizer = optim.Adam(model.parameters(),
                                lr=lr, weight_decay=weight_decay)
 

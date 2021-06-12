@@ -74,11 +74,11 @@ def mat_import(mat):
 
 def train(features, adj, adj_label, val_edges, val_edges_false, device, pos_weight, norm,hid1,hid2,dropout,lr,weight_decay,epochs,**kwargs):
 
-    lrrate = [0.1,0.01,0.001,0.0001,0.005,0.05,0.00005]
+    lrrate = [-5, -4.5, -4, -3.5, -3, -2.5, -2.0, -1.5, -1.0, -0.5]
     hidden = [64,128,256]
     weight = [0,5e-4,1e-3]
     weight1 = weight[weight_decay]
-    lr = lrrate[lr]
+    lr = 10**lrrate[lr]
     hidden1 = hidden[hid1]
     model = GCNTra(nfeat=features.shape[1],
                 nhid=hidden1,
@@ -182,7 +182,7 @@ class GAE(Models):
             'batch_size': hp.uniformint('batch_size', 1, 100),
             'epochs': hp.uniformint('epochs', 100, 5000),
             # 'lr': hp.loguniform('lr', np.log(0.05), np.log(0.2)),
-            'lr': hp.choice('lr', [0,1,2,3,4,5,6]),
+            'lr': hp.choice('lr', [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]),
             'dropout': hp.uniform('dropout', 0, 0.75),
             'evaluation': str(self.evaluation),
             'tuning_method': str(self.tuning),
