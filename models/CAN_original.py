@@ -38,8 +38,7 @@ class CAN_original(Models):
             'nb_epochs': hp.uniformint('nb_epochs', 100, 5000),
             # 'lr': hp.loguniform('lr', np.log(0.05), np.log(0.2)), # walk_length,window_size
             'lr': hp.choice('lr', [0, 1, 2, 3, 4, 5, 6]),
-            'dropout': hp.uniform('dropout', 0, 0.75),
-            'evaluation': str(self.evaluation)
+            'dropout': hp.uniform('dropout', 0, 0.75)
         }
 
         return space_dtree

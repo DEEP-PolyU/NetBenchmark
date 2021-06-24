@@ -13,8 +13,7 @@ class LINE(Models):
             'walk_length': hp.uniformint('walk_length', 1, 100),
             'walk_num': hp.uniformint('walk_num', 1, 100),
             'alpha': hp.uniform('alpha', 0, 1),
-            'negative': hp.uniformint('negative', 1, 10),
-            'evaluation': str(self.evaluation)
+            'negative': hp.uniformint('negative', 1, 10)
         }
 
         return space_dtree

@@ -49,14 +49,14 @@ def deepwalk_fun(CombG,d,**kwargs):
                                                           rand=random.Random(seed),
                                                           num_workers=os.cpu_count())
 
-        print("Counting vertex frequency...")
+        # print("Counting vertex frequency...")
         if not vertex_freq_degree:
             vertex_counts = serialized_walks.count_textfiles(walk_files, 1)
         else:
             # use degree distribution for frequency in tree
             vertex_counts = G.degree(nodes=G.iterkeys())
 
-        print("Training...")
+        # print("Training...")
         model = Skipgram(sentences=serialized_walks.combine_files_iter(walk_files), vocabulary_counts=vertex_counts,
                          size=d,
                          window=window_size, min_count=0, workers=os.cpu_count())
@@ -83,8 +83,7 @@ class deepwalk(Models):
 
             'number_walks': hp.uniformint('number_walks', 5, 80),
             'walk_length': hp.uniformint('walk_length', 5, 50),
-            'window_size': hp.uniformint('window_size', 5, 50), #walk_length,window_size
-            'evaluation': str(self.evaluation)
+            'window_size': hp.uniformint('window_size', 5, 50)
         }
 
 

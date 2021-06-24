@@ -7,8 +7,7 @@ from sklearn import preprocessing
 class HOPE(Models):
     def check_train_parameters(self):
         space_dtree = {
-            'beta': hp.uniform('beta', 0, 1),
-            'evaluation': str(self.evaluation)
+            'beta': hp.uniform('beta', 0, 1)
         }
 
         return space_dtree

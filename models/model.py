@@ -27,9 +27,13 @@ class Models(torch.nn.Module):
         if self.is_preprocessing():
             self.preprocessing(datasets)
         start_time = time.time()
-        emb, best = self.parameter_tuning()
-        self.best = best
-        self.emb = emb
+        if self.is_end2end():
+            self.F1_mic, self.F1_mac, self.best = self.end2end()
+            self.end_time = time.time() - start_time
+        else:
+            emb, best = self.parameter_tuning()
+            self.best = best
+            self.emb = emb
         self.end_time = time.time() - start_time
 
 

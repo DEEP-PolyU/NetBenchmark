@@ -110,14 +110,14 @@ def train(features, adj, adj_label, val_edges, val_edges_false, device, pos_weig
         else:
             cnt_wait += 1
 
-        print('Epoch %d / %d' % (epoch, epochs),
-              'current_best_epoch: %d' % best_epoch,
-              'train_loss: %.4f' % loss_train,
-              'valid_acu: %.4f' % auc_,
-              'valid_ap: %.4f' % ap_)
+        # print('Epoch %d / %d' % (epoch, epochs),
+        #       'current_best_epoch: %d' % best_epoch,
+        #       'train_loss: %.4f' % loss_train,
+        #       'valid_acu: %.4f' % auc_,
+        #       'valid_ap: %.4f' % ap_)
 
         if cnt_wait == 200 and best_epoch != 0:
-            print('Early stopping!')
+            # print('Early stopping!')
             break
 
         loss.backward()
@@ -172,7 +172,6 @@ class GAE(Models):
             # 'lr': hp.loguniform('lr', np.log(0.05), np.log(0.2)),
             'lr': hp.choice('lr', [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]),
             'dropout': hp.uniform('dropout', 0, 0.75),
-            'evaluation': str(self.evaluation),
             'tuning_method': str(self.tuning),
             'hid1':hp.choice('hid1',[0,1,2]),
             'weight_decay': hp.choice('weight_decay',[0,1,2])

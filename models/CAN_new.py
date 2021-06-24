@@ -30,8 +30,7 @@ class CAN_new(Models):
         space_dtree = {
             'nb_epochs': hp.uniformint('nb_epochs', 100, 5000),
             # 'lr': hp.loguniform('lr', np.log(0.05), np.log(0.2)), # walk_length,window_size
-            'lr': hp.choice('lr', [0, 1, 2, 3, 4, 5, 6]),
-            'evaluation': str(self.evaluation)
+            'lr': hp.choice('lr', [0, 1, 2, 3, 4, 5, 6])
         }
 
         return space_dtree
@@ -61,7 +60,7 @@ class CAN_new(Models):
         adj_orig = adj
         adj_orig = adj_orig - sp.dia_matrix((adj_orig.diagonal()[np.newaxis, :], [0]), shape=adj_orig.shape)
         adj_orig.eliminate_zeros()
-        print('--->Generate train/valid links for unsupervised learning...')
+        # print('--->Generate train/valid links for unsupervised learning...')
         adj_train, train_edges, val_edges, val_edges_false, test_edges, test_edges_false = mask_test_edges(adj)
         fea_train, train_feas, val_feas, val_feas_false, test_feas, test_feas_false = mask_test_feas(features)
 
@@ -75,9 +74,9 @@ class CAN_new(Models):
         features = sparse_to_tuple(features.tocoo())
         num_features = features[2][1]
         features_nonzero = features[1].shape[0]
-        print(features[1].shape)
+        # print(features[1].shape)
         # Create model
-        print('--->Create model...')
+        # print('--->Create model...')
         # args can be one parameter
         # 创建model这里的参数是传到CAN的构造函数(init)处
         model = CAN(hidden1, hidden2, num_features, num_nodes, features_nonzero, dropout).to(device)
@@ -213,7 +212,7 @@ class CAN_new(Models):
             val_roc_score.append(roc_curr)
 
             if avg_cost> 10000:
-                print('Early stopping!')
+                # print('Early stopping!')
                 break
 
             # Run backward

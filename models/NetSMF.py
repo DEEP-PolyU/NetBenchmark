@@ -12,8 +12,7 @@ class NetSMF(Models):
     def check_train_parameters(self):
         space_dtree = {
             'negative': hp.uniformint('negative', 1, 10),
-            'window_size': hp.uniformint('window_size', 1, 20),
-            'evaluation': str(self.evaluation)
+            'window_size': hp.uniformint('window_size', 1, 20)
         }
 
         return space_dtree

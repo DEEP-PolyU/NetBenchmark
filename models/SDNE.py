@@ -53,8 +53,7 @@ class SDNE_layer(nn.Module):
 class SDNE(Models):
     def check_train_parameters(self):
         space_dtree = {
-            'beta': hp.uniform('beta', 0, 1),
-            'evaluation': str(self.evaluation)
+            'beta': hp.uniform('beta', 0, 1)
         }
 
         return space_dtree
@@ -81,8 +80,7 @@ class SDNE(Models):
             'nu2': hp.choice('nu2', [0, 1, 2, 3, 4, 5, 6]),
             'dropout': hp.uniform('dropout', 0, 0.75),
             'alpha': hp.choice('alpha', [0, 1, 2, 3, 4, 5, 6]),
-            'beta': hp.randint('beta',5,25),
-            'evaluation': str(self.evaluation)
+            'beta': hp.randint('beta',5,25)
         }
 
         return space_dtree

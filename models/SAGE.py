@@ -42,8 +42,7 @@ class SAGE(Models):
             'lr': hp.choice('lr', [0, 1, 2, 3, 4, 5, 6]),
             'dropout': hp.uniform('dropout', 0, 0.75),
             'lamda': hp.uniform('lamda', 0, 0.75),
-            'alpha': hp.uniform('alpha', 0, 0.75),
-            'evaluation': str(self.evaluation)
+            'alpha': hp.uniform('alpha', 0, 0.75)
         }
 
         return space_dtree

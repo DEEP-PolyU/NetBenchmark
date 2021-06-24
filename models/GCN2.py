@@ -38,8 +38,7 @@ class GCN2(Models):
             'dropout': hp.uniform('dropout', 0, 0.75),
             'lamda': hp.uniform('lamda', 0, 0.75),
             'alpha': hp.uniform('alpha', 0, 0.75),
-            'layer': hp.randint('layer',1,64),
-            'evaluation': str(self.evaluation)
+            'layer': hp.randint('layer',1,64)
         }
 
         return space_dtree

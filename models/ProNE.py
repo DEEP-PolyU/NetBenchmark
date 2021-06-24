@@ -121,8 +121,7 @@ class ProNE(Models):
 
             'step': hp.uniformint('step', 5, 20),
             'theta': hp.uniform('theta', 0, 1),
-            'mu': hp.uniform('mu', 0, 1),  # walk_length,window_size
-            'evaluation': str(self.evaluation)
+            'mu': hp.uniform('mu', 0, 1)
         }
 
         return space_dtree

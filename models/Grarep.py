@@ -7,8 +7,7 @@ from sklearn import preprocessing
 class Grarep(Models):
     def check_train_parameters(self):
         space_dtree = {
-            'step': hp.uniformint('step', 1, 20),
-            'evaluation': str(self.evaluation)
+            'step': hp.uniformint('step', 1, 20)
         }
 
         return space_dtree

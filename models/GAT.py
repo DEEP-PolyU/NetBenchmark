@@ -40,7 +40,6 @@ class GATModel(Models):
             'dropout': hp.uniform('dropout', 0, 0.75),
             'lr': hp.choice('lr', [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]),
             # 'nb_heads': hp.uniformint('nb_heads',1,10),
-            'evaluation': str(self.evaluation)
         }
 
         return space_dtree

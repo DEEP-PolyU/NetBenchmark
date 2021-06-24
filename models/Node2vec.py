@@ -22,8 +22,8 @@ def timer(msg):
             t1 = perf_counter()
             ret = func(*args, **kwargs)
             t2 = perf_counter()
-            print("Time elapsed for "+msg+" ----> "+str(timedelta(seconds=t2-t1)))
-            print("\n---------------------------------------\n")
+            # print("Time elapsed for "+msg+" ----> "+str(timedelta(seconds=t2-t1)))
+            # print("\n---------------------------------------\n")
             return ret
         return wrapper
     return inner
@@ -164,8 +164,7 @@ class node2vec(Models):
             'q': hp.uniform('q', 0.1, 2),
             'walks': hp.uniformint('walks', 5, 80),
             'length': hp.uniformint('length', 5, 50),
-            'window': hp.uniformint('window', 5, 50),
-            'evaluation': str(self.evaluation)
+            'window': hp.uniformint('window', 5, 50)
         }
 
 

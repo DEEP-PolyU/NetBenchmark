@@ -34,7 +34,7 @@ from datetime import date
 datasetlist = [Cora, Flickr, BlogCatalog,Citeseer,pubmed,ppi] #yelp,reddit,cornell
 datasetlist_all = [Cora, Flickr, BlogCatalog,ACM,Citeseer,neil001,pubmed,ppi,ogbn_arxiv,chameleon,wisconsin,film,squirrel] #yelp,reddit,cornell
 datasetdict = {Cls.__name__.lower(): Cls for Cls in datasetlist}
-modellist=[featwalk, netmf, deepwalk, node2vec, DGI, GAE, CAN_new, CAN_original, ProNE,GCN,GCN2,GATModel,HOPE,Grarep,LINE,NetSMF,SAGE,SDNE,splinecnn]
+modellist=[featwalk, netmf, deepwalk, node2vec, DGI, GAE, CAN_new, CAN_original, ProNE,HOPE,Grarep,NetSMF,SDNE]
 modeldict = {Cls.__name__.lower(): Cls for Cls in modellist}
 
 datasetdict_all = copy.deepcopy(datasetdict)
@@ -142,13 +142,15 @@ def main(args):
             else:
                 emb = model.get_emb()
                 best = model.get_best()
-                f1_mic, f1_mac = node_classifcation_10_time(np.array(emb), Graph['Label'])
-                adj_train, train_edges, val_edges, val_edges_false, test_edges, test_edges_false = pre.mask_test_edges(
-                    Graph['Network'])
-                roc_score, ap_score = link_prediction(emb, edges_pos=test_edges, edges_neg=test_edges_false)
+                if args.task_method=='task1' or 'task3':
+                    f1_mic, f1_mac = node_classifcation_10_time(np.array(emb), Graph['Label'])
+                    temp_result = {'Dataset': dkey, 'model': mkey, 'f1_micro': f1_mic, 'f1_macro': f1_mac, 'best': best}
+                else:
+
+                    adj_train, train_edges, val_edges, val_edges_false, test_edges, test_edges_false = pre.mask_test_edges(Graph['Network'])
+                    roc_score, ap_score = link_prediction(emb, edges_pos=test_edges, edges_neg=test_edges_false)
+                    temp_result = {'Dataset': dkey, 'model': mkey, 'roc_score': roc_score, 'ap_score': ap_score, 'best': best}
                 np.save('result/embFiles/' + mkey + '_embedding_' + args.dataset + '.npy', emb)
-            temp_result = {'Dataset': dkey, 'model': mkey, 'f1_micro': f1_mic, 'f1_macro': f1_mac,
-                              'roc_score': roc_score, 'ap_score': ap_score, 'best': best}
             # save it in result file by using 'add' model
             fileObject = open(eval_file_name, 'a+')
             fileObject.write(str(temp_result) + '\n')
