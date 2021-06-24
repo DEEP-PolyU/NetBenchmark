@@ -10,7 +10,7 @@ import torch.nn.functional as F
 import torch.optim as optim
 
 from .GCN_package.utils import load_data, accuracy, load_citation,load_citationANEmat_gac,load_webANEmat_gac,F1_score
-from .GCN_package.input_graph_feed import GraphInput
+
 from .GCN_package.models import GCN_original
 from .model import *
 from preprocessing.preprocessing import load_normalized_format
@@ -39,8 +39,7 @@ class GCN(Models):
             # 'lr': hp.loguniform('lr', np.log(0.05), np.log(0.2)), # walk_length,window_size
             'lr': hp.choice('lr', [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]),
             # 'lr':hp.uniform('lr',0,1),
-            'dropout': hp.uniform('dropout', 0, 0.75),
-            'evaluation': str(self.evaluation)
+            'dropout': hp.uniform('dropout', 0, 0.75)
         }
 
         return space_dtree

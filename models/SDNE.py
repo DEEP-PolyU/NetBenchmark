@@ -76,7 +76,7 @@ class SDNE(Models):
             'batch_size': hp.uniformint('batch_size', 1, 100),
             'nb_epochs': hp.uniformint('nb_epochs', 100, 5000),
             # 'lr': hp.loguniform('lr', np.log(0.05), np.log(0.2)), # walk_length,window_size
-            'lr': hp.choice('lr', [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]),
+            'lr': hp.choice('lr', [0, 1, 2, 3, 4, 5, 6]),
             'nu1': hp.choice('nu1', [0, 1, 2, 3, 4, 5, 6]),
             'nu2': hp.choice('nu2', [0, 1, 2, 3, 4, 5, 6]),
             'dropout': hp.uniform('dropout', 0, 0.75),
@@ -90,12 +90,12 @@ class SDNE(Models):
     def train_model(self, **kwargs):
         np.random.seed(42)
         torch.manual_seed(42)
-        lrrate = [-5, -4.5, -4, -3.5, -3, -2.5, -2.0, -1.5, -1.0, -0.5]
+        lrrate = [0.1, 0.01, 0.001, 0.0001, 0.005, 0.05, 0.00005]
 
         nb_epochs = int(kwargs["nb_epochs"])
 
         lr = kwargs["lr"]
-        lr =10**lrrate[lr]
+        lr = lrrate[lr]
         nu1 = lrrate[kwargs['nu1']]
         nu2 = lrrate[kwargs['nu2']]
         alpha = lrrate[kwargs['alpha']]
@@ -111,13 +111,10 @@ class SDNE(Models):
         num_node = G.number_of_nodes()
         #TODO: Parameter range of alpha ,beta, nu1,nu2
         model = SDNE_layer(
-            num_node, hidden_size1=256, hidden_size2=128, droput=drop_prob, alpha=1e-4, beta=beta, nu1=nu1, nu2=nu2
+            num_node, hidden_size1=256, hidden_size2=128, droput=drop_prob, alpha=alpha, beta=beta, nu1=nu1, nu2=nu2
         )
 
-        # A = torch.from_numpy(nx.adjacency_matrix(G).todense().astype(np.float32))
-        adj = nx.adjacency_matrix(G)
-        adj = process.normalize_adj(adj + sp.eye(adj.shape[0]))
-        A = torch.from_numpy(adj.todense().astype(np.float32))
+        A = torch.from_numpy(nx.adjacency_matrix(G).todense().astype(np.float32))
         L = torch.from_numpy(nx.laplacian_matrix(G).todense().astype(np.float32))
 
         A, L = A.to(self.device), L.to(self.device)
@@ -125,7 +122,7 @@ class SDNE(Models):
 
         opt = torch.optim.Adam(model.parameters(), lr=lr)
         # epoch_iter = tqdm(range(nb_epochs))
-        for epoch in range(100):
+        for epoch in range(nb_epochs):
             opt.zero_grad()
             L_1st, L_2nd, L_all, L_reg = model.forward(A, L)
             Loss = L_all + L_reg
@@ -135,6 +132,4 @@ class SDNE(Models):
             # )
             opt.step()
         embedding = model.get_emb(A)
-        node_emb = embedding.detach().cpu().numpy()
-        # node_emb = node_emb.reshape(node_emb.shape[1:])
-        return node_emb
+        return embedding.detach().cpu().numpy()

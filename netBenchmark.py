@@ -26,7 +26,7 @@ from models.SAGE import SAGE
 from models.SDNE import SDNE
 from models.splineCNN import splinecnn
 from evaluation.link_prediction import link_prediction
-from evaluation.node_classification import node_classifcation
+from evaluation.node_classification import node_classifcation_10_time
 import preprocessing.preprocessing as pre
 import copy
 from datetime import date
@@ -50,9 +50,9 @@ def parse_args():
     parser.add_argument('--method', type=str, default='all',
                         choices=modeldict_all,
                         help='The learning method')
-    parser.add_argument('--evaluation', type=str, default='link_prediction',
-                        choices=['node_classification','link_prediction'],
-                        help='The evaluation method')
+    parser.add_argument('--task_method', type=str, default='task3',
+                        choices=['task1','task2','task3'],
+                        help='The task method')
     parser.add_argument('--variable_name', type=str,
                         help='The name of features in dataset')
     parser.add_argument('--training_time', type=float, default=1.4,
@@ -124,7 +124,7 @@ def main(args):
         datasetdict[args.dataset] = temp
 
     # initial variable to store the final result and clean the file
-    eval_file_name='result/evalFiles/result_'+str(args.tunning_method)+'_' +str(args.method) + '_' + str(today) + '_' + str(args.evaluation) + '_' + str(args.dataset)+ '.txt'
+    eval_file_name='result/evalFiles/result_'+str(args.tunning_method)+'_' +str(args.method) + '_' + str(today) + '_' + str(args.task_method) + '_' + str(args.dataset)+ '.txt'
     fileObject = open(eval_file_name, 'w')
     fileObject.close()
 
@@ -133,7 +133,7 @@ def main(args):
             print("\n----------Train information-------------\n",'dataset: {} ,Algorithm:{} '.format(dkey,mkey))
             model = modeldict[mkey]
             Graph,Stoptime = get_graph_time(args,dkey)
-            model = model(datasets=Graph, iter=iter, time_setting=Stoptime,evaluation=args.evaluation,tuning=args.tunning_method,cuda=args.cuda_device)
+            model = model(datasets=Graph, iter=iter, time_setting=Stoptime,task_method=args.task_method,tuning=args.tunning_method,cuda=args.cuda_device)
             roc_score=0
             ap_score=0
             if model.is_end2end():
@@ -142,7 +142,7 @@ def main(args):
             else:
                 emb = model.get_emb()
                 best = model.get_best()
-                f1_mic, f1_mac = node_classifcation(np.array(emb), Graph['Label'])
+                f1_mic, f1_mac = node_classifcation_10_time(np.array(emb), Graph['Label'])
                 adj_train, train_edges, val_edges, val_edges_false, test_edges, test_edges_false = pre.mask_test_edges(
                     Graph['Network'])
                 roc_score, ap_score = link_prediction(emb, edges_pos=test_edges, edges_neg=test_edges_false)

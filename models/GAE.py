@@ -1,24 +1,12 @@
 from __future__ import division
 from __future__ import print_function
 
-import time
-import argparse
-import numpy as np
-import scipy.io as sio
-import torch
-import torch.nn.functional as F
 import torch.optim as optim
 import scipy.sparse as sp
 import torch.nn as nn
 from sklearn.metrics import roc_auc_score
 from sklearn.metrics import average_precision_score
-from sklearn.model_selection import KFold
-from sklearn import svm
-from sklearn.metrics import f1_score
-# from optimizer import loss_function_entropy
 from models.dgi_package import process
-from preprocessing.preprocessing import mask_test_edges_fast
-from hyperopt import hp
 from models.GAE_package import GCN,GCNTra
 from .model import *
 

@@ -9,7 +9,7 @@ import os
 import scipy.io as sio
 from hyperopt import hp
 from preprocessing.preprocessing import mask_test_edges_fast
-from evaluation.node_classification import node_classifcation_test
+
 
 '''
 featur1     is the first feature matrix
@@ -57,7 +57,7 @@ def load_citationmat_featwalk(self, dataset, normalization="AugNormAdj", use_fea
 
 
 class featurewalk:
-    def __init__(self, featur1, alpha1, featur2, alpha2, Net, beta, num_paths, path_length, dim, win_size,evaluation):
+    def __init__(self, featur1, alpha1, featur2, alpha2, Net, beta, num_paths, path_length, dim, win_size):
 
         adj_train, train_edges, val_edges, val_edges_false, test_edges, test_edges_false = mask_test_edges_fast(Net)
         Net = adj_train #move the adj preprocessing to here
@@ -265,7 +265,7 @@ class featwalk(Models):
             'num_paths': hp.uniformint('num_paths', 10, 50),
             'path_length': hp.uniformint('path_length', 5, 50),
             'win_size': hp.uniformint('win_size', 5, 15),
-            'evaluation': hp.choice('evaluation', self.evaluation)
+            # 'evaluation': hp.choice('evaluation', self.evaluation)
         }
 
         return space_dtree

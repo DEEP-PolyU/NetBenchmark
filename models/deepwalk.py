@@ -2,11 +2,6 @@ from models.deepwalk_package import graph, walks as serialized_walks
 from models.deepwalk_package.skipgram import Skipgram
 from gensim.models import Word2Vec
 import random
-import os
-import numpy as np
-import time
-import scipy.io as sio
-from evaluation.node_classification import node_classifcation_test
 from .model import *
 from hyperopt import fmin, tpe, hp, space_eval,Trials, partial
 

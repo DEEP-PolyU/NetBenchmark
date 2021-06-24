@@ -14,7 +14,6 @@ import logging
 import theano
 from theano import tensor as T
 from .model import *
-from evaluation.node_classification import node_classifcation_test
 logger = logging.getLogger(__name__)
 theano.config.exception_verbosity='high'
 
