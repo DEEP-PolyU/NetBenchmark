@@ -34,7 +34,7 @@ from datetime import date
 datasetlist = [Cora, Flickr, BlogCatalog,Citeseer,pubmed,ppi] #yelp,reddit,cornell
 datasetlist_all = [Cora, Flickr, BlogCatalog,ACM,Citeseer,neil001,pubmed,ppi,ogbn_arxiv,chameleon,wisconsin,film,squirrel] #yelp,reddit,cornell
 datasetdict = {Cls.__name__.lower(): Cls for Cls in datasetlist}
-modellist=[featwalk, netmf, deepwalk, node2vec, DGI, GAE, CAN_new, CAN_original, ProNE,HOPE,Grarep,NetSMF,SDNE]
+modellist=[featwalk, netmf, deepwalk, node2vec, DGI, GAE, CAN_new, CAN_original, ProNE,HOPE,Grarep,SDNE]
 modeldict = {Cls.__name__.lower(): Cls for Cls in modellist}
 
 datasetdict_all = copy.deepcopy(datasetdict)
@@ -45,7 +45,7 @@ def parse_args():
     parser = argparse.ArgumentParser(description='NetBenchmark(DeepLab).')
 
     parser.add_argument('--dataset', type=str,
-                        default='all',choices=datasetdict_all,
+                        default='cora',choices=datasetdict_all,
                         help='select a available dataset (default: cora)')
     parser.add_argument('--method', type=str, default='all',
                         choices=modeldict_all,
@@ -134,8 +134,6 @@ def main(args):
             model = modeldict[mkey]
             Graph,Stoptime = get_graph_time(args,dkey)
             model = model(datasets=Graph, iter=iter, time_setting=Stoptime,task_method=args.task_method,tuning=args.tunning_method,cuda=args.cuda_device)
-            roc_score=0
-            ap_score=0
             if model.is_end2end():
                 f1_mic,f1_mac = model.end2endsocre()
                 best = model.get_best()
