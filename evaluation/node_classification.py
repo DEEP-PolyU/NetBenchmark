@@ -18,7 +18,7 @@ def node_classifcation_10_time(feature, labels):
     for i in range(10):
         f1_mic_fold = []
         f1_mac_fold = []
-        kf = KFold(n_splits=5, shuffle=True,random_state=0)
+        kf = KFold(n_splits=5, shuffle=True)
         for train_index, test_index in kf.split(feature):
             train_X, train_y = feature[train_index], labels[train_index]
             test_X, test_y = feature[test_index], labels[test_index]
