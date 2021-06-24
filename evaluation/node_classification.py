@@ -18,7 +18,7 @@ def node_classifcation_10_time(feature, labels):
     for i in range(10):
         f1_mic_fold = []
         f1_mac_fold = []
-        kf = KFold(n_splits=5, shuffle=True)
+        kf = KFold(n_splits=5, shuffle=True,random_state=0)
         for train_index, test_index in kf.split(feature):
             train_X, train_y = feature[train_index], labels[train_index]
             test_X, test_y = feature[test_index], labels[test_index]
@@ -51,7 +51,7 @@ def node_classifcation_end2end(feature, labels):
     shape = len(labels.shape)
     if shape == 2:
         labels = np.argmax(labels, axis=1)
-    kf = KFold(n_splits=5, shuffle=True)
+    kf = KFold(n_splits=5, shuffle=True,random_state=0)
     for train_index, test_index in kf.split(feature):
         val_index_index = np.random.choice(train_index.shape[0], int(train_index.shape[0]/10), replace=False)
         val_index = train_index[val_index_index]
