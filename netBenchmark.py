@@ -25,7 +25,7 @@ from models.GCN2 import GCN2
 from models.SAGE import SAGE
 from models.SDNE import SDNE
 from models.splineCNN import splinecnn
-from evaluation.link_prediction import link_prediction
+from evaluation.link_prediction import link_prediction_10_time
 from evaluation.node_classification import node_classifcation_10_time
 import preprocessing.preprocessing as pre
 import copy
@@ -76,8 +76,6 @@ def prase_input_file(args):
         Graph = {"Network": adj, "Label": labels, "Attributes": features}
         return Graph
     return None
-
-# TODO(Qian): input file prase
 
 def time_calculating(Graph,training_time_rate):
     edges = list()
@@ -142,11 +140,11 @@ def main(args):
                 best = model.get_best()
                 if args.task_method=='task1' or args.task_method=='task3':
                     f1_mic, f1_mac = node_classifcation_10_time(np.array(emb), Graph['Label'])
+                    print("nodeclassfication task")
                     temp_result = {'Dataset': dkey, 'model': mkey, 'f1_micro': f1_mic, 'f1_macro': f1_mac, 'best': best}
-                else:
-
-                    adj_train, train_edges, val_edges, val_edges_false, test_edges, test_edges_false = pre.mask_test_edges(Graph['Network'])
-                    roc_score, ap_score = link_prediction(emb, edges_pos=test_edges, edges_neg=test_edges_false)
+                if args.task_method == 'task2':
+                    roc_score, ap_score = link_prediction_10_time(emb,Graph)
+                    print("linkprediciton task")
                     temp_result = {'Dataset': dkey, 'model': mkey, 'roc_score': roc_score, 'ap_score': ap_score, 'best': best}
                 np.save('result/embFiles/' + mkey + '_embedding_' + args.dataset + '.npy', emb)
             # save it in result file by using 'add' model
