@@ -140,7 +140,7 @@ def main(args):
             else:
                 emb = model.get_emb()
                 best = model.get_best()
-                if args.task_method=='task1' or 'task3':
+                if args.task_method=='task1' or args.task_method=='task3':
                     f1_mic, f1_mac = node_classifcation_10_time(np.array(emb), Graph['Label'])
                     temp_result = {'Dataset': dkey, 'model': mkey, 'f1_micro': f1_mic, 'f1_macro': f1_mac, 'best': best}
                 else:
