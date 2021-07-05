@@ -24,7 +24,6 @@ from models.NetSMF import NetSMF
 from models.GCN2 import GCN2
 from models.SAGE import SAGE
 from models.SDNE import SDNE
-from models.splineCNN import splinecnn
 from evaluation.link_prediction import link_prediction_10_time
 from evaluation.node_classification import node_classifcation_10_time
 import preprocessing.preprocessing as pre
@@ -45,9 +44,9 @@ def parse_args():
     parser = argparse.ArgumentParser(description='NetBenchmark(DeepLab).')
 
     parser.add_argument('--dataset', type=str,
-                        default='cora',choices=datasetdict_all,
+                        default='all',choices=datasetdict_all,
                         help='select a available dataset (default: cora)')
-    parser.add_argument('--method', type=str, default='featwalk',
+    parser.add_argument('--method', type=str, default='all',
                         choices=modeldict_all,
                         help='The learning method')
     parser.add_argument('--task_method', type=str, default='task3',
