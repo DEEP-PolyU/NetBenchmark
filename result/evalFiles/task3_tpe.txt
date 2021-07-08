@@ -1,0 +1,50 @@
+{'Dataset': 'cora', 'model': 'featwalk', 'f1_micro': 0.8537756375715329, 'f1_macro': 0.8442792651849175, 'best': {'alpha1': 0.4247225466038219, 'num_paths': 22.0, 'path_length': 33.0, 'win_size': 6.0}}
+{'Dataset': 'flickr', 'model': 'featwalk', 'f1_micro': 0.9411679902922467, 'f1_macro': 0.9404513584832367, 'best': {'alpha1': 0.5920282498640335, 'num_paths': 49.0, 'path_length': 34.0, 'win_size': 8.0}}
+{'Dataset': 'blogcatalog', 'model': 'featwalk', 'f1_micro': 0.958044902643074, 'f1_macro': 0.9568272697018637, 'best': {'alpha1': 0.6387554024306062, 'num_paths': 38.0, 'path_length': 50.0, 'win_size': 8.0}}
+{'Dataset': 'citeseer', 'model': 'featwalk', 'f1_micro': 0.7415087267718847, 'f1_macro': 0.6917772243094845, 'best': {'alpha1': 0.3396538384011292, 'num_paths': 46.0, 'path_length': 36.0, 'win_size': 6.0}}
+{'Dataset': 'pubmed', 'model': 'featwalk', 'f1_micro': 0.8658010910031848, 'f1_macro': 0.864411795467527, 'best': {'alpha1': 0.7551325878736405, 'num_paths': 44.0, 'path_length': 38.0, 'win_size': 7.0}}
+{'Dataset': 'cora', 'model': 'netmf', 'f1_micro': 0.8452824140071344, 'f1_macro': 0.8360530557337473, 'best': {'window': 7.0}}
+{'Dataset': 'flickr', 'model': 'netmf', 'f1_micro': 0.5969053913700313, 'f1_macro': 0.5932368149039323, 'best': {'window': 6.0}}
+{'Dataset': 'blogcatalog', 'model': 'netmf', 'f1_micro': 0.6968801362256606, 'f1_macro': 0.6876894918715613, 'best': {'window': 8.0}}
+{'Dataset': 'citeseer', 'model': 'netmf', 'f1_micro': 0.6134530018740545, 'f1_macro': 0.5744430436349488, 'best': {'window': 14.0}}
+{'Dataset': 'pubmed', 'model': 'netmf', 'f1_micro': 0.8364859491156691, 'f1_macro': 0.8256442665933446, 'best': {'window': 13.0}}
+{'Dataset': 'cora', 'model': 'deepwalk', 'f1_micro': 0.816476253487119, 'f1_macro': 0.80714337757384, 'best': {'number_walks': 61.0, 'walk_length': 20.0, 'window_size': 15.0}}
+{'Dataset': 'flickr', 'model': 'deepwalk', 'f1_micro': 0.6240079802208023, 'f1_macro': 0.6192158100660938, 'best': {'number_walks': 58.0, 'walk_length': 26.0, 'window_size': 8.0}}
+{'Dataset': 'blogcatalog', 'model': 'deepwalk', 'f1_micro': 0.7338356037610129, 'f1_macro': 0.7300957775359034, 'best': {'number_walks': 23.0, 'walk_length': 16.0, 'window_size': 34.0}}
+{'Dataset': 'citeseer', 'model': 'deepwalk', 'f1_micro': 0.6789771726613832, 'f1_macro': 0.6233953440953943, 'best': {'number_walks': 42.0, 'walk_length': 7.0, 'window_size': 5.0}}
+{'Dataset': 'pubmed', 'model': 'deepwalk', 'f1_micro': 0.8163511195797725, 'f1_macro': 0.8042674588558762, 'best': {'number_walks': 31.0, 'walk_length': 5.0, 'window_size': 6.0}}
+{'Dataset': 'cora', 'model': 'node2vec', 'f1_micro': 0.8582057280831588, 'f1_macro': 0.8486513472711852, 'best': {'length': 29.0, 'p': 1.6493140722048718, 'q': 1.6690583732070987, 'walks': 14.0, 'window': 6.0}}
+{'Dataset': 'flickr', 'model': 'node2vec', 'f1_micro': 0.5822324685179938, 'f1_macro': 0.5777748178096058, 'best': {'length': 22.0, 'p': 0.5083352161010808, 'q': 1.6989134534795833, 'walks': 76.0, 'window': 27.0}}
+{'Dataset': 'blogcatalog', 'model': 'node2vec', 'f1_micro': 0.7313344932257346, 'f1_macro': 0.7269277047215852, 'best': {'length': 47.0, 'p': 1.9890152437740756, 'q': 1.7115814248031127, 'walks': 78.0, 'window': 23.0}}
+{'Dataset': 'citeseer', 'model': 'node2vec', 'f1_micro': 0.6946144640881482, 'f1_macro': 0.6518166040634774, 'best': {'length': 29.0, 'p': 1.7892484088842249, 'q': 0.416041639748572, 'walks': 68.0, 'window': 9.0}}
+{'Dataset': 'pubmed', 'model': 'node2vec', 'f1_micro': 0.8394276657377775, 'f1_macro': 0.8296774019930325, 'best': {'length': 49.0, 'p': 1.3866436898028756, 'q': 0.5534193147370514, 'walks': 55.0, 'window': 47.0}}
+{'Dataset': 'cora', 'model': 'dgi', 'f1_micro': 0.8589457816944158, 'f1_macro': 0.8472089749424662, 'best': {'batch_size': 9.0, 'lr': 3, 'nb_epochs': 108.0}}
+{'Dataset': 'flickr', 'model': 'dgi', 'f1_micro': 0.4555795976318118, 'f1_macro': 0.451237565639308, 'best': {'batch_size': 61.0, 'lr': 0, 'nb_epochs': 107.0}}
+{'Dataset': 'blogcatalog', 'model': 'dgi', 'f1_micro': 0.7184372917746353, 'f1_macro': 0.7129059872844519, 'best': {'batch_size': 39.0, 'lr': 4, 'nb_epochs': 115.0}}
+{'Dataset': 'citeseer', 'model': 'dgi', 'f1_micro': 0.7526302242091718, 'f1_macro': 0.689528783638859, 'best': {'batch_size': 16.0, 'lr': 5, 'nb_epochs': 105.0}}
+{'Dataset': 'pubmed', 'model': 'dgi', 'f1_micro': 0.8531720140809785, 'f1_macro': 0.8516478831153261, 'best': {'batch_size': 28.0, 'lr': 2, 'nb_epochs': 100.0}}
+{'Dataset': 'cora', 'model': 'gae', 'f1_micro': 0.8342048004583557, 'f1_macro': 0.8278821847448427, 'best': {'batch_size': 58.0, 'dropout': 0.2539871568937269, 'epochs': 4243.0, 'hid1': 2, 'lr': 5, 'weight_decay': 1}}
+{'Dataset': 'flickr', 'model': 'gae', 'f1_micro': 0.48202081082120724, 'f1_macro': 0.47051487686174936, 'best': {'batch_size': 2.0, 'dropout': 0.6537578048371553, 'epochs': 627.0, 'hid1': 2, 'lr': 0, 'weight_decay': 2}}
+{'Dataset': 'blogcatalog', 'model': 'gae', 'f1_micro': 0.6989997778929442, 'f1_macro': 0.683238936167361, 'best': {'batch_size': 58.0, 'dropout': 0.6252804182000047, 'epochs': 4411.0, 'hid1': 2, 'lr': 3, 'weight_decay': 1}}
+{'Dataset': 'citeseer', 'model': 'gae', 'f1_micro': 0.679584095373569, 'f1_macro': 0.6275034213809743, 'best': {'batch_size': 48.0, 'dropout': 0.41170710591830156, 'epochs': 3299.0, 'hid1': 1, 'lr': 0, 'weight_decay': 0}}
+{'Dataset': 'pubmed', 'model': 'gae', 'f1_micro': 0.839224504462423, 'f1_macro': 0.8331882515503356, 'best': {'batch_size': 90.0, 'dropout': 0.17543220209844962, 'epochs': 1654.0, 'hid1': 2, 'lr': 5, 'weight_decay': 1}}
+{'Dataset': 'cora', 'model': 'can_new', 'f1_micro': 0.8785125263452265, 'f1_macro': 0.8678760327298773, 'best': {'lr': 6, 'nb_epochs': 3223.0}}
+{'Dataset': 'flickr', 'model': 'can_new', 'f1_micro': 0.7822579094059596, 'f1_macro': 0.7798069862853565, 'best': {'lr': 4, 'nb_epochs': 3901.0}}
+{'Dataset': 'blogcatalog', 'model': 'can_new', 'f1_micro': 0.8137021544384393, 'f1_macro': 0.8108634567841188, 'best': {'lr': 6, 'nb_epochs': 4613.0}}
+{'Dataset': 'citeseer', 'model': 'can_new', 'f1_micro': 0.7583418004470637, 'f1_macro': 0.7156076946334887, 'best': {'lr': 4, 'nb_epochs': 3183.0}}
+{'Dataset': 'pubmed', 'model': 'can_new', 'f1_micro': 0.8540847544033923, 'f1_macro': 0.8480523226318744, 'best': {'lr': 4, 'nb_epochs': 1861.0}}
+{'Dataset': 'cora', 'model': 'can_original', 'f1_micro': 0.8714953175409758, 'f1_macro': 0.8655629043040601, 'best': {'batch_size': 61.0, 'dropout': 0.15315904944910735, 'lr': 4, 'nb_epochs': 2067.0}}
+{'Dataset': 'flickr', 'model': 'can_original', 'f1_micro': 0.714965187073581, 'f1_macro': 0.7129536660344147, 'best': {'batch_size': 44.0, 'dropout': 0.5016230900298297, 'lr': 1, 'nb_epochs': 3604.0}}
+{'Dataset': 'blogcatalog', 'model': 'can_original', 'f1_micro': 0.8023482268453396, 'f1_macro': 0.7988138982274114, 'best': {'batch_size': 94.0, 'dropout': 0.2022614490333505, 'lr': 4, 'nb_epochs': 2555.0}}
+{'Dataset': 'citeseer', 'model': 'can_original', 'f1_micro': 0.7442100747363904, 'f1_macro': 0.6963590678295721, 'best': {'batch_size': 40.0, 'dropout': 0.21187883734279991, 'lr': 1, 'nb_epochs': 3293.0}}
+{'Dataset': 'pubmed', 'model': 'can_original', 'f1_micro': 0.8321746783140481, 'f1_macro': 0.8250338513868252, 'best': {'batch_size': 16.0, 'dropout': 0.6086778705699687, 'lr': 4, 'nb_epochs': 3755.0}}
+{'Dataset': 'cora', 'model': 'prone', 'f1_micro': 0.8537742734174106, 'f1_macro': 0.8440126521011704, 'best': {'mu': 0.355120438700106, 'step': 17.0, 'theta': 0.5133087386255483}}
+{'Dataset': 'flickr', 'model': 'prone', 'f1_micro': 0.6470124878915361, 'f1_macro': 0.6427763053470095, 'best': {'mu': 0.4045639849157613, 'step': 9.0, 'theta': 0.40177064405117235}}
+{'Dataset': 'blogcatalog', 'model': 'prone', 'f1_micro': 0.715550455319464, 'f1_macro': 0.7060648325101784, 'best': {'mu': 0.9961511429502393, 'step': 20.0, 'theta': 0.2935721167937515}}
+{'Dataset': 'citeseer', 'model': 'prone', 'f1_micro': 0.703331752805437, 'f1_macro': 0.6594618976637241, 'best': {'mu': 0.08002163709258947, 'step': 11.0, 'theta': 0.9286830214791472}}
+{'Dataset': 'pubmed', 'model': 'prone', 'f1_micro': 0.829486807184941, 'f1_macro': 0.818594721817756, 'best': {'mu': 0.6037955955198996, 'step': 10.0, 'theta': 0.3396440996885157}}
+{'Dataset': 'cora', 'model': 'grarep', 'f1_micro': 0.8090839022992817, 'f1_macro': 0.7989890553945658, 'best': {'step': 1.0}}
+{'Dataset': 'flickr', 'model': 'grarep', 'f1_micro': 0.6587776309025484, 'f1_macro': 0.6530591473410261, 'best': {'step': 6.0}}
+{'Dataset': 'blogcatalog', 'model': 'grarep', 'f1_micro': 0.7782877396905308, 'f1_macro': 0.7701807394271791, 'best': {'step': 18.0}}
+{'Dataset': 'citeseer', 'model': 'grarep', 'f1_micro': 0.5683722820564927, 'f1_macro': 0.5098760496517614, 'best': {'step': 3.0}}
+{'Dataset': 'pubmed', 'model': 'grarep', 'f1_micro': 0.8101636839156766, 'f1_macro': 0.798107411387466, 'best': {'step': 1.0}}
