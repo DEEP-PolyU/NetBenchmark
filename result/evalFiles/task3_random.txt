@@ -1,3 +1,8 @@
+{'Dataset': 'cora', 'model': 'featwalk', 'f1_micro': 0.8596817428433065, 'f1_macro': 0.850247280836156, 'best': {'alpha1': 0.47844678446703603, 'num_paths': 17.0, 'path_length': 23.0, 'win_size': 5.0}}
+{'Dataset': 'flickr', 'model': 'featwalk', 'f1_micro': 0.9342939672747997, 'f1_macro': 0.9336822563859529, 'best': {'alpha1': 0.8010428617757364, 'num_paths': 44.0, 'path_length': 42.0, 'win_size': 14.0}}
+{'Dataset': 'blogcatalog', 'model': 'featwalk', 'f1_micro': 0.9703637003035462, 'f1_macro': 0.9695337770502025, 'best': {'alpha1': 0.8399750320729165, 'num_paths': 42.0, 'path_length': 45.0, 'win_size': 6.0}}
+{'Dataset': 'citeseer', 'model': 'featwalk', 'f1_micro': 0.7309891846733951, 'f1_macro': 0.6775743328955918, 'best': {'alpha1': 0.6482826992410722, 'num_paths': 43.0, 'path_length': 19.0, 'win_size': 15.0}}
+{'Dataset': 'pubmed', 'model': 'featwalk', 'f1_micro': 0.8644315111021715, 'f1_macro': 0.8622104061429864, 'best': {'alpha1': 0.8234319724883148, 'num_paths': 45.0, 'path_length': 49.0, 'win_size': 13.0}}
 {'Dataset': 'cora', 'model': 'netmf', 'f1_micro': 0.8508201976659324, 'f1_macro': 0.8407918687563083, 'best': {'window': 15.0}}
 {'Dataset': 'flickr', 'model': 'netmf', 'f1_micro': 0.5925424102225161, 'f1_macro': 0.5889897001590294, 'best': {'window': 7.0}}
 {'Dataset': 'blogcatalog', 'model': 'netmf', 'f1_micro': 0.6972649366994892, 'f1_macro': 0.688075425979602, 'best': {'window': 9.0}}
