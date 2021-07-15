@@ -31,15 +31,15 @@ optional arguments:
 
 - -h, --help           
   show this help message and exit
--  --dataset {cora,flickr,blogcatalog,acm,all}      
-   select a available dataset (default: cora)
--  --method {featwalk,netmf,deepwalk,node2vec,dgi,gae,can_new,can_original,all}         
+-  --dataset {cora,flickr,blogcatalog,citeseer,pubmed,all}      
+   select a available dataset (default: all)
+-  --method {featwalk,netmf,deepwalk,prone,node2vec,dgi,gae,can_new,can_original,all}         
    The learning method
--  --evaluation {node_classification,link_prediction}       
+-  --task_method {task1,task2,task3}       
    The evaluation method
 -  --variable_name VARIABLE_NAME        
    The name of features in dataset
--  --training_time TRAINING_TIME        
+-  --training_time TRAINING_TIME (default: 1.4)
    The total training time you want
 -  --input_file INPUT_FILE      
    The input datasets you want
@@ -48,21 +48,16 @@ optional arguments:
 
 An example
 ```bash
-CUDA_VISIBLE_DEVICE="0,1,2,3,4,5" python netBenchmark.py --method=all --dataset=all --cuda_device=1 
+CUDA_VISIBLE_DEVICE="0,1,2,3,4,5" python netBenchmark.py --method=all --dataset=all --task_method=task1 --cuda_device=1 
 ```
-After choosing the dataset in `datasetdict` and methods in `modeldict`, the parser system will calculate the upper limits of running time and run the following code.
 
-```python
-model = modeldict[mkey]
-Graph,Stoptime = get_graph_time(args,dkey)
-model = model(datasets=Graph, iter=iter, Time=Stoptime,evaluation=args.evaluation,tuning=args.tunning_method,cuda=args.cuda_device)
-```
 
 ## Design detail
 ### Dataset class: `Dataset`
 
 All the input datasets inherit from a base class: Dataset.
 
+Path:  ./preprocessing/dataset.py
 ```python
 class Datasets:
     def __init__(self):
@@ -76,54 +71,47 @@ class Datasets:
     def attributed(cls):
         raise NotImplementedError
 ```
-Besides, the input file can be divided into 2 kinds of format,which is the mat file(can be parsed through `scipy.io.loadmat`) and others files(create the special code to parse).
+This class aimed at dealing with different format of input source files and return a normalized format result. 
+We now have 4 different methods to deal with different source files, which includes `mat`/`txt`/`(tx,ty,x,y)`/`npz`.After that, it all will return a DICT result.
+```python
+ data={"Network":adj,"Label":labels,"Attributes":feature}
+```
 
 ### Base class: `Models`
-All algorithms model inherit from a base class: `Models`, which itself inherits from `torch.nn.Module`.
-The main idea of this class is to tune parameters and obtain the best result, which will be evaluated by node classification.
+All algorithms model inherit from a base class: ./models/model.py `Models`, which itself inherits from `torch.nn.Module`.
+The main idea of this class is to tune parameters and obtain the best result, which will be evaluated by node classification or link prediction according to the different tasks.
+
+#### How to import a new algorithm
+we build a super class for algorithms to normalize the input and output.The dataset processed by Dataset.py will become a global variable that can be called as `self.mat_content`.
 
 ```python
-class Models(torch.nn.Module):
-    
-    def __init__(self, *, datasets, time_setting, evaluation,tuning,**kwargs):
-       
-    def is_end2end(cls):
-        raise NotImplementedError
-
-    def check_train_parameters(self)
-
-    def is_preprocessing(cls)
-        raise NotImplementedError
-
-    def is_deep_model(cls)
-        raise NotImplementedError
-
-    def get_score(self,params)
-
-    def preprocessing(self, filename)
-
-    def hyperparameter_tuning(self)
-
-    def get_emb(self)
-        
-    def get_best(self)
-        
-    def get_time(self)
-    
-    def train_model(self, **kwargs)
+def train_model(self, **kwargs):
+   # need to add the algorithm
+   return embedding
 ```
-The following 3 methods should be overridden:
+#### Embedding evaluation
 
-- `is_preprocessing(cls)` Determine whether the model needs to be preprocessed, if it needs to be preprocessed, jump to the preprocessing function for processing
-
-- `is_deep_model(cls)` Determine whether an algorithm is deep model
-
-- `is_deep_model(cls)` Determine whether an algorithm is deep model
-
-- `train_model(self, **kwargs)`Training the datasets and obtain the embedding matrix according to different settings
-
+In order to tune parameters according to different tasks,we need to calculate different score for different tasks. 
+Meanwhile,train,val and test will be divided from all data before obtain score.
+```python
+def get_score(self,params):
+     emb = self.train_model(**params)
+     adj = self.mat_content['Network']
+     adj_train, train_edges, val_edges, val_edges_false, test_edges, test_edges_false = pre.mask_val_test_edges(adj)
+     if self.task_method == 'task1':
+         score=link_prediction_Automatic_tuning(emb,edges_pos=val_edges,edges_neg=val_edges_false)
+     elif self.task_method == 'task2':
+         score = link_prediction_Automatic_tuning(emb, edges_pos=val_edges, edges_neg=val_edges_false)
+     else:
+         score=node_classifcation_end2end(np.array(emb), self.mat_content['Label'])
+    return -score
+```
 #### Automatic parameter tuning
-Each algorithm's parameters are different, and it will be recorded in `check_train_parameters`.And
+After score can be obtained from get_score, it can be used to tune hyper-parameters.
+for each algorithm's ,its parameters are different, and it will be recorded in `check_train_parameters`.
+The third package hyperopt is a reliable package can help us tune parameters.
+We choose two methods from it so far,which is random search and TPE respectively.
+After tuning and find the best one, it will return the best embbeding and related hyper-parameters we set.
 ```python
 trials = Trials()
 if self.tuning == 'random':
@@ -140,25 +128,8 @@ return emb,best
 ```
 
 ### Evaluation class: `Evaluation layer`
+Two purpose of evaluation layer is to tune the parameters as soon as possible and obtain the final accuracy fairly.
+So, we build 2 function for both link prediction and node classification .
 
-- `node_classifcation(feature, labels)` 10-fold Node classification
-- `link_prediction(emb_name,variable_name, edges_pos, edges_neg)`
-
-Examples:
-```python
-def parse(**kwargs):
-    return Evaluation, Graph_Filedir, Model
-
-# parsing
-args = {x: y for x, y in args.__dict__.items() if y is not None}
-Evaluation, Graph_Filedir, Model = parse(**args)
-
-# train
-res = model.train_model(rootdir,**train_args)
-
-# evaluation
-if(Evaluation="node_classifcation"):
-    node_classifcation()
-if(Evaluation="link_prediction"):
-    link_prediction()
-```
+- `node_classifcation_10time(feature, labels)` 10-fold Node classification
+- `node_classifcation_end2end(feature, labels)` 10-fold Node classification
