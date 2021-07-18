@@ -63,7 +63,7 @@ class Models(torch.nn.Module):
         adj = self.mat_content['Network']
         adj_train, train_edges, val_edges, val_edges_false, test_edges, test_edges_false = pre.mask_val_test_edges(adj)
         if self.task_method == 'task1':
-            score=link_prediction_Automatic_tuning(emb,edges_pos=val_edges,edges_neg=val_edges_false)
+            score=link_prediction_Automatic_tuning(emb,edges_pos=test_edges,edges_neg=test_edges_false)
         elif self.task_method == 'task2':
             score = link_prediction_Automatic_tuning(emb, edges_pos=val_edges, edges_neg=val_edges_false)
         else:
