@@ -159,8 +159,8 @@ But deal with embedding will take a lot of time,so, we build 2 function for both
 We use five-fold cross-validation to generate the training and test sets.  
 In the first round (five rounds in total), we tune the hyper-parameters. We use 1/10 of training set as validationto tune hyperparameters. 
 - `node_classifcation_end2end(feature, labels)` 
-
+- `link_prediction_Automatic_tuning(emb, edges_pos, edges_neg)` 
 After we have selected the hyperparameters, we add 1/10 validation back to training set. The average of results in ten runs (five rounds in each run) are recorded.
 - `node_classifcation_10time(feature, labels)` 10-fold Node classification
-  
+- `link_prediction_10_time(emb,Graph)` 
 
