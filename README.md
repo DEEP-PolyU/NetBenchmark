@@ -19,11 +19,15 @@ We will implement more representative NE models continuously.
 Specifically, we welcome other researchers to contribute NE models into this platform.
 
 
-## Design overview
+## Operation guide 
 
-### Parser system workflow
+Download all dependent packages
+```bash
+    pip install -r requirement.txt
+```
 
-The system selects datasets and algorithms through the parameters provided by the command system,which can view details by
+Then the command below could be run successfully,The command can select datasets,
+algorithms and others through the parameters provided by the command system,which can view details by this command
 ```bash
     python netBenchmark.py -h
 ```
@@ -37,13 +41,11 @@ optional arguments:
    The learning method
 -  --task_method {task1,task2,task3}       
    The evaluation method
--  --variable_name VARIABLE_NAME        
-   The name of features in dataset
+-  --cuda_device
+   The number of cuda device
 -  --training_time TRAINING_TIME (default: 1.4)
    The total training time you want
--  --input_file INPUT_FILE      
-   The input datasets you want
--  --tunning_method TUNNING_METHOD      
+-  --tuning_method TUNNING_METHOD      
    The method of parameter tuning.(now includes Random search and tpe search)
 
 An example

@@ -46,19 +46,17 @@ def parse_args():
     parser.add_argument('--dataset', type=str,
                         default='all',choices=datasetdict_all,
                         help='select a available dataset (default: cora)')
-    parser.add_argument('--method', type=str, default='sdne',
+    parser.add_argument('--method', type=str, default='all',
                         choices=modeldict_all,
                         help='The learning method')
     parser.add_argument('--task_method', type=str, default='task3',
                         choices=['task1','task2','task3'],
                         help='The task method')
-    parser.add_argument('--variable_name', type=str,
-                        help='The name of features in dataset')
     parser.add_argument('--training_time', type=float, default=1.4,
                         help='The total training time you want')
     parser.add_argument('--input_file', type=str, default=None,
                         help='The input datasets you want')
-    parser.add_argument('--tunning_method', type=str, default='random',
+    parser.add_argument('--tuning_method', type=str, default='random',
                         choices=['random','tpe','atpe'],
                         help='random search/ tpe search/adaptive tpe search')
     parser.add_argument('--cuda_device',type=str,default='0')
