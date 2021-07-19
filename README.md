@@ -12,7 +12,7 @@ Node Representation Learning Benchmark
 
 We aim at building a auto,fair and systematic evaluation platform to compare the results of different Network Embedding models. 
 The implemented or modified models include [DeepWalk](https://github.com/phanein/deepwalk),  [node2vec](https://github.com/aditya-grover/node2vec), 
-[GCN](https://github.com/tkipf/gcn), [NetMF](https://github.com/xptree/NetMF), GAE, [featWalk](https://github.com/xhuang31/FeatWalk_AAAI19), CAN.
+[GCN](https://github.com/tkipf/gcn), [NetMF](https://github.com/xptree/NetMF), GAE, [featWalk](https://github.com/xhuang31/FeatWalk_AAAI19), CAN,LINE,HOPE,GAE.
 
 Also, we imported several classic dataset, which includes Flickr, ACM, Cora, BlogCatalog.
 We will implement more representative NE models continuously. 
@@ -117,17 +117,18 @@ All in all, a new algorithms will be imported successfully by overwriting two fu
 
 In order to tune parameters under different scoring criteria,we wrote get_score function ,which will put the embedding in different evaluation function by an IF-ELSE condition here.
 ```python
-def get_score(self,params):
-     emb = self.train_model(**params)
-     adj = self.mat_content['Network']
-     adj_train, train_edges, val_edges, val_edges_false, test_edges, test_edges_false = pre.mask_val_test_edges(adj)
-     if self.task_method == 'task1':
-         score=link_prediction_Automatic_tuning(emb,edges_pos=test_edges,edges_neg=test_edges_false)
-     elif self.task_method == 'task2':
-         score = link_prediction_Automatic_tuning(emb, edges_pos=val_edges, edges_neg=val_edges_false)
-     else:
-         score=node_classifcation_end2end(np.array(emb), self.mat_content['Label'])
-    return -score
+    def get_score(self,params):
+        emb = self.train_model(**params)
+        adj = self.mat_content['Network']
+        if self.task_method == 'task1':
+            adj_train, train_edges, val_edges, val_edges_false, test_edges, test_edges_false = pre.mask_val_test_edges(adj)
+            score=link_prediction_Automatic_tuning(emb,edges_pos=test_edges,edges_neg=test_edges_false)
+        elif self.task_method == 'task2':
+            adj_train, train_edges, val_edges, val_edges_false, test_edges, test_edges_false = pre.mask_val_test_edges(adj)
+            score = link_prediction_Automatic_tuning(emb, edges_pos=val_edges, edges_neg=val_edges_false)
+        else:
+            score=node_classifcation_end2end(np.array(emb), self.mat_content['Label'])
+        return -score
 ```
 #### Automatic parameter tuning
 
