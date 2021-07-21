@@ -48,3 +48,7 @@
 {'Dataset': 'blogcatalog', 'model': 'grarep', 'f1_micro': 0.7782877396905308, 'f1_macro': 0.7701807394271791, 'best': {'step': 18.0}}
 {'Dataset': 'citeseer', 'model': 'grarep', 'f1_micro': 0.5683722820564927, 'f1_macro': 0.5098760496517614, 'best': {'step': 3.0}}
 {'Dataset': 'pubmed', 'model': 'grarep', 'f1_micro': 0.8101636839156766, 'f1_macro': 0.798107411387466, 'best': {'step': 1.0}}
+{'Dataset': 'cora', 'model': 'hope', 'f1_micro': 0.8068760188526101, 'f1_macro': 0.7943465493257802, 'best': {'beta': 0.30023456923816216}}
+{'Dataset': 'blogcatalog', 'model': 'hope', 'f1_micro': 0.7550024061597689, 'f1_macro': 0.7470842162280673, 'best': {'beta': 0.010227511163379832}}
+{'Dataset': 'flickr', 'model': 'hope', 'f1_micro': 0.7111308693265073, 'f1_macro': 0.7076570156516564, 'best': {'beta': 0.01601113610930016}}
+{'Dataset': 'pubmed', 'model': 'hope', 'f1_micro': 0.817466763962531, 'f1_macro': 0.8032642819129971, 'best': {'beta': 0.2675108501680147}}
