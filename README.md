@@ -85,23 +85,33 @@ All algorithms model inherit from a base class: ./models/model.py `Models`, whic
 The main idea of this class is to tune parameters and obtain the best result, which will be evaluated by node classification or link prediction according to the different tasks.
 So, class `train_model`,`get_score`,`parameter_tuning` are the most important content in model.py.
 #### How to import a new algorithm
-we build a function  `train_model` for algorithms to normalize the input and output.The dataset processed by Dataset.py will become a global variable that can be called as `self.mat_content`.
-And implementation of `train_model`  in different algorithms is various, which means it can be replaced when it comes new algorithms.
+After building our template,we realized that it is important to make our code extensible, which means it can facilitate the importing of other algorithms.
+So, we build a function `train_model` for algorithms to normalize the input and output.
+
+And implementation of `train_model` in different algorithms is various, which means it can be replaced when it comes new algorithms.
 `train_model` only had one input parameter called `kwargs`, which will be pre-defined and represent all hyper-parameters of this algorithm.
-For example,
+For example,  
 ```python
  kwargs={'alpha1': 0.2404249370702901, 'num_paths': 47, 'path_length': 48, 'win_size': 14}
 ```
-Then algorithms can call dataset as `self.mat_content` in class and transfer it to embedding.
+After processing by Dataset.py, input data will become a global variable that can be called as `self.mat_content`.
+But it may still not satisfied the format of some algorithms.So, algorithms can call dataset as `self.mat_content` in class and tackle it.
+For example, GraRep will tackle graph by `nx.from_scipy_sparse_matrix` like below
+```python
+    self.graph=self.mat_content['Network']
+    self.G = nx.from_scipy_sparse_matrix(self.graph)
+```
+According to above two points, the function need to be overwritten like below,
 ```python
 def train_model(self, **kwargs):
-   # need to add the algorithm
-   return embedding
+    adj, features, labels = load_citationmat()  'Load the data from the Dictionary and Preprocess'
+    embbeding = Featwalk( **kwargs).function() 'Send the Parameter to the Algorithm'
+    return embbeding
+
 ```
-So, the reason why we used `kwargs` is that for each tuning,the value of it is different,which means it needs to be a variable.
+Thus, the reason we used `kwargs` is that for each tuning,the value of it is different,which means it needs to be a variable.
 Besides,for each algorithm, its hyper-parameters is varying with numbers,name and range,so it will be recorded in `check_train_parameters`.
-Log space is also can be defined here.
-For example
+For example,
 ```python
  def check_train_parameters(self):
         space_dtree = {
@@ -132,9 +142,10 @@ In order to tune parameters under different scoring criteria,we wrote get_score 
 ```
 #### Automatic parameter tuning
 
-The third package hyperopt is a reliable package can help us tune parameters.
-We choose two methods from it so far,which is random search and TPE respectively.
-After tuning and find the best one, it will return the best embbeding and related hyper-parameters we set.
+[Hyperopt](http://proceedings.mlr.press/v28/bergstra13.pdf) is a Python library for serial and parallel optimization over awkward search spaces, which may include real-valued, discrete, and conditional dimensions.
+Currently three algorithms are implemented in hyperopt:Random Search,Tree of Parzen Estimators (TPE), Adaptive TPE. 
+We used two methods from it so far,which is random search and TPE respectively.
+After tuning and obtaining the best score, it will return the best embedding matrix, related hyper-parameters and tuning times.
 ```python
     def parameter_tuning(self):
         trials = Trials()
@@ -142,9 +153,6 @@ After tuning and find the best one, it will return the best embbeding and relate
             algo = partial(hyperopt.rand.suggest)
         elif self.tuning== 'tpe':
             algo = partial(tpe.suggest)
-        else:
-            algo = partial(atpe.suggest)
-
         space_dtree = self.check_train_parameters()
         best = fmin(fn=self.get_score, space=space_dtree, algo=algo, max_evals=1000, trials=trials, timeout=self.stop_time)
         hyperparam = hyperopt.space_eval(space_dtree,best)
