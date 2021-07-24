@@ -119,7 +119,7 @@ def main(args):
         datasetdict[args.dataset] = temp
 
     # initial variable to store the final result and clean the file
-    eval_file_name='result/evalFiles/result_'+str(args.tunning_method)+'_' +str(args.method) + '_' + str(today) + '_' + str(args.task_method) + '_' + str(args.dataset)+ '.txt'
+    eval_file_name='result/evalFiles/result_'+str(args.tuning_method)+'_' +str(args.method) + '_' + str(today) + '_' + str(args.task_method) + '_' + str(args.dataset)+ '.txt'
     fileObject = open(eval_file_name, 'w')
     fileObject.close()
 
@@ -128,7 +128,7 @@ def main(args):
             print("\n----------Train information-------------\n",'dataset: {} ,Algorithm:{} '.format(dkey,mkey))
             model = modeldict[mkey]
             Graph,Stoptime = get_graph_time(args,dkey)
-            model = model(datasets=Graph, iter=iter, time_setting=Stoptime,task_method=args.task_method,tuning=args.tunning_method,cuda=args.cuda_device)
+            model = model(datasets=Graph, iter=iter, time_setting=Stoptime,task_method=args.task_method,tuning=args.tuning_method,cuda=args.cuda_device)
             if model.is_end2end():
                 f1_mic,f1_mac = model.end2endsocre()
                 best = model.get_best()
