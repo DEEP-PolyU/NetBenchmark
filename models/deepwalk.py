@@ -17,6 +17,7 @@ def deepwalk_fun(CombG,d,**kwargs):
     walk_length = kwargs['walk_length']
     window_size = kwargs['window_size']
 
+
     G = graph.from_numpy(CombG)
     #print("Number of nodes: {}".format(len(G.nodes())))
 
@@ -37,7 +38,7 @@ def deepwalk_fun(CombG,d,**kwargs):
         # print("time elapsed: {:.2f}s".format(time.time() - start_time))
         # print("Training...")
         walks = [list(map(str, walk)) for walk in walks]
-        model = Word2Vec(walks, size=d, window=window_size, min_count=0, workers=os.cpu_count())
+        model = Word2Vec(walks, size=d, window=window_size, min_count=0, workers=kwargs['cpu_number'])
         # print("time elapsed: {:.2f}s".format(time.time() - start_time))
     else:
         # print("Data size {} is larger than limit (max-memory-data-size: {}).  Dumping walks to disk.".format(data_size, max_memory_data_size))
@@ -47,7 +48,7 @@ def deepwalk_fun(CombG,d,**kwargs):
         walk_files = serialized_walks.write_walks_to_disk(G, walks_filebase, num_paths=number_walks,
                                                           path_length=walk_length, alpha=0,
                                                           rand=random.Random(seed),
-                                                          num_workers=os.cpu_count())
+                                                          num_workers=kwargs['cpu_number'])
 
         # print("Counting vertex frequency...")
         if not vertex_freq_degree:
@@ -59,7 +60,7 @@ def deepwalk_fun(CombG,d,**kwargs):
         # print("Training...")
         model = Skipgram(sentences=serialized_walks.combine_files_iter(walk_files), vocabulary_counts=vertex_counts,
                          size=d,
-                         window=window_size, min_count=0, workers=os.cpu_count())
+                         window=window_size, min_count=0, workers=kwargs['cpu_number'])
 
     word_vectors = model.wv
     H = np.zeros((CombG.shape[0], d))
@@ -82,11 +83,10 @@ class deepwalk(Models):
         space_dtree = {
 
             'number_walks': hp.uniformint('number_walks', 5, 80),
-            'walk_length': hp.uniformint('walk_length', 5, 50),
-            'window_size': hp.uniformint('window_size', 5, 50)
+            'walk_length': hp.uniformint('walk_length', 5, 80),
+            'window_size': hp.uniformint('window_size', 2, 40),
+            'cpu_number': self.cpu_number
         }
-
-
         return space_dtree
 
     @classmethod
@@ -106,9 +106,9 @@ class deepwalk(Models):
         d = 128
         ComG = self.mat_content['Network']
 
-        embbeding = deepwalk_fun(CombG=ComG, d = 128,**kwargs)
+        embedding = deepwalk_fun(CombG=ComG, d = 128,**kwargs)
 
 
-        return embbeding
+        return embedding
 
 

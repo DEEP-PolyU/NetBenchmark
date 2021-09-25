@@ -15,6 +15,7 @@ class Models(torch.nn.Module):
     def __init__(self, *, datasets, time_setting, task_method,tuning,cuda,**kwargs):
         # Train on CPU (hide GPU) due to memory constraints
         # os.environ['CUDA_VISIBLE_DEVICES'] = [0,1,2,3,4,5,6]
+        self.cpu_number = 4
         self.use_gpu = torch.cuda.is_available()
         cuda_name = 'cuda:' + cuda
         self.device = torch.device(cuda_name if self.use_gpu else 'cpu')
