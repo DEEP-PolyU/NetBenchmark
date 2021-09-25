@@ -31,7 +31,8 @@ import preprocessing.preprocessing as pre
 import copy
 from datetime import date
 
-datasetlist = [Cora, Flickr, BlogCatalog, Citeseer, pubmed]  # yelp,reddit,cornell
+datasetlist = [Cora, Flickr, BlogCatalog, ACM, Citeseer, neil001, pubmed, ppi, ogbn_arxiv, chameleon, wisconsin,
+                   film, squirrel]  # yelp,reddit,cornell
 datasetlist_all = [Cora, Flickr, BlogCatalog, ACM, Citeseer, neil001, pubmed, ppi, ogbn_arxiv, chameleon, wisconsin,
                    film, squirrel]  # yelp,reddit,cornell
 datasetdict = {Cls.__name__.lower(): Cls for Cls in datasetlist}
@@ -56,13 +57,13 @@ def parse_args():
     parser.add_argument('--task_method', type=str, default='task1',
                         choices=['task1', 'task2', 'task3'],
                         help='The task method')
-    parser.add_argument('--training_time', type=float, default=1.4,
+    parser.add_argument('--training_time', type=float, default=2.8,
                         help='The total training time you want')
     parser.add_argument('--input_file', type=str, default=None,
                         help='The input datasets you want')
     parser.add_argument('--tuning_method', type=str, default='random',
                         choices=['random', 'tpe'],
-                        help='random search/ tpe search/adaptive tpe search')
+                        help='random search/ tpe search')
     parser.add_argument('--cuda_device', type=str, default='0')
 
     args = parser.parse_args()
