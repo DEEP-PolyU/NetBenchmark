@@ -8,8 +8,7 @@ from .CAN_new_package.optimizer import  OptimizerCAN
 from .CAN_new_package.model import CAN
 from .CAN_new_package.preprocessing import preprocess_graph, construct_feed_dict, sparse_to_tuple, mask_test_edges, mask_test_feas
 from .model import *
-
-
+from hyperparameters.public_hyper import SPACE_TREE
 
 
 class CAN_new(Models):
@@ -27,28 +26,21 @@ class CAN_new(Models):
         return False
 
     def check_train_parameters(self):
-        space_dtree = {
-            'nb_epochs': hp.uniformint('nb_epochs', 100, 5000),
-            # 'lr': hp.loguniform('lr', np.log(0.05), np.log(0.2)), # walk_length,window_size
-            'lr': hp.choice('lr', [0, 1, 2, 3, 4, 5, 6])
-        }
+        space_dtree = SPACE_TREE
 
         return space_dtree
 
 
     def train_model(self, **kwargs):
 
-        lrrate = [0.1, 0.01, 0.001, 0.0001, 0.005, 0.05, 0.00005]
-
         device= self.device
-        lr=kwargs["lr"]
         hidden1=256
         hidden2=128
-        dropout=0
+        dropout=kwargs["dropout"]
         epochs=int(kwargs["nb_epochs"])
         seed=42
         use_gpu = self.use_gpu
-        learning_rate = lrrate[lr]
+        learning_rate =kwargs["lr"]
 
         np.random.seed(seed)
         torch.manual_seed(seed)
