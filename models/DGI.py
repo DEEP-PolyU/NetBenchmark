@@ -2,6 +2,7 @@ import torch.nn as nn
 import scipy.sparse as sp
 from models.dgi_package import GCN, AvgReadout, Discriminator,process
 from .model import *
+from hyperparameters.public_hyper import SPACE_TREE
 class DGI_test(nn.Module):
     def __init__(self, n_in, n_h, activation):
         super(DGI_test, self).__init__()
@@ -45,13 +46,7 @@ class DGI(Models):
         return False
 
     def check_train_parameters(self):
-        space_dtree = {
-
-            'batch_size': hp.uniformint('batch_size', 1, 100),
-            'nb_epochs': hp.uniformint('nb_epochs', 100, 120),
-            # 'lr': hp.loguniform('lr', np.log(0.05), np.log(0.2)), # walk_length,window_size
-            'lr': hp.choice('lr', [0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
-        }
+        space_dtree = SPACE_TREE
 
         return space_dtree
 
@@ -68,12 +63,11 @@ class DGI(Models):
 
 
         # training params
-        lrrate = [-5, -4.5, -4, -3.5, -3, -2.5, -2.0, -1.5, -1.0, -0.5]
+        # print(int(kwargs["batch_size"]))
         batch_size = 1
         nb_epochs = int(kwargs["nb_epochs"])
         patience = 20
         lr = kwargs["lr"]
-        lr = 10 ** lrrate[lr]
         l2_coef = 0.0
         drop_prob = 0.0
         hid_units = 128
