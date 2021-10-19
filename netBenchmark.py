@@ -141,7 +141,7 @@ def main(args):
                     roc_score, ap_score = link_prediction_10_time(emb, Graph)
                     temp_result['roc_score'] = roc_score
                     temp_result['ap_score'] = ap_score
-                np.save('result/embFiles/' + mkey + '_embedding_' + args.dataset + '.npy', emb)
+                # np.save('result/embFiles/' + mkey + '_embedding_' + args.dataset + '.npy', emb)
             # save it in result file by using 'add' model
             fileObject = open(eval_file_name, 'a+')
             fileObject.write(str(temp_result) + '\n')

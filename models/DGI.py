@@ -112,7 +112,7 @@ class DGI(Models):
         cnt_wait = 0
         best = 1e9
         best_t = 0
-
+        best_model=None
         start_time = time.time()
         for epoch in range(nb_epochs):
             model.train()
@@ -139,7 +139,8 @@ class DGI(Models):
                 best = loss
                 best_t = epoch
                 cnt_wait = 0
-                torch.save(model.state_dict(), 'models/dgi_package/best_dgi_%d.pkl' % (hid_units))
+                best_model = model.state_dict()
+                # torch.save(model.state_dict(), 'models/dgi_package/best_dgi_%d.pkl' % (hid_units))
             else:
                 cnt_wait += 1
 
@@ -151,7 +152,7 @@ class DGI(Models):
             optimiser.step()
 
         # print('Loading {}th epoch'.format(best_t))
-        model.load_state_dict(torch.load('models/dgi_package/best_dgi_%d.pkl' % (hid_units)))
+        model.load_state_dict(best_model)
 
         embeds, _ = model.embed(features, sp_adj if sparse else adj, sparse, None)
 
