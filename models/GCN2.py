@@ -68,6 +68,7 @@ class GCN2(Models):
         np.random.seed(seed)
 
 
+
         fastmode = False
         # Load data
         # adj, features, labels, idx_train, idx_val, idx_test = load_data()
@@ -76,10 +77,9 @@ class GCN2(Models):
         if self.use_gpu:
             device = self.device
             torch.cuda.manual_seed(42)
-
-            features = features.to(device)
             adj = adj.to(device)
             labels = labels.to(device)
+            features = features.to(device)
         else:
             device = self.device
             print("--> No GPU")
@@ -97,7 +97,6 @@ class GCN2(Models):
 
         optimizer = optim.Adam(model.parameters(),
                                lr=lr, weight_decay=weight_decay)
-        model.to(device)
 
 
 
