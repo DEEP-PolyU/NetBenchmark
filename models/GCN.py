@@ -59,20 +59,28 @@ class GCN(Models):
         # epochs=int(kwargs["nb_epochs"])
         epochs = 1000
         semi_rate=0.6
+        best = 1e9
+        patience = 20
+        cnt_wait = 0
+        best_model = None
 
         np.random.seed(seed)
 
-        if self.use_gpu:
-            device = self.device
-            torch.cuda.manual_seed(42)
-        else:
-            device = self.device
-            print("--> No GPU")
+
         fastmode = False
         # Load data
         # adj, features, labels, idx_train, idx_val, idx_test = load_data()
         adj, features, labels, idx_train, idx_val, idx_test=load_normalized_format(datasets=self.mat_content,semi_rate=semi_rate)
 
+        if self.use_gpu:
+            device = self.device
+            torch.cuda.manual_seed(42)
+            adj = adj.to(device)
+            labels = labels.to(device)
+            features = features.to(device)
+        else:
+            device = self.device
+            print("--> No GPU")
         # Model and optimizer
         model = GCN_original(nfeat=features.shape[1],
                     nhid=hidden,
@@ -125,29 +133,50 @@ class GCN(Models):
 
         # if __name__ == '__main__':
         # Train model
-        kf = KFold(n_splits=5, random_state=seed, shuffle=True)
-        t_total = time.time()
-        F1_mic_tot = []
-        F1_mac_tot = []
-        for train_index, test_index in kf.split(features):
-            train_index = torch.LongTensor(train_index)
-            test_index = torch.LongTensor(test_index)
-            train_index.to(device)
-            test_index.to(device)
-            for epoch in range(epochs):
-                train(epoch, train_index)
-            print("Optimization Finished!")
-            print("Total time elapsed: {:.4f}s".format(time.time() - t_total))
-            # Testing
-            F1_mic, F1_mac = test(test_index, labels)
-            F1_mic_tot.append(F1_mic)
-            F1_mac_tot.append(F1_mac)
-        F1_mic_tot = np.array(F1_mic_tot)
-        F1_mac_tot = np.array(F1_mac_tot)
-        F1_mic_mean = np.mean(F1_mic_tot)
-        F1_mac_mean = np.mean(F1_mac_tot)
-        print('F1_mic:', F1_mic_mean)
-        print('F1_mac:', F1_mac_mean)
+        # kf = KFold(n_splits=5, random_state=seed, shuffle=True)
+        # t_total = time.time()
+        # F1_mic_tot = []
+        # F1_mac_tot = []
+        # for train_index, test_index in kf.split(features):
+        #     train_index = torch.LongTensor(train_index)
+        #     test_index = torch.LongTensor(test_index)
+        #     train_index.to(device)
+        #     test_index.to(device)
+        #     for epoch in range(epochs):
+        #         train(epoch, train_index)
+        #     print("Optimization Finished!")
+        #     print("Total time elapsed: {:.4f}s".format(time.time() - t_total))
+        #     # Testing
+        #     F1_mic, F1_mac = test(test_index, labels)
+        #     F1_mic_tot.append(F1_mic)
+        #     F1_mac_tot.append(F1_mac)
+        # F1_mic_tot = np.array(F1_mic_tot)
+        # F1_mac_tot = np.array(F1_mac_tot)
+        # F1_mic_mean = np.mean(F1_mic_tot)
+        # F1_mac_mean = np.mean(F1_mac_tot)
+        # print('F1_mic:', F1_mic_mean)
+        # print('F1_mac:', F1_mac_mean)
 
 
-        return F1_mic_mean,F1_mac_mean
+        for epoch in range(epochs):
+            model.train()
+            optimizer.zero_grad()
+            output = model(features, adj)
+            loss_train = F.nll_loss(output, labels)
+            if loss_train < best:
+                best = loss_train
+                cnt_wait = 0
+                best_model = model.state_dict()
+            else:
+                cnt_wait += 1
+            if cnt_wait == patience:
+                # print('Early stopping!')
+                break
+            loss_train.backward()
+            optimizer.step()
+        model.load_state_dict(best_model)
+        emb = model(features, adj)
+        node_emb = emb.data.cpu().numpy()
+
+
+        return node_emb
