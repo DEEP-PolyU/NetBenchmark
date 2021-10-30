@@ -156,9 +156,9 @@ class DGI(Models):
 
         embeds, _ = model.embed(features, sp_adj if sparse else adj, sparse, None)
 
-        train_embs = embeds[0, idx_train]
-        val_embs = embeds[0, idx_val]
-        test_embs = embeds[0, idx_test]
+        # train_embs = embeds[0, idx_train]
+        # val_embs = embeds[0, idx_val]
+        # test_embs = embeds[0, idx_test]
 
         node_emb = embeds.data.cpu().numpy()
         # print('node_shape ', node_emb.shape)
