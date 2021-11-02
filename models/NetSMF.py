@@ -11,8 +11,7 @@ from models.LINE_package.utils import alias_draw, alias_setup
 class NetSMF(Models):
     def check_train_parameters(self):
         space_dtree = {
-            'negative': hp.uniformint('negative', 1, 10),
-            'window_size': hp.uniformint('window_size', 1, 20)
+            'window_size': hp.uniformint('window_size', 5, 15)
         }
 
         return space_dtree
@@ -32,9 +31,9 @@ class NetSMF(Models):
     def train_model(self, **kwargs):  # (self,rootdir,variable_name,number_walks):
         self.dimension = 128
         self.window_size=int(kwargs['window_size'])
-        self.negative=int(kwargs['negative'])
+        self.negative= 1
         self.num_round = 100
-        self.worker = 2
+        self.worker = 4
         self.graph=self.mat_content['Network']
         self.G = nx.from_scipy_sparse_matrix(self.graph)
         node2id = dict([(node, vid) for vid, node in enumerate(self.G.nodes())])

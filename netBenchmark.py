@@ -36,7 +36,7 @@ datasetlist = [Cora, Flickr, BlogCatalog, ACM, Citeseer, neil001, pubmed, ppi , 
 datasetlist_all = [Cora, Flickr, BlogCatalog, ACM, Citeseer, neil001, pubmed, ppi, chameleon, wisconsin,
                    film, squirrel]  # yelp,reddit,cornell,ogbn_arxiv
 datasetdict = {Cls.__name__.lower(): Cls for Cls in datasetlist}
-modellist = [featwalk, netmf, deepwalk, node2vec, DGI, GAE, CAN_new, CAN_original, ProNE, HOPE, Grarep, SDNE,GCN,GCN2]
+modellist = [featwalk, netmf, deepwalk, node2vec, DGI, GAE, CAN_new, CAN_original, ProNE, HOPE, Grarep, SDNE,GCN,GCN2,NetSMF]
 modeldict = {Cls.__name__.lower(): Cls for Cls in modellist}
 
 datasetdict_all = copy.deepcopy(datasetdict)
