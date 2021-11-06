@@ -3,13 +3,11 @@ import numpy as np
 import networkx as nx
 import scipy.sparse as sp
 from sklearn import preprocessing
+from hyperparameters.public_hyper import SPACE_TREE
 
 class HOPE(Models):
     def check_train_parameters(self):
-        space_dtree = {
-            'beta': hp.uniform('beta', 0, 1)
-        }
-
+        space_dtree = SPACE_TREE
         return space_dtree
 
     @classmethod
