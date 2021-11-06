@@ -37,6 +37,6 @@ class HOPE(Models):
         self.G = nx.from_scipy_sparse_matrix(self.graph)
         adj = nx.adjacency_matrix(self.G).todense()
         n = adj.shape[0]
-        katz_matrix = np.asarray((np.eye(n) - kwargs['beta'] * np.mat(adj)).I - np.eye(n))
+        katz_matrix = np.asarray((np.eye(n) - kwargs['lr'] * np.mat(adj)).I - np.eye(n))
         embeddings = self._get_embedding(katz_matrix, 128)
         return embeddings
