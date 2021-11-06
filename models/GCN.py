@@ -14,9 +14,7 @@ from .GCN_package.utils import load_data, accuracy, load_citation,load_citationA
 from .GCN_package.models import GCN_original
 from .model import *
 from preprocessing.preprocessing import load_normalized_format
-import os
-from sklearn.model_selection import KFold
-from sklearn.metrics import f1_score
+from hyperparameters.public_hyper import SPACE_TREE
 # This is the graphsage version of GCN_package paper
 
 class GCN(Models):
@@ -32,32 +30,20 @@ class GCN(Models):
         return True
 
     def check_train_parameters(self):
-        space_dtree = {
-
-            'batch_size': hp.uniformint('batch_size', 1, 100),
-            'nb_epochs': hp.uniformint('nb_epochs', 100, 120),
-            # 'lr': hp.loguniform('lr', np.log(0.05), np.log(0.2)), # walk_length,window_size
-            'lr': hp.choice('lr', [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]),
-            # 'lr':hp.uniform('lr',0,1),
-            'dropout': hp.uniform('dropout', 0, 0.75)
-        }
-
+        space_dtree = SPACE_TREE
         return space_dtree
 
     def train_model(self, **kwargs):
 
-        lrrate = [-5, -4.5, -4, -3.5, -3, -2.5, -2.0, -1.5, -1.0, -0.5]
         semi=0
         seed=42
         hidden=128
         dropout=kwargs["dropout"]
         # lr=np.power(10,-4*kwargs["lr"])
         lr = kwargs["lr"]
-        lr =10**lrrate[lr]
 
         weight_decay=0
-        # epochs=int(kwargs["nb_epochs"])
-        epochs = 1000
+        epochs=int(kwargs["nb_epochs"])
         semi_rate=0.6
         best = 1e9
         patience = 20
@@ -85,7 +71,7 @@ class GCN(Models):
         model = GCN_original(nfeat=features.shape[1],
                     nhid=hidden,
                     nclass=labels.max().item() + 1,
-                    dropout=0)
+                    dropout=dropout)
         optimizer = optim.Adam(model.parameters(),
                                lr=lr, weight_decay=weight_decay)
 
