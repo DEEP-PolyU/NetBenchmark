@@ -27,7 +27,7 @@ class GCN(Models):
         return False
     @classmethod
     def is_end2end(cls):
-        return True
+        return False
 
     def check_train_parameters(self):
         space_dtree = SPACE_TREE
