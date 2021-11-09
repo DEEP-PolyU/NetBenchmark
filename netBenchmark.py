@@ -31,10 +31,10 @@ import preprocessing.preprocessing as pre
 import copy
 from datetime import date
 
-datasetlist = [Cora, Flickr, BlogCatalog, ACM, Citeseer, neil001, pubmed, ppi , chameleon, wisconsin,
-                   film, squirrel]  # yelp,reddit,cornell,ogbn_arxiv
-datasetlist_all = [Cora, Flickr, BlogCatalog, ACM, Citeseer, neil001, pubmed, ppi, chameleon, wisconsin,
-                   film, squirrel]  # yelp,reddit,cornell,ogbn_arxiv
+datasetlist = [Cora, Flickr, BlogCatalog, ACM, Citeseer, pubmed , chameleon, wisconsin,
+                   film, squirrel]  # yelp,reddit,cornell,ogbn_arxiv,neil001, ppi
+datasetlist_all = [Cora, Flickr, BlogCatalog, ACM, Citeseer, pubmed, chameleon, wisconsin,
+                   film, squirrel]  # yelp,reddit,cornell,ogbn_arxiv,neil001, ppi
 datasetdict = {Cls.__name__.lower(): Cls for Cls in datasetlist}
 modellist = [featwalk, netmf, deepwalk, node2vec, DGI, GAE, CAN_new, CAN_original, ProNE, HOPE, Grarep, SDNE,GCN,GCN2,NetSMF]
 modeldict = {Cls.__name__.lower(): Cls for Cls in modellist}
