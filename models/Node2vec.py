@@ -160,11 +160,11 @@ class node2vec(Models):
 
         space_dtree = {
             # unifrom 就是隨機抽取數字，按document說是完成了random search
-            'p': hp.uniform('p', 0.1, 2),
-            'q': hp.uniform('q', 0.1, 2),
-            'walks': hp.uniformint('walks', 5, 80),
-            'length': hp.uniformint('length', 5, 50),
-            'window': hp.uniformint('window', 5, 50)
+            'p': hp.choice('p', [0.25, 0.5, 1, 2, 4]),
+            'q': hp.choice('q', [0.25, 0.5, 1, 2, 4]),
+            'walks': hp.uniformint('walks', 5, 120),
+            'length': hp.uniformint('length', 5, 120),
+            'window': hp.uniformint('window', 5, 15)
         }
 
 
