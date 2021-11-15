@@ -12,7 +12,7 @@ class LINE(Models):
         space_dtree = {
             'walk_length': hp.uniformint('walk_length', 1, 100),
             'walk_num': hp.uniformint('walk_num', 1, 100),
-            'alpha': hp.uniform('alpha', 0, 1),
+            'alpha': hp.choice('alpha', [0.5, 0.4, 0.3, 0.2, 0.1, 0.01, 0.001, 0.0001, 0.005, 0.05, 0.00005]),
             'negative': hp.uniformint('negative', 1, 10)
         }
 
@@ -93,8 +93,8 @@ class LINE(Models):
         batch_size = 1000
         t0 = time.time()
         num_batch = int(self.num_sampling_edge / batch_size)
-        epoch_iter = tqdm(range(num_batch))
-        for b in epoch_iter:
+        # epoch_iter = tqdm(range(num_batch))
+        for b in range(num_batch):
             if b % 100 == 0:
                 # epoch_iter.set_description(
                 #     f"Progress: {b *1.0/num_batch * 100:.4f}%, alpha: {self.alpha:.6f}, time: {time.time() - t0:.4f}"
