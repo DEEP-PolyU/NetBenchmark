@@ -9,7 +9,7 @@ import torch.nn.functional as F
 from tqdm import tqdm
 from .model import *
 from models.dgi_package import GCN, AvgReadout, Discriminator,process
-
+from hyperparameters.public_hyper import SPACE_TREE
 class SDNE_layer(nn.Module):
     def __init__(self, num_node, hidden_size1, hidden_size2, droput, alpha, beta, nu1, nu2):
         super(SDNE_layer, self).__init__()
@@ -71,38 +71,24 @@ class SDNE(Models):
         return False
 
     def check_train_parameters(self):
-        space_dtree = {
-            'batch_size': hp.uniformint('batch_size', 1, 100),
-            'nb_epochs': hp.uniformint('nb_epochs', 100, 5000),
-            # 'lr': hp.loguniform('lr', np.log(0.05), np.log(0.2)), # walk_length,window_size
-            'lr': hp.choice('lr', [0, 1, 2, 3, 4, 5, 6]),
-            'nu1': hp.choice('nu1', [0, 1, 2, 3, 4, 5, 6]),
-            'nu2': hp.choice('nu2', [0, 1, 2, 3, 4, 5, 6]),
-            'dropout': hp.uniform('dropout', 0, 0.75),
-            'alpha': hp.choice('alpha', [0, 1, 2, 3, 4, 5, 6]),
-            'beta': hp.randint('beta',5,25)
-        }
-
+        space_dtree = SPACE_TREE
+        space_dtree['nu1']= hp.choice('nu1', [0.1, 0.01, 0.001, 0.0001, 0.005, 0.05, 0.00005])
+        space_dtree['nu2']=hp.choice('nu2', [0.1, 0.01, 0.001, 0.0001, 0.005, 0.05, 0.00005])
+        space_dtree['beta']=hp.randint('beta', 5, 25)
+        space_dtree['alpha'] = hp.normal('alpha', 0, 0.4)
         return space_dtree
 
     def train_model(self, **kwargs):
         np.random.seed(42)
         torch.manual_seed(42)
-        lrrate = [0.1, 0.01, 0.001, 0.0001, 0.005, 0.05, 0.00005]
 
         nb_epochs = int(kwargs["nb_epochs"])
-
         lr = kwargs["lr"]
-        lr = lrrate[lr]
-        nu1 = lrrate[kwargs['nu1']]
-        nu2 = lrrate[kwargs['nu2']]
-        alpha = lrrate[kwargs['alpha']]
+        nu1 = kwargs['nu1']
+        nu2 = kwargs['nu2']
+        alpha = kwargs['alpha']
         beta = kwargs['beta']
-
-        l2_coef = 0.0
         drop_prob = kwargs["dropout"]
-        hid_units = 128
-
 
         self.graph = self.mat_content['Network']
         G = nx.from_scipy_sparse_matrix(self.graph)
