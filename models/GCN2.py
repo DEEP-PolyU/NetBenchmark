@@ -6,7 +6,7 @@ from __future__ import print_function
 import torch
 import torch.nn.functional as F
 import torch.optim as optim
-
+from hyperparameters.public_hyper import SPACE_TREE
 from .GCN_package.utils import load_data, accuracy, load_citation,load_citationANEmat_gac,load_webANEmat_gac,F1_score
 from .GCN2_package import GCNII
 from .model import *
@@ -29,28 +29,18 @@ class GCN2(Models):
         return False
 
     def check_train_parameters(self):
-        space_dtree = {
-
-            'batch_size': hp.uniformint('batch_size', 1, 100),
-            'nb_epochs': hp.uniformint('nb_epochs', 100, 5000),
-            # 'lr': hp.loguniform('lr', np.log(0.05), np.log(0.2)),
-            'lr': hp.choice('lr', [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]),# walk_length,window_size
-            'dropout': hp.uniform('dropout', 0, 0.75),
-            'lamda': hp.uniform('lamda', 0, 0.75),
-            'alpha': hp.uniform('alpha', 0, 0.75),
-            'layer': hp.randint('layer',1,64)
-        }
-
+        space_dtree = SPACE_TREE
+        space_dtree['layer']=hp.choice('layer', [8,16,32,64,128])
+        space_dtree['lamda']=hp.choice('lamda', [0,0.5,1,1.5,2,2.5])
+        if 'dropout' in space_dtree.keys():
+            space_dtree.pop('dropout')
         return space_dtree
 
     def train_model(self, **kwargs):
-
-        lrrate = [-5, -4.5, -4, -3.5, -3, -2.5, -2.0, -1.5, -1.0, -0.5]
-
         semi=0
         seed=42
         hidden=128
-        dropout=kwargs["dropout"]
+        dropout=0.5
         lr=kwargs["lr"]
         weight_decay=0
         epochs=int(kwargs["nb_epochs"])
@@ -58,16 +48,12 @@ class GCN2(Models):
         lamda=kwargs["lamda"]
         alpha = kwargs["alpha"]
         layer = kwargs['layer']
-        lr =10**lrrate[lr]
         best = 1e9
         patience = 20
         cnt_wait = 0
         best_model = None
 
-
         np.random.seed(seed)
-
-
 
         fastmode = False
         # Load data

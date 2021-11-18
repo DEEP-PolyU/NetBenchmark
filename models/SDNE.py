@@ -51,13 +51,6 @@ class SDNE_layer(nn.Module):
 
 
 class SDNE(Models):
-    def check_train_parameters(self):
-        space_dtree = {
-            'beta': hp.uniform('beta', 0, 1)
-        }
-
-        return space_dtree
-
     @classmethod
     def is_preprocessing(cls):
         return False
@@ -75,7 +68,8 @@ class SDNE(Models):
         space_dtree['nu1']= hp.choice('nu1', [0.1, 0.01, 0.001, 0.0001, 0.005, 0.05, 0.00005])
         space_dtree['nu2']=hp.choice('nu2', [0.1, 0.01, 0.001, 0.0001, 0.005, 0.05, 0.00005])
         space_dtree['beta']=hp.randint('beta', 5, 25)
-        space_dtree['alpha'] = hp.normal('alpha', 0, 0.4)
+        if 'batch_size' in space_dtree.keys():
+            space_dtree.pop('batch_size')
         return space_dtree
 
     def train_model(self, **kwargs):

@@ -9,10 +9,7 @@ from sklearn.metrics import average_precision_score
 from models.dgi_package import process
 from models.GAE_package import GCN,GCNTra
 from .model import *
-
-
-
-
+from hyperparameters.public_hyper import SPACE_TREE
 
 def sigmoid(x):
     return 1 / (1 + np.exp(-x))
@@ -60,21 +57,16 @@ def mat_import(mat):
 
     return features, adj_norm, adj_label, val_edges, val_edges_false, test_edges, test_edges_false, norm, pos_weight
 
-def train(features, adj, adj_label, val_edges, val_edges_false, device, pos_weight, norm,hid1,hid2,dropout,lr,weight_decay,epochs,**kwargs):
+def train(features, adj, adj_label, val_edges, val_edges_false, device, pos_weight, norm,hid1,hid2,dropout,lr,weight_decay,nb_epochs,**kwargs):
 
-    lrrate = [-5, -4.5, -4, -3.5, -3, -2.5, -2.0, -1.5, -1.0, -0.5]
-    hidden = [64,128,256]
-    weight = [0,5e-4,1e-3]
-    weight1 = weight[weight_decay]
-    lr = 10**lrrate[lr]
-    hidden1 = hidden[hid1]
+
     model = GCNTra(nfeat=features.shape[1],
-                nhid=hidden1,
+                nhid=hid1,
                 nhid2=hid2,
                 dropout=dropout)
 
     optimizer = optim.Adam(model.parameters(),
-                           lr=lr, weight_decay=weight1)
+                           lr=lr, weight_decay=weight_decay)
     pos_weight = pos_weight.to(device)
     b_xent = nn.BCEWithLogitsLoss(pos_weight=pos_weight)
 
@@ -90,7 +82,7 @@ def train(features, adj, adj_label, val_edges, val_edges_false, device, pos_weig
     cnt_wait = 0
     start_time = time.time()
     file_name='models/GAE_package/savepath/'+kwargs['tuning_method']+'_save.pth'
-    for epoch in range(int(epochs)):
+    for epoch in range(int(nb_epochs)):
         model.train()
         optimizer.zero_grad()
         emb = model(features, adj)
@@ -164,18 +156,10 @@ class GAE(Models):
         return False
 
     def check_train_parameters(self):
-
-        space_dtree = {
-
-            'batch_size': hp.uniformint('batch_size', 1, 100),
-            'epochs': hp.uniformint('epochs', 100, 5000),
-            # 'lr': hp.loguniform('lr', np.log(0.05), np.log(0.2)),
-            'lr': hp.choice('lr', [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]),
-            'dropout': hp.uniform('dropout', 0, 0.75),
-            'tuning_method': str(self.tuning),
-            'hid1':hp.choice('hid1',[0,1,2]),
-            'weight_decay': hp.choice('weight_decay',[0,1,2])
-        }
+        space_dtree=SPACE_TREE
+        space_dtree['tuning_method']=str(self.tuning)
+        space_dtree['hid1']=hp.choice('hid1',[64,128,256])
+        space_dtree['weight_decay']= hp.choice('weight_decay',[0,5e-4,1e-3])
 
         return space_dtree
 

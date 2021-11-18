@@ -101,7 +101,7 @@ class Models(torch.nn.Module):
         print('end of training:{:.2f}s'.format(self.stop_time))
         emb = self.train_model(**hyperparam)
 
-        return emb,best,tuning_time
+        return emb,hyperparam,tuning_time
 
 
 
