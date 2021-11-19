@@ -64,6 +64,7 @@ class LINE(Models):
             # print(type(self.dimension))
             self.emb_vertex = (np.random.random((self.num_node, self.dimension)) - 0.5) / self.dimension
             self._train_line(order=1)
+            self.emb_vertex=np.nan_to_num(self.emb_vertex)
             embedding1 = preprocessing.normalize(self.emb_vertex, "l2")
 
         if self.order == 2 or self.order == 3:
@@ -71,6 +72,7 @@ class LINE(Models):
             self.emb_vertex = (np.random.random((self.num_node, self.dimension)) - 0.5) / self.dimension
             self.emb_context = self.emb_vertex
             self._train_line(order=2)
+            self.emb_vertex = np.nan_to_num(self.emb_vertex)
             embedding2 = preprocessing.normalize(self.emb_vertex, "l2")
 
         if self.order == 1:
