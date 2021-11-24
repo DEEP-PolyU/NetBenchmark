@@ -81,7 +81,8 @@ def train(features, adj, adj_label, val_edges, val_edges_false, device, pos_weig
     best_epoch = 0
     cnt_wait = 0
     start_time = time.time()
-    file_name='models/GAE_package/savepath/'+kwargs['tuning_method']+'_save.pth'
+    best_model = None
+    # file_name='models/GAE_package/savepath/'+kwargs['tuning_method']+'_save.pth'
     for epoch in range(int(nb_epochs)):
         model.train()
         optimizer.zero_grad()
@@ -98,7 +99,8 @@ def train(features, adj, adj_label, val_edges, val_edges_false, device, pos_weig
             max_ap = ap_
             best_epoch = epoch
             cnt_wait = 0
-            torch.save(model.state_dict(), file_name)
+            best_model = model.state_dict()
+            # torch.save(model.state_dict(), file_name)
         else:
             cnt_wait += 1
 
@@ -116,7 +118,7 @@ def train(features, adj, adj_label, val_edges, val_edges_false, device, pos_weig
         optimizer.step()
 
 
-    model.load_state_dict(torch.load(file_name))
+    model.load_state_dict(best_model)
     model.eval()
     emb = model(features, adj)
 
