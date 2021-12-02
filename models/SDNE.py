@@ -67,7 +67,8 @@ class SDNE(Models):
         space_dtree = SPACE_TREE
         space_dtree['nu1']= hp.choice('nu1', [0.1, 0.01, 0.001, 0.0001, 0.005, 0.05, 0.00005])
         space_dtree['nu2']=hp.choice('nu2', [0.1, 0.01, 0.001, 0.0001, 0.005, 0.05, 0.00005])
-        space_dtree['beta']=hp.randint('beta', 5, 25)
+        space_dtree['beta']=hp.choice('beta', [0, 1,5, 10, 20, 30, 0.5])
+        space_dtree['alpha'] = hp.choice('alpha', [0,0.1, 0.2, 0.3, 0.4, 0.5])
         if 'batch_size' in space_dtree.keys():
             space_dtree.pop('batch_size')
         return space_dtree
