@@ -61,17 +61,19 @@ class Models(torch.nn.Module):
         return embedding
 
     def get_score(self,params):
-        emb = self.train_model(**params)
-        adj = self.mat_content['Network']
-        if self.task_method == 'task1':
-            adj_train, train_edges, val_edges, val_edges_false, test_edges, test_edges_false = pre.mask_val_test_edges(adj)
-            score=link_prediction_Automatic_tuning(emb,edges_pos=test_edges,edges_neg=test_edges_false)
-        elif self.task_method == 'task2':
-            adj_train, train_edges, val_edges, val_edges_false, test_edges, test_edges_false = pre.mask_val_test_edges(adj)
-            score = link_prediction_Automatic_tuning(emb, edges_pos=val_edges, edges_neg=val_edges_false)
-        else:
-            score=node_classifcation_end2end(np.array(emb), self.mat_content['Label'])
-
+        try:
+            emb = self.train_model(**params)
+            adj = self.mat_content['Network']
+            if self.task_method == 'task1':
+                adj_train, train_edges, val_edges, val_edges_false, test_edges, test_edges_false = pre.mask_val_test_edges(adj)
+                score=link_prediction_Automatic_tuning(emb,edges_pos=test_edges,edges_neg=test_edges_false)
+            elif self.task_method == 'task2':
+                adj_train, train_edges, val_edges, val_edges_false, test_edges, test_edges_false = pre.mask_val_test_edges(adj)
+                score = link_prediction_Automatic_tuning(emb, edges_pos=val_edges, edges_neg=val_edges_false)
+            else:
+                score=node_classifcation_end2end(np.array(emb), self.mat_content['Label'])
+        except:
+            score=0
         return -score
     def en2end_get_score(self,params):
         F1_mic,F1_mac = self.train_model(**params)
