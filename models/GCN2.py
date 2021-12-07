@@ -32,15 +32,13 @@ class GCN2(Models):
         space_dtree = SPACE_TREE
         space_dtree['layer']=hp.choice('layer', [8,16,32,64,128])
         space_dtree['lamda']=hp.choice('lamda', [0,0.5,1,1.5,2,2.5])
-        if 'dropout' in space_dtree.keys():
-            space_dtree.pop('dropout')
         return space_dtree
 
     def train_model(self, **kwargs):
         semi=0
         seed=42
         hidden=128
-        dropout=0.5
+        dropout=kwargs["dropout"]
         lr=kwargs["lr"]
         weight_decay=0
         epochs=int(kwargs["nb_epochs"])

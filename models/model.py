@@ -72,7 +72,8 @@ class Models(torch.nn.Module):
                 score = link_prediction_Automatic_tuning(emb, edges_pos=val_edges, edges_neg=val_edges_false)
             else:
                 score=node_classifcation_end2end(np.array(emb), self.mat_content['Label'])
-        except:
+        except Exception as err:
+            print(f"Unexpected {err=}, {type(err)=}")
             score=0
         return -score
     def en2end_get_score(self,params):
