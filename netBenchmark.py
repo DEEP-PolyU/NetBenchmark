@@ -1,6 +1,7 @@
 import argparse
 import numpy as np
 import networkx as nx
+import threading
 import time
 import os
 from preprocessing.dataset import load_adjacency_matrix
@@ -100,6 +101,7 @@ def get_graph_time(args, dkey):
     return Graph, Stoptime
 
 def main(args):
+  with  sem:
     today = date.today()
     # deal with the option is not all
     if args.method != 'all':
@@ -149,4 +151,6 @@ def main(args):
 
 if __name__ == "__main__":
     # np.random.seed(32)
-    main(parse_args())
+    sem = threading.Semaphore(4)
+    threading.Thread(target=main(parse_args())).start()
+    # main(parse_args())
