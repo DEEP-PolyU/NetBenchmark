@@ -46,8 +46,9 @@ class DGI(Models):
         return False
 
     def check_train_parameters(self):
-        space_dtree = SPACE_TREE
-
+        space_dtree = {}
+        space_dtree['lr'] = SPACE_TREE['lr']
+        space_dtree["nb_epochs"] = SPACE_TREE["nb_epochs"]
         return space_dtree
 
 

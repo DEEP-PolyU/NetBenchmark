@@ -57,4 +57,4 @@ def link_prediction_Automatic_tuning(emb, edges_pos, edges_neg):
     labels_all = np.hstack([np.ones(len(preds)), np.zeros(len(preds_neg))])
     roc_score = roc_auc_score(labels_all, preds_all)
     ap_score = average_precision_score(labels_all, preds_all)
-    return roc_score
+    return (roc_score+ap_score)/2

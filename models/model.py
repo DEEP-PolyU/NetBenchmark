@@ -30,7 +30,6 @@ class Models(torch.nn.Module):
         start_time = time.time()
         if self.is_end2end():
             self.F1_mic, self.F1_mac, self.best = self.end2end()
-            self.end_time = time.time() - start_time
         else:
             emb, best, tuning_times = self.parameter_tuning()
             self.best = best
@@ -77,9 +76,9 @@ class Models(torch.nn.Module):
             score=0
         return -score
     def en2end_get_score(self,params):
-        F1_mic,F1_mac = self.train_model(**params)
+        F1 = self.train_model(**params)
 
-        return -F1_mic
+        return -F1
 
     def preprocessing(self, filename):
         return None
@@ -121,9 +120,10 @@ class Models(torch.nn.Module):
         best = fmin(
             fn=self.en2end_get_score, space=space_dtree, algo=algo, max_evals=10000, trials=trials, timeout=self.stop_time)
         print(best)
+        tuning_time = len(trials)
         print('end of training:{:.2f}s'.format(self.stop_time))
-        F1_mic, F1_mac = self.train_model(**best)
-
+        F1_mic, F1_mac = self.get_best_result(**best)
+        self.tuning_times=tuning_time
         return F1_mic, F1_mac, best
 
     def end2endsocre(self):

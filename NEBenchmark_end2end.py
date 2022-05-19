@@ -37,7 +37,7 @@ datasetlist = [Cora, Flickr, BlogCatalog, ACM, Citeseer, pubmed , chameleon, wis
 datasetlist_all = [Cora, Flickr, BlogCatalog, ACM, Citeseer, pubmed, chameleon, wisconsin,
                    film, squirrel]  # yelp,reddit,cornell,ogbn_arxiv,neil001, ppi
 datasetdict = {Cls.__name__.lower(): Cls for Cls in datasetlist}
-modellist = [featwalk, netmf, deepwalk, node2vec, DGI, GAE, CAN_new, CAN_original, ProNE, HOPE, Grarep, SDNE,GCN,GCN2,NetSMF,LINE,node2vec]
+modellist = [GCN,GCN2]
 modeldict = {Cls.__name__.lower(): Cls for Cls in modellist}
 
 datasetdict_all = copy.deepcopy(datasetdict)
@@ -56,15 +56,15 @@ def parse_args():
                         choices=modeldict_all,
                         help='The learning method')
     parser.add_argument('--task_method', type=str, default='task3',
-                        choices=['task1', 'task2', 'task3'],
+                        choices=['task3'],
                         help='The task method')
     parser.add_argument('--training_time', type=float, default=2.8,
                         help='The total training time you want')
-    parser.add_argument('--input_file', type=str, default=None,
-                        help='The input datasets you want')
     parser.add_argument('--tuning_method', type=str, default='random',
                         choices=['random', 'tpe'],
                         help='random search/ tpe search')
+    parser.add_argument('--input_file', type=str, default=None,
+                        help='The input datasets you want')
     parser.add_argument('--cuda_device', type=str, default='0')
 
     args = parser.parse_args()
@@ -101,7 +101,7 @@ def get_graph_time(args, dkey):
     return Graph, Stoptime
 
 def main(args):
-  # with  sem:
+
     today = date.today()
     # deal with the option is not all
     if args.method != 'all':
@@ -113,8 +113,7 @@ def main(args):
         datasetdict.clear()
         datasetdict[args.dataset] = temp
     # initial variable to store the final result and clean the file
-    eval_file_name = 'result/evalFiles/result_' + str(args.tuning_method) + '_' + str(args.method) + '_' + str(
-        today) + '_' + str(args.task_method) + '_' + str(args.dataset) + '.txt'
+    eval_file_name = 'result/evalFiles/result_' + str(args.tuning_method) + '_' + str(args.method) + '_' + str(today) + '_' + str(args.task_method) + '_' + str(args.dataset) + '.txt'
     fileObject = open(eval_file_name, 'w')
     fileObject.close()
 
@@ -125,32 +124,21 @@ def main(args):
             Graph, Stoptime = get_graph_time(args, dkey)
             model = model(datasets=Graph, iter=iter, time_setting=Stoptime, task_method=args.task_method,
                           tuning=args.tuning_method, cuda=args.cuda_device)
-            emb = model.emb
+            # emb = model.emb
             best = model.best
             tuning_times = model.tuning_times
             temp_result = {'Dataset': dkey, 'model': mkey, 'best': best, 'tuning_times': tuning_times}
             if model.is_end2end():
-                f1_mic, f1_mac = model.end2endsocre()
-                best = model.get_best()
-            else:
-                if args.task_method == 'task1' or args.task_method == 'task3':
-                    print("node_classification")
-                    f1_mic, f1_mac = node_classifcation_10_time(np.array(emb), Graph['Label'])
-                    temp_result['f1_micro'] = f1_mic
-                    temp_result['f1_macro'] = f1_mac
-                elif args.task_method == 'task2':
-                    print("link_prediction")
-                    roc_score, ap_score = link_prediction_10_time(emb, Graph)
-                    temp_result['roc_score'] = roc_score
-                    temp_result['ap_score'] = ap_score
+                temp_result['f1_micro'] = model.F1_mic
+                temp_result['f1_macro']=model.F1_mac
                 # np.save('result/embFiles/' + mkey + '_embedding_' + args.dataset + '.npy', emb)
             # save it in result file by using 'add' model
             fileObject = open(eval_file_name, 'a+')
             fileObject.write(str(temp_result) + '\n')
             fileObject.close()
+            print("Tuning completed")
 
 if __name__ == "__main__":
     # np.random.seed(32)
-    # sem = threading.Semaphore(4)
-    # threading.Thread(target=main(parse_args())).start()
     main(parse_args())
+    # main(parse_args())
