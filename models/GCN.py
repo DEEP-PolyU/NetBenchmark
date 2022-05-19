@@ -195,6 +195,7 @@ class GCN(Models):
         t_total = time.time()
         F1_mic_tot = []
         F1_mac_tot = []
+        print("Evaluating")
         for train_index, test_index in kf.split(features):
             train_index = torch.LongTensor(train_index)
             test_index = torch.LongTensor(test_index)
@@ -202,8 +203,8 @@ class GCN(Models):
             test_index.to(device)
             for epoch in range(epochs):
                 train(epoch, train_index)
-            print("Optimization Finished!")
-            print("Total time elapsed: {:.4f}s".format(time.time() - t_total))
+            # print("Optimization Finished!")
+            # print("Total time elapsed: {:.4f}s".format(time.time() - t_total))
             # Testing
             F1_mic, F1_mac = test(test_index, labels)
             F1_mic_tot.append(F1_mic)
