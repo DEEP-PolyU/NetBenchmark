@@ -119,10 +119,11 @@ class Models(torch.nn.Module):
         space_dtree = self.check_train_parameters()
         best = fmin(
             fn=self.en2end_get_score, space=space_dtree, algo=algo, max_evals=10000, trials=trials, timeout=self.stop_time)
-        print(best)
+        hyperparam = hyperopt.space_eval(space_dtree, best)
+        print(hyperparam)
         tuning_time = len(trials)
         print('end of training:{:.2f}s'.format(self.stop_time))
-        F1_mic, F1_mac = self.get_best_result(**best)
+        F1_mic, F1_mac = self.get_best_result(**hyperparam)
         self.tuning_times=tuning_time
         return F1_mic, F1_mac, best
 
