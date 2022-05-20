@@ -125,7 +125,7 @@ class Models(torch.nn.Module):
         print('end of training:{:.2f}s'.format(self.stop_time))
         F1_mic, F1_mac = self.get_best_result(**hyperparam)
         self.tuning_times=tuning_time
-        return F1_mic, F1_mac, best
+        return F1_mic, F1_mac, hyperparam
 
     def end2endsocre(self):
         return self.F1_mic,self.F1_mac
