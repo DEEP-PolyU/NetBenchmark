@@ -32,12 +32,10 @@ import preprocessing.preprocessing as pre
 import copy
 from datetime import date
 
-datasetlist = [Cora, Flickr, BlogCatalog, ACM, Citeseer, pubmed , chameleon, wisconsin,
-                   film, squirrel]  # yelp,reddit,cornell,ogbn_arxiv,neil001, ppi
-datasetlist_all = [Cora, Flickr, BlogCatalog, ACM, Citeseer, pubmed, chameleon, wisconsin,
-                   film, squirrel]  # yelp,reddit,cornell,ogbn_arxiv,neil001, ppi
+datasetlist = [Cora, Flickr, BlogCatalog, Citeseer, pubmed , chameleon,film, squirrel]  # yelp,reddit,cornell,ogbn_arxiv,neil001, ppi
+datasetlist_all = [Cora, Flickr, BlogCatalog, Citeseer, pubmed, chameleon ,film, squirrel]  # yelp,reddit,cornell,ogbn_arxiv,neil001, ppi
 datasetdict = {Cls.__name__.lower(): Cls for Cls in datasetlist}
-modellist = [featwalk, netmf, deepwalk, node2vec, DGI, GAE, CAN_new, CAN_original, ProNE, HOPE, Grarep, SDNE,GCN,GCN2,NetSMF,LINE,node2vec]
+modellist = [featwalk, netmf, deepwalk, node2vec, DGI, GAE, CAN_new, HOPE, Grarep, SDNE,NetSMF,LINE,node2vec]
 modeldict = {Cls.__name__.lower(): Cls for Cls in modellist}
 
 datasetdict_all = copy.deepcopy(datasetdict)
@@ -50,15 +48,15 @@ def parse_args():
     parser = argparse.ArgumentParser(description='NetBenchmark(DeepLab).')
 
     parser.add_argument('--dataset', type=str,
-                        default='cora', choices=datasetdict_all,
+                        default='all', choices=datasetdict_all,
                         help='select a available dataset (default: cora)')
-    parser.add_argument('--method', type=str, default='gcn',
+    parser.add_argument('--method', type=str, default='all',
                         choices=modeldict_all,
                         help='The learning method')
-    parser.add_argument('--task_method', type=str, default='task3',
+    parser.add_argument('--task_method', type=str, default='task2',
                         choices=['task1', 'task2', 'task3'],
                         help='The task method')
-    parser.add_argument('--training_time', type=float, default=2.8,
+    parser.add_argument('--training_time', type=float, default=1.4,
                         help='The total training time you want')
     parser.add_argument('--input_file', type=str, default=None,
                         help='The input datasets you want')
@@ -101,7 +99,7 @@ def get_graph_time(args, dkey):
     return Graph, Stoptime
 
 def main(args):
-  # with  sem:
+  with  sem:
     today = date.today()
     # deal with the option is not all
     if args.method != 'all':
@@ -151,6 +149,6 @@ def main(args):
 
 if __name__ == "__main__":
     # np.random.seed(32)
-    # sem = threading.Semaphore(4)
-    # threading.Thread(target=main(parse_args())).start()
-    main(parse_args())
+    sem = threading.Semaphore(4)
+    threading.Thread(target=main(parse_args())).start()
+    # main(parse_args())
