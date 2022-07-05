@@ -29,7 +29,7 @@ def link_prediction(emb,edges_pos, edges_neg):
 def link_prediction_10_time(emb,Graph):
     roc_score=[]
     ap_score=[]
-    for i in range(50):
+    for i in range(10):
         adj_train, train_edges, val_edges, val_edges_false, test_edges, test_edges_false = pre.mask_val_test_edges(
             Graph['Network'])
         roc, ap = link_prediction(emb, edges_pos=test_edges, edges_neg=test_edges_false)

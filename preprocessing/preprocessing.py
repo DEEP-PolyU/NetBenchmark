@@ -105,8 +105,8 @@ def mask_val_test_edges(adj):
     adj_tuple = sparse_to_tuple(adj_triu)
     edges = adj_tuple[0]
     edges_all = sparse_to_tuple(adj)[0]
-    num_test = int(np.floor(edges.shape[0] / 5.))
-    num_val = int(np.floor(edges.shape[0]*2 / 25.))
+    num_test = int(np.floor(edges.shape[0] / 4))
+    num_val = int(np.floor(edges.shape[0] / 2))
     randomint=int(random.randint(0,edges.shape[0]-num_val-num_test))
     all_edge_idx = list(range(edges.shape[0]))
     np.random.shuffle(all_edge_idx)
@@ -116,7 +116,7 @@ def mask_val_test_edges(adj):
     val_edges = edges[val_edge_idx]
     train_edges = np.delete(edges, test_edge_idx, axis=0)
 
-    def ismember(a, b, tol=5):
+    def ismember(a, b, tol=2):
         rows_close = np.all(np.round(a - b[:, None], tol) == 0, axis=-1)
         return np.any(rows_close)
 
