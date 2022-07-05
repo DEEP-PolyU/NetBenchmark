@@ -26,19 +26,19 @@ def link_prediction(emb,edges_pos, edges_neg):
     return roc_score,ap_score
 
 
-def link_prediction_10_time(emb,Graph):
+def link_prediction_10_time(best, Graph,model):
     roc_score=[]
     ap_score=[]
     for i in range(10):
-        adj_train, train_edges, val_edges, val_edges_false, test_edges, test_edges_false = pre.mask_val_test_edges(
-            Graph['Network'])
-        roc, ap = link_prediction(emb, edges_pos=test_edges, edges_neg=test_edges_false)
+        adj_train, train_edges, val_edges, val_edges_false, test_edges, test_edges_false = pre.mask_test_edges(Graph['Network'])
+        model.replace_mat_content(adj_train)
+        emb=model.train_model(**best)
+        roc, ap = link_prediction(emb, edges_pos=val_edges, edges_neg=val_edges_false)
         roc_score.append(np.array(roc))
         ap_score.append(np.array(ap))
     print("roc_score=",np.mean(roc_score))
     print("ap_score=",np.mean(ap_score))
     return np.mean(roc_score), np.mean(ap_score)
-
 
 
 

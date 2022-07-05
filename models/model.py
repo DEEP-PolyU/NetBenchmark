@@ -41,6 +41,9 @@ class Models(torch.nn.Module):
     def check_train_parameters(self):
         return None
 
+    def replace_mat_content(self,adj):
+        self.mat_content['Network']=adj
+
     @classmethod
     def is_preprocessing(cls):
         raise NotImplementedError
