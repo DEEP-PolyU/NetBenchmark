@@ -36,6 +36,7 @@ def link_prediction_10_time(best, Graph,model):
         roc, ap = link_prediction(emb, edges_pos=val_edges, edges_neg=val_edges_false)
         roc_score.append(np.array(roc))
         ap_score.append(np.array(ap))
+        # print(roc_score,ap_score)
     print("roc_score=",np.mean(roc_score))
     print("ap_score=",np.mean(ap_score))
     return np.mean(roc_score), np.mean(ap_score)

@@ -56,7 +56,7 @@ def parse_args():
     parser.add_argument('--task_method', type=str, default='task2',
                         choices=['task1', 'task2', 'task3'],
                         help='The task method')
-    parser.add_argument('--training_time', type=float, default=1.4,
+    parser.add_argument('--training_time', type=float, default=0.05,
                         help='The total training time you want')
     parser.add_argument('--input_file', type=str, default=None,
                         help='The input datasets you want')
@@ -132,13 +132,13 @@ def main(args):
                 best = model.get_best()
             else:
                 if args.task_method == 'task1' or args.task_method == 'task3':
-                    print("node_classification")
+                    print("running node_classification")
                     f1_mic, f1_mac = node_classifcation_10_time(np.array(emb), Graph['Label'])
                     temp_result['f1_micro'] = f1_mic
                     temp_result['f1_macro'] = f1_mac
                 elif args.task_method == 'task2':
                     print("link_prediction")
-                    roc_score, ap_score = link_prediction_10_time(emb, Graph)
+                    roc_score, ap_score = link_prediction_10_time(best, Graph,model)
                     temp_result['roc_score'] = roc_score
                     temp_result['ap_score'] = ap_score
                 # np.save('result/embFiles/' + mkey + '_embedding_' + args.dataset + '.npy', emb)
