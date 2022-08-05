@@ -57,7 +57,7 @@ def parse_args():
     parser.add_argument('--task_method', type=str, default='task2',
                         choices=['task1', 'task2', 'task3'],
                         help='The task method')
-    parser.add_argument('--training_time', type=float, default=0.05,
+    parser.add_argument('--training_time', type=float, default=1.4,
                         help='The total training time you want')
     parser.add_argument('--input_file', type=str, default=None,
                         help='The input datasets you want')
