@@ -73,8 +73,9 @@ class Models(torch.nn.Module):
         try:
 
             if self.task_method == 'task2' or self.task_method == 'task3':
-                emb = self.train_model(**params)
+
                 self.replace_mat_content(self.adj_train)
+                emb = self.train_model(**params)
                 score = link_prediction_Automatic_tuning(emb, edges_pos=self.val_edges, edges_neg=self.val_edges_false)
             elif self.task_method == 'task1':
                 emb = self.train_model(**params)
