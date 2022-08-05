@@ -31,6 +31,7 @@ from evaluation.node_classification import node_classifcation_10_time
 import preprocessing.preprocessing as pre
 import copy
 from datetime import date
+import copy
 
 datasetlist = [Cora, Flickr, BlogCatalog, Citeseer, pubmed , chameleon,film, squirrel]  # yelp,reddit,cornell,ogbn_arxiv,neil001, ppi
 datasetlist_all = [Cora, Flickr, BlogCatalog, Citeseer, pubmed, chameleon ,film, squirrel]  # yelp,reddit,cornell,ogbn_arxiv,neil001, ppi
@@ -121,8 +122,10 @@ def main(args):
             print("\n----------Train information-------------\n", 'dataset: {} ,Algorithm:{} '.format(dkey, mkey))
             model = modeldict[mkey]
             Graph, Stoptime = get_graph_time(args, dkey)
+            Graph_cp = copy.deepcopy(Graph)
             model = model(datasets=Graph, iter=iter, time_setting=Stoptime, task_method=args.task_method,
                           tuning=args.tuning_method, cuda=args.cuda_device)
+
             emb = model.emb
             best = model.best
             tuning_times = model.tuning_times
@@ -138,7 +141,7 @@ def main(args):
                     temp_result['f1_macro'] = f1_mac
                 elif args.task_method == 'task2':
                     print("link_prediction")
-                    roc_score, ap_score = link_prediction_10_time(best, Graph,model)
+                    roc_score, ap_score = link_prediction_10_time(best, Graph_cp,model)
                     temp_result['roc_score'] = roc_score
                     temp_result['ap_score'] = ap_score
                 # np.save('result/embFiles/' + mkey + '_embedding_' + args.dataset + '.npy', emb)

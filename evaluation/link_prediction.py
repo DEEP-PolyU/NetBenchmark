@@ -4,7 +4,7 @@ import numpy as np
 from sklearn.metrics import roc_auc_score
 from sklearn.metrics import average_precision_score
 from preprocessing.utils import normalize, sigmoid, load_citation, sparse_mx_to_torch_sparse_tensor, load_citationANEmat
-
+import copy
 def link_prediction(emb,edges_pos, edges_neg):
 
     adj_rec = np.matmul(emb, emb.T)
@@ -29,8 +29,10 @@ def link_prediction(emb,edges_pos, edges_neg):
 def link_prediction_10_time(best, Graph,model):
     roc_score=[]
     ap_score=[]
+
     for i in range(10):
-        adj_train, train_edges, val_edges, val_edges_false, test_edges, test_edges_false = pre.mask_test_edges(Graph['Network'])
+        temp_Graph = copy.deepcopy(Graph)
+        adj_train, train_edges, val_edges, val_edges_false, test_edges, test_edges_false = pre.mask_test_edges(temp_Graph['Network'])
         model.replace_mat_content(adj_train)
         emb=model.train_model(**best)
         roc, ap = link_prediction(emb, edges_pos=val_edges, edges_neg=val_edges_false)
