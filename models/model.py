@@ -24,10 +24,15 @@ class Models(torch.nn.Module):
         self.stop_time = time_setting
         self.task_method = task_method
         self.tuning = tuning
+
+        adj_train, train_edges, val_edges, val_edges_false, test_edges, test_edges_false = pre.mask_test_edges(self.mat_content['Network'])
+        self.adj_train = adj_train
+        self.val_edges = val_edges
+        self.val_edges_false = val_edges_false
         super(Models, self).__init__()
         if self.is_preprocessing():
             self.preprocessing(datasets)
-        start_time = time.time()
+
         if self.is_end2end():
             self.F1_mic, self.F1_mac, self.best = self.end2end()
         else:
@@ -35,7 +40,9 @@ class Models(torch.nn.Module):
             self.best = best
             self.emb = emb
             self.tuning_times=tuning_times
+        start_time = time.time()
         self.end_time = time.time() - start_time
+
 
 
     def check_train_parameters(self):
@@ -64,15 +71,13 @@ class Models(torch.nn.Module):
 
     def get_score(self,params):
         try:
-            emb = self.train_model(**params)
-            adj = self.mat_content['Network']
-            if self.task_method == 'task1':
-                adj_train, train_edges, val_edges, val_edges_false, test_edges, test_edges_false = pre.mask_val_test_edges(adj)
-                score=link_prediction_Automatic_tuning(emb,edges_pos=test_edges,edges_neg=test_edges_false)
-            elif self.task_method == 'task2':
-                adj_train, train_edges, val_edges, val_edges_false, test_edges, test_edges_false = pre.mask_val_test_edges(adj)
-                score = link_prediction_Automatic_tuning(emb, edges_pos=val_edges, edges_neg=val_edges_false)
-            else:
+
+            if self.task_method == 'task2' or self.task_method == 'task3':
+                emb = self.train_model(**params)
+                self.replace_mat_content(self.adj_train)
+                score = link_prediction_Automatic_tuning(emb, edges_pos=self.val_edges, edges_neg=self.val_edges_false)
+            elif self.task_method == 'task1':
+                emb = self.train_model(**params)
                 score=node_classifcation_end2end(np.array(emb), self.mat_content['Label'])
         except Exception as err:
             print(f"Unexpected {err=}, {type(err)=}")

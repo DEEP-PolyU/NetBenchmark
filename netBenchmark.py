@@ -48,9 +48,9 @@ def parse_args():
     parser = argparse.ArgumentParser(description='NetBenchmark(DeepLab).')
 
     parser.add_argument('--dataset', type=str,
-                        default='all', choices=datasetdict_all,
+                        default='cora', choices=datasetdict_all,
                         help='select a available dataset (default: cora)')
-    parser.add_argument('--method', type=str, default='all',
+    parser.add_argument('--method', type=str, default='hope',
                         choices=modeldict_all,
                         help='The learning method')
     parser.add_argument('--task_method', type=str, default='task2',
