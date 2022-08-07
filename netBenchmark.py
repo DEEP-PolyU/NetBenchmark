@@ -36,7 +36,7 @@ import copy
 datasetlist = [Cora, Flickr, BlogCatalog, Citeseer, pubmed , chameleon,film, squirrel]  # yelp,reddit,cornell,ogbn_arxiv,neil001, ppi
 datasetlist_all = [Cora, Flickr, BlogCatalog, Citeseer, pubmed, chameleon ,film, squirrel]  # yelp,reddit,cornell,ogbn_arxiv,neil001, ppi
 datasetdict = {Cls.__name__.lower(): Cls for Cls in datasetlist}
-modellist = [featwalk, netmf, deepwalk, node2vec, DGI, GAE, CAN_new, HOPE, Grarep, SDNE,NetSMF,LINE,node2vec]
+modellist = [featwalk, netmf, deepwalk, node2vec, DGI, GAE, CAN_new, HOPE, Grarep, SDNE,NetSMF,LINE,ProNE]
 modeldict = {Cls.__name__.lower(): Cls for Cls in modellist}
 
 datasetdict_all = copy.deepcopy(datasetdict)
@@ -49,16 +49,16 @@ def parse_args():
     parser = argparse.ArgumentParser(description='NetBenchmark(DeepLab).')
 
     parser.add_argument('--dataset', type=str,
-                        default='cora', choices=datasetdict_all,
+                        default='all', choices=datasetdict_all,
                         help='select a available dataset (default: cora)')
-    parser.add_argument('--method', type=str, default='hope',
+    parser.add_argument('--method', type=str, default='all',
                         choices=modeldict_all,
                         help='The learning method')
     parser.add_argument('--task_method', type=str, default='task2',
                         choices=['task1', 'task2', 'task3'],
                         help='The task method')
-    parser.add_argument('--training_time', type=float, default=1.4,
-                        help='The total training time you want')
+    parser.add_argument('--training_ratio', type=float, default= 1.,
+                        help='The total training ratio for our time settings')
     parser.add_argument('--input_file', type=str, default=None,
                         help='The input datasets you want')
     parser.add_argument('--tuning_method', type=str, default='random',
@@ -70,6 +70,9 @@ def parse_args():
     return args
 
 def time_calculating(Graph, training_time_rate):
+
+    node_ratio=1.5
+    edge_ratio=0.25
     edges = list()
     nodes = Graph['Network'].tolil()
     G = nx.DiGraph()
@@ -83,19 +86,25 @@ def time_calculating(Graph, training_time_rate):
 
     num_of_nodes = G.number_of_nodes()
     num_of_edges = G.number_of_edges()
-    time = int(training_time_rate * num_of_nodes)
-    print("\n----------Graph infomation-------------\n",
-          nx.info(G) + "\n" + "training Time: {}".format(time) + "\n---------------------------------------\n")
 
-    return time
+    node_time = int(node_ratio * num_of_nodes * training_time_rate)
+    edge_time = int(edge_ratio * num_of_edges * training_time_rate)
+    if node_time > edge_time:
+        total_time = node_time
+    else:
+        total_time = edge_time
+    print("\n----------Graph infomation-------------\n",
+          nx.info(G) + "\n" + "training Time: {}".format(total_time) + "\n---------------------------------------\n")
+
+    return total_time
 
 
 def get_graph_time(args, dkey):
-    if (args.input_file == None):
+    if (args.input_file is None):
         Graph = datasetdict[dkey]
         Graph = Graph.get_graph(Graph)
         # iter = get_training_time(args.method,Graph)
-    Stoptime = time_calculating(Graph, args.training_time)
+    Stoptime = time_calculating(Graph, args.training_ratio)
 
     return Graph, Stoptime
 
