@@ -34,7 +34,6 @@ from datetime import date
 import copy
 
 datasetlist = [Cora, Flickr, BlogCatalog, Citeseer, pubmed , chameleon,film, squirrel]  # yelp,reddit,cornell,ogbn_arxiv,neil001, ppi
-datasetlist_all = [Cora, Flickr, BlogCatalog, Citeseer, pubmed, chameleon ,film, squirrel]  # yelp,reddit,cornell,ogbn_arxiv,neil001, ppi
 datasetdict = {Cls.__name__.lower(): Cls for Cls in datasetlist}
 modellist = [featwalk, netmf, deepwalk, node2vec, DGI, GAE, CAN_new, HOPE, Grarep, SDNE,NetSMF,LINE,ProNE]
 modeldict = {Cls.__name__.lower(): Cls for Cls in modellist}
@@ -72,7 +71,7 @@ def parse_args():
 def time_calculating(Graph, training_time_rate):
 
     node_ratio=1.5
-    edge_ratio=0.25
+    edge_ratio=0.1
     edges = list()
     nodes = Graph['Network'].tolil()
     G = nx.DiGraph()

@@ -30,9 +30,9 @@ def link_prediction_10_time(best, Graph,model):
     roc_score=[]
     ap_score=[]
 
-    for i in range(10):
+    for i in range(5):
         temp_Graph = copy.deepcopy(Graph)
-        adj_train, train_edges, val_edges, val_edges_false, test_edges, test_edges_false = pre.mask_test_edges(temp_Graph['Network'])
+        adj_train, train_edges, val_edges, val_edges_false= pre.mask_test_edges(temp_Graph['Network'])
         model.replace_mat_content(adj_train)
         emb=model.train_model(**best)
         roc, ap = link_prediction(emb, edges_pos=val_edges, edges_neg=val_edges_false)

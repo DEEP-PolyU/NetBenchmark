@@ -192,8 +192,8 @@ def mask_test_edges(adj):
     all_edge_idx = list(range(edges.shape[0]))
     np.random.shuffle(all_edge_idx)
     val_edge_idx = all_edge_idx[:num_val]
-    test_edge_idx = all_edge_idx[num_val:(num_val + num_test)]
-    test_edges = edges[test_edge_idx]
+    # test_edge_idx = all_edge_idx[num_val:(num_val + num_test)]
+    # test_edges = edges[test_edge_idx]
     val_edges = edges[val_edge_idx]
     # train_edges = np.delete(edges, np.hstack([test_edge_idx, val_edge_idx]), axis=0)
     train_edges = np.delete(edges, np.hstack([val_edge_idx]), axis=0)
@@ -202,20 +202,20 @@ def mask_test_edges(adj):
         rows_close = np.all(np.round(a - b[:, None], tol) == 0, axis=-1)
         return np.any(rows_close)
 
-    test_edges_false = []
-    while len(test_edges_false) < len(test_edges):
-        idx_i = np.random.randint(0, adj.shape[0])
-        idx_j = np.random.randint(0, adj.shape[0])
-        if idx_i == idx_j:
-            continue
-        if ismember([idx_i, idx_j], edges_all):
-            continue
-        if test_edges_false:
-            if ismember([idx_j, idx_i], np.array(test_edges_false)):
-                continue
-            if ismember([idx_i, idx_j], np.array(test_edges_false)):
-                continue
-        test_edges_false.append([idx_i, idx_j])
+    # test_edges_false = []
+    # while len(test_edges_false) < len(test_edges):
+    #     idx_i = np.random.randint(0, adj.shape[0])
+    #     idx_j = np.random.randint(0, adj.shape[0])
+    #     if idx_i == idx_j:
+    #         continue
+    #     if ismember([idx_i, idx_j], edges_all):
+    #         continue
+    #     if test_edges_false:
+    #         if ismember([idx_j, idx_i], np.array(test_edges_false)):
+    #             continue
+    #         if ismember([idx_i, idx_j], np.array(test_edges_false)):
+    #             continue
+    #     test_edges_false.append([idx_i, idx_j])
 
     val_edges_false = []
     while len(val_edges_false) < len(val_edges):
@@ -251,7 +251,7 @@ def mask_test_edges(adj):
     adj_train = adj_train + adj_train.T
 
     # NOTE: these edge lists only contain single direction of edge!
-    return adj_train, train_edges, val_edges, val_edges_false, test_edges, test_edges_false
+    return adj_train, train_edges, val_edges, val_edges_false
 
 def mask_test_edges_net(adj):
     # Function to build test set with 10% positive links

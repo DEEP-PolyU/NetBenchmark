@@ -25,7 +25,7 @@ class Models(torch.nn.Module):
         self.task_method = task_method
         self.tuning = tuning
 
-        adj_train, train_edges, val_edges, val_edges_false, test_edges, test_edges_false = pre.mask_test_edges(self.mat_content['Network'])
+        adj_train, train_edges, val_edges, val_edges_false = pre.mask_test_edges(self.mat_content['Network'])
         self.adj_train = adj_train
         self.val_edges = val_edges
         self.val_edges_false = val_edges_false
@@ -84,6 +84,7 @@ class Models(torch.nn.Module):
             print(f"Unexpected {err=}, {type(err)=}")
             score=0
         return -score
+
     def en2end_get_score(self,params):
         F1 = self.train_model(**params)
 
