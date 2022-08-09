@@ -185,9 +185,9 @@ def mask_test_edges(adj):
     adj_triu = sp.triu(adj)
     adj_tuple = sparse_to_tuple(adj_triu)
     edges = adj_tuple[0]
-    edges_all = sparse_to_tuple(adj)[0]
-    num_test = int(np.floor(edges.shape[0] / 10.))
-    num_val = int(np.floor(edges.shape[0] / 4.))
+    # edges_all = sparse_to_tuple(adj)[0]
+    # num_test = int(np.floor(edges.shape[0] / 10.))
+    num_val = int(np.floor(edges.shape[0] / 8.))
 
     all_edge_idx = list(range(edges.shape[0]))
     np.random.shuffle(all_edge_idx)
