@@ -5,8 +5,8 @@ from sklearn.metrics import roc_auc_score
 from sklearn.metrics import average_precision_score
 from preprocessing.utils import normalize, sigmoid, load_citation, sparse_mx_to_torch_sparse_tensor, load_citationANEmat
 import copy
-from multiprocessing import  Pool
-from functools import reduce
+import multiprocessing
+from tqdm import tqdm
 def link_prediction(emb,edges_pos, edges_neg):
 
     adj_rec = np.matmul(emb, emb.T)
@@ -27,38 +27,52 @@ def link_prediction(emb,edges_pos, edges_neg):
     # print("ap_score=",ap_score)
     return roc_score,ap_score
 
-def train(best, Graph,model):
+def split_dataset(Graph):
     temp_Graph = copy.deepcopy(Graph)
     adj_train, train_edges, val_edges, val_edges_false = pre.mask_test_edges(temp_Graph['Network'])
-    model.replace_mat_content(adj_train)
-    emb = model.train_model(**best)
-    roc, ap = link_prediction(emb, edges_pos=val_edges, edges_neg=val_edges_false)
-    return roc ,ap
+    return adj_train, train_edges, val_edges, val_edges_false
 
 
 def link_prediction_10_time(best, Graph,model):
+    total_time=5
     roc_score=[]
     ap_score=[]
-    p= Pool()
-    args=[(best, Graph,model),(best, Graph,model),(best, Graph,model),(best, Graph,model),(best, Graph,model)]
-    temp = p.starmap(train, args)
-    p.close()
-    p.join()
-    result = reduce(lambda x,y :x+y, temp)
-    for num in range(0,len(result)):
-        if(num % 2 ==0):
-            roc_score.append(result[num])
-        else:
-            ap_score.append(result[num])
-    # for i in range(5):
-    #     temp_Graph = copy.deepcopy(Graph)
-    #     adj_train, train_edges, val_edges, val_edges_false= pre.mask_test_edges(temp_Graph['Network'])
-    #     model.replace_mat_content(adj_train)
-    #     emb=model.train_model(**best)
-    #     roc, ap = link_prediction(emb, edges_pos=val_edges, edges_neg=val_edges_false)
-    #     roc_score.append(np.array(roc))
-    #     ap_score.append(np.array(ap))
-        # print(roc_score,ap_score)
+    results_list=[]
+    pool = multiprocessing.Pool(processes=4)
+    for i in range(total_time):
+        result_per_read = pool.apply_async(split_dataset, (Graph,))
+        results_list.append(result_per_read)
+    pool.close()
+    pbar = tqdm(total=total_time, position=0, leave=True)
+    for result_df in results_list:
+        temp = result_df.get()
+        if temp is not None:
+            adj_train, train_edges, val_edges, val_edges_false=temp
+            model.replace_mat_content(adj_train)
+            emb = model.train_model(**best)
+            roc, ap = link_prediction(emb, edges_pos=val_edges, edges_neg=val_edges_false)
+            roc_score.append(roc)
+            ap_score.append(ap)
+        pbar.update(1)
+    pool.join()
+    print("roc_score=",np.mean(roc_score))
+    print("ap_score=",np.mean(ap_score))
+    return np.mean(roc_score), np.mean(ap_score)
+
+def link_prediction_10_time_old(best, Graph, model):
+    total_time = 5
+    roc_score = []
+    ap_score = []
+    pbar = tqdm(total=total_time, position=0, leave=True)
+    for i in range(total_time):
+        temp_Graph = copy.deepcopy(Graph)
+        adj_train, train_edges, val_edges, val_edges_false= pre.mask_test_edges(temp_Graph['Network'])
+        model.replace_mat_content(adj_train)
+        emb=model.train_model(**best)
+        roc, ap = link_prediction(emb, edges_pos=val_edges, edges_neg=val_edges_false)
+        roc_score.append(np.array(roc))
+        ap_score.append(np.array(ap))
+        pbar.update(1)
     print("roc_score=",np.mean(roc_score))
     print("ap_score=",np.mean(ap_score))
     return np.mean(roc_score), np.mean(ap_score)

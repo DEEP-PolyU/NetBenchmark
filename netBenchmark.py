@@ -26,7 +26,7 @@ from models.NetSMF import NetSMF
 from models.GCN2 import GCN2
 from models.SAGE import SAGE
 from models.SDNE import SDNE
-from evaluation.link_prediction import link_prediction_10_time
+from evaluation.link_prediction import link_prediction_10_time,link_prediction_10_time_old
 from evaluation.node_classification import node_classifcation_10_time
 import preprocessing.preprocessing as pre
 import copy
@@ -108,7 +108,7 @@ def get_graph_time(args, dkey):
     return Graph, Stoptime
 
 def main(args):
-  with  sem:
+  # with  sem:
     today = date.today()
     # deal with the option is not all
     if args.method != 'all':
@@ -148,7 +148,7 @@ def main(args):
                     temp_result['f1_micro'] = f1_mic
                     temp_result['f1_macro'] = f1_mac
                 elif args.task_method == 'task2':
-                    print("link_prediction")
+                    print("running link_prediction")
                     roc_score, ap_score = link_prediction_10_time(best, Graph_cp,model)
                     temp_result['roc_score'] = roc_score
                     temp_result['ap_score'] = ap_score
@@ -160,6 +160,6 @@ def main(args):
 
 if __name__ == "__main__":
     # np.random.seed(32)
-    sem = threading.Semaphore(4)
-    threading.Thread(target=main(parse_args())).start()
-    # main(parse_args())
+    # sem = threading.Semaphore(4)
+    # threading.Thread(target=main(parse_args())).start()
+    main(parse_args())
