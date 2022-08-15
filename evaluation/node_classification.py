@@ -36,7 +36,7 @@ def node_classifcation_10_time(feature, labels):
         f1_mac_fold = np.array(f1_mac_fold)
         f1_mic.append(np.mean(f1_mic_fold))
         f1_mac.append(np.mean(f1_mac_fold))
-        tqdm.update(1)
+        pbar.update(1)
 
     f1_mac = np.array(f1_mac)
     f1_mic = np.array(f1_mic)
