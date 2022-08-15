@@ -6,8 +6,9 @@ import scipy.io as sio
 from sklearn.model_selection import KFold
 from sklearn import svm
 from sklearn.metrics import f1_score
-
+from tqdm import tqdm
 def node_classifcation_10_time(feature, labels):
+    pbar = tqdm(total=10, position=0, leave=True)
     labels = labels.reshape(-1)
     shape = len(labels.shape)
     if shape == 2:
@@ -35,16 +36,16 @@ def node_classifcation_10_time(feature, labels):
         f1_mac_fold = np.array(f1_mac_fold)
         f1_mic.append(np.mean(f1_mic_fold))
         f1_mac.append(np.mean(f1_mac_fold))
+        tqdm.update(1)
 
     f1_mac = np.array(f1_mac)
     f1_mic = np.array(f1_mic)
-
-
 
     print('Testing based on svm: ',
           'f1_micro=%.4f' % np.mean(f1_mic),
           'f1_macro=%.4f' % np.mean(f1_mac))
     return np.mean(f1_mic),np.mean(f1_mac)
+
 
 def node_classifcation_end2end(feature, labels):
     labels = labels.reshape(-1)
