@@ -24,11 +24,11 @@ class Models(torch.nn.Module):
         self.stop_time = time_setting
         self.task_method = task_method
         self.tuning = tuning
-
-        adj_train, train_edges, val_edges, val_edges_false = pre.mask_test_edges(self.mat_content['Network'])
-        self.adj_train = adj_train
-        self.val_edges = val_edges
-        self.val_edges_false = val_edges_false
+        if task_method != 'task1':
+            adj_train, train_edges, val_edges, val_edges_false = pre.mask_test_edges(self.mat_content['Network'])
+            self.adj_train = adj_train
+            self.val_edges = val_edges
+            self.val_edges_false = val_edges_false
         super(Models, self).__init__()
         if self.is_preprocessing():
             self.preprocessing(datasets)
