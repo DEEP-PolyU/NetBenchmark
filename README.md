@@ -35,16 +35,16 @@ optional arguments:
 
 - -h, --help           
   show this help message and exit
--  --dataset {cora,flickr,blogcatalog,citeseer,pubmed,all}      
+-  --dataset {{cora,flickr,blogcatalog,citeseer,pubmed,chameleon,film,squirrel,all}      
    select a available dataset (default: all)
--  --method {featwalk,netmf,deepwalk,prone,node2vec,dgi,gae,can_new,can_original,all}         
-   The learning method
+-  --method {featwalk,netmf,deepwalk,node2vec,dgi,gae,can_new,hope,grarep,sdne,netsmf,line,prone,all}         
+   The network embedding algorithms (default: all)
 -  --task_method {task1,task2,task3}       
    The evaluation method
 -  --cuda_device {default:0}
    The number of cuda device
--  --training_time TRAINING_TIME (default: 1.4)
-   The total training time you want
+-  --training_ratio (default: 1.)
+   The value to control the total training time 
 -  --tuning_method {random,tpe} 
    The method of parameter tuning.(now includes Random search and tpe search)
 
