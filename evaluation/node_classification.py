@@ -13,13 +13,12 @@ def node_classifcation_10_time(feature, labels):
     shape = len(labels.shape)
     if shape == 2:
         labels = np.argmax(labels, axis=1)
-    i = 0
     f1_mac = []
     f1_mic = []
     for i in range(10):
         f1_mic_fold = []
         f1_mac_fold = []
-        kf = KFold(n_splits=5, shuffle=True,random_state=0)
+        kf = KFold(n_splits=5, shuffle=True,random_state=i)
         for train_index, test_index in kf.split(feature):
             train_X, train_y = feature[train_index], labels[train_index]
             test_X, test_y = feature[test_index], labels[test_index]
@@ -34,17 +33,17 @@ def node_classifcation_10_time(feature, labels):
 
         f1_mic_fold = np.array(f1_mic_fold)
         f1_mac_fold = np.array(f1_mac_fold)
-        f1_mic.append(np.mean(f1_mic_fold))
-        f1_mac.append(np.mean(f1_mac_fold))
+        f1_mic.extend(f1_mic_fold)
+        f1_mac.extend(f1_mac_fold)
         pbar.update(1)
 
     f1_mac = np.array(f1_mac)
     f1_mic = np.array(f1_mic)
 
     print('Testing based on svm: ',
-          'f1_micro=%.4f' % np.mean(f1_mic),
-          'f1_macro=%.4f' % np.mean(f1_mac))
-    return np.mean(f1_mic),np.mean(f1_mac)
+          'f1_micro=%.4f' % np.mean(f1_mic),"± %.4f" % np.std(f1_mic),
+          'f1_macro=%.4f' % np.mean(f1_mac),"± %.4f" % np.std(f1_mac))
+    return np.mean(f1_mic),np.mean(f1_mac),np.std(f1_mic),np.std(f1_mac)
 
 
 def node_classifcation_end2end(feature, labels):

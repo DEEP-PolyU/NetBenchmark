@@ -144,14 +144,18 @@ def main(args):
             else:
                 if args.task_method == 'task1' or args.task_method == 'task3':
                     print("running node_classification")
-                    f1_mic, f1_mac = node_classifcation_10_time(np.array(emb), Graph['Label'])
-                    temp_result['f1_micro'] = f1_mic
-                    temp_result['f1_macro'] = f1_mac
+                    f1_mic, f1_mac,f1_mic_std,f1_mac_std = node_classifcation_10_time(np.array(emb), Graph['Label'])
+                    temp_result['f1_micro_mean'] = f1_mic
+                    temp_result['f1_macro_mean'] = f1_mac
+                    temp_result['f1_micro_std'] = f1_mic_std
+                    temp_result['f1_macro_std'] = f1_mac_std
                 elif args.task_method == 'task2':
                     print("running link_prediction")
-                    roc_score, ap_score = link_prediction_10_time(best, Graph_cp,model)
-                    temp_result['roc_score'] = roc_score
-                    temp_result['ap_score'] = ap_score
+                    roc_score, ap_score,roc_score_std,ap_score_std = link_prediction_10_time(best, Graph_cp,model)
+                    temp_result['roc_score_mean'] = roc_score
+                    temp_result['ap_score_mean'] = ap_score
+                    temp_result['roc_score_std'] = roc_score_std
+                    temp_result['ap_score_std'] = ap_score_std
                 # np.save('result/embFiles/' + mkey + '_embedding_' + args.dataset + '.npy', emb)
             # save it in result file by using 'add' model
             fileObject = open(eval_file_name, 'a+')

@@ -105,7 +105,7 @@ class Models(torch.nn.Module):
             algo = partial(atpe.suggest)
 
         space_dtree = self.check_train_parameters()
-        best = fmin(fn=self.get_score, space=space_dtree, algo=algo, max_evals=10000, trials=trials, timeout=self.stop_time)
+        best = fmin(fn=self.get_score, space=space_dtree, algo=algo, max_evals=10000, trials=trials, timeout=self.stop_time, rstate=np.random.default_rng(42))
         hyperparam = hyperopt.space_eval(space_dtree,best)
         tuning_time = len(trials)
         print(hyperparam)
