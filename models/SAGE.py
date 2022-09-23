@@ -8,7 +8,7 @@ import numpy as np
 import torch
 import torch.nn.functional as F
 import torch.optim as optim
-
+from hyperparameters.public_hyper import SPACE_TREE
 from .GCN_package.utils import load_data, accuracy, load_citation,load_citationANEmat_gac,load_webANEmat_gac,F1_score
 from .GCN_package.input_graph_feed import GraphInput
 from .SAGE_package.models import GNN
@@ -34,16 +34,13 @@ class SAGE(Models):
         return True
 
     def check_train_parameters(self):
-        space_dtree = {
-
-            'batch_size': hp.uniformint('batch_size', 1, 100),
-            'nb_epochs': hp.uniformint('nb_epochs', 100, 2000),
-            # 'lr': hp.loguniform('lr', np.log(0.05), np.log(0.2)), # walk_length,window_size
-            'lr': hp.choice('lr', [0, 1, 2, 3, 4, 5, 6]),
-            'dropout': hp.uniform('dropout', 0, 0.75),
-            'lamda': hp.uniform('lamda', 0, 0.75),
-            'alpha': hp.uniform('alpha', 0, 0.75)
-        }
+        space_dtree = {}
+        space_dtree['lr'] = SPACE_TREE['lr']
+        space_dtree["nb_epochs"] = SPACE_TREE["nb_epochs"]
+        space_dtree["batch_size"] = SPACE_TREE["batch_size"]
+        space_dtree["dropout"] = SPACE_TREE["dropout"]
+        space_dtree["lamda"] = hp.uniform('lamda', 0, 0.75)
+        space_dtree["alpha"] = SPACE_TREE["alpha"]
 
         return space_dtree
 
@@ -132,13 +129,11 @@ class SAGE(Models):
 
         #model start
 
-        lrrate = [0.1, 0.01, 0.001, 0.0001, 0.005, 0.05, 0.00005]
         semi = 0
         seed = 42
         hidden = '16,16'
         dropout = kwargs["dropout"]
         lr = kwargs["lr"]
-        lr = lrrate[lr]
         weight_decay = 0
         epochs = int(kwargs["nb_epochs"])
         # epochs = 20
