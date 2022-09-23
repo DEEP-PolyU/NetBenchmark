@@ -57,7 +57,7 @@ def link_prediction_10_time(best, Graph,model):
     pool.join()
     print("roc_score=",np.mean(roc_score),"± %.4f" % np.std(roc_score))
     print("ap_score=",np.mean(ap_score),"± %.4f" % np.std(ap_score))
-    return np.mean(roc_score), np.mean(ap_score),np.std(roc_score), np.std(ap_score)
+    return np.mean(roc_score), np.mean(ap_score),np.std(roc_score), np.std(ap_score),roc_score,ap_score
 
 def link_prediction_10_time_old(best, Graph, model):
     total_time = 5

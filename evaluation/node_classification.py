@@ -43,7 +43,7 @@ def node_classifcation_10_time(feature, labels):
     print('Testing based on svm: ',
           'f1_micro=%.4f' % np.mean(f1_mic),"± %.4f" % np.std(f1_mic),
           'f1_macro=%.4f' % np.mean(f1_mac),"± %.4f" % np.std(f1_mac))
-    return np.mean(f1_mic),np.mean(f1_mac),np.std(f1_mic),np.std(f1_mac)
+    return np.mean(f1_mic),np.mean(f1_mac),np.std(f1_mic),np.std(f1_mac),f1_mic,f1_mac
 
 
 def node_classifcation_end2end(feature, labels):

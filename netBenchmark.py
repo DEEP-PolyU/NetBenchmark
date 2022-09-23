@@ -17,14 +17,13 @@ from models.GAE import GAE
 from models.GCN import GCN
 from models.ProNE import ProNE
 from models.CAN_new import CAN_new
-from models.CAN_original import CAN_original
-from models.GAT import GATModel
+# from models.CAN_original import CAN_original
+# from models.GAT import GATModel
 from models.HOPE import HOPE
 from models.Grarep import Grarep
 from models.LINE import LINE
 from models.NetSMF import NetSMF
-from models.GCN2 import GCN2
-from models.SAGE import SAGE
+import json
 from models.SDNE import SDNE
 from evaluation.link_prediction import link_prediction_10_time,link_prediction_10_time_old
 from evaluation.node_classification import node_classifcation_10_time
@@ -35,7 +34,7 @@ import copy
 
 datasetlist = [Cora, Flickr, BlogCatalog, Citeseer, pubmed , chameleon,film, squirrel]  # yelp,reddit,cornell,ogbn_arxiv,neil001, ppi
 datasetdict = {Cls.__name__.lower(): Cls for Cls in datasetlist}
-modellist = [featwalk, netmf, deepwalk, node2vec, DGI, GAE, CAN_new, HOPE, Grarep, SDNE,NetSMF,LINE,ProNE]
+modellist = [featwalk, netmf, deepwalk, node2vec, DGI, GAE, CAN_new, HOPE, SDNE,NetSMF,LINE,ProNE,Grarep]
 modeldict = {Cls.__name__.lower(): Cls for Cls in modellist}
 
 datasetdict_all = copy.deepcopy(datasetdict)
@@ -144,21 +143,26 @@ def main(args):
             else:
                 if args.task_method == 'task1' or args.task_method == 'task3':
                     print("running node_classification")
-                    f1_mic, f1_mac,f1_mic_std,f1_mac_std = node_classifcation_10_time(np.array(emb), Graph['Label'])
+                    f1_mic, f1_mac,f1_mic_std,f1_mac_std ,f1_mic_array,f1_mac_array= node_classifcation_10_time(np.array(emb), Graph['Label'])
                     temp_result['f1_micro_mean'] = f1_mic
                     temp_result['f1_macro_mean'] = f1_mac
                     temp_result['f1_micro_std'] = f1_mic_std
                     temp_result['f1_macro_std'] = f1_mac_std
+                    temp_result['f1_micro_list'] = f1_mic_array
+                    temp_result['f1_macro_list'] = f1_mac_array
                 elif args.task_method == 'task2':
                     print("running link_prediction")
-                    roc_score, ap_score,roc_score_std,ap_score_std = link_prediction_10_time(best, Graph_cp,model)
+                    roc_score, ap_score,roc_score_std,ap_score_std,roc_score_list,ap_score_list = link_prediction_10_time(best, Graph_cp,model)
                     temp_result['roc_score_mean'] = roc_score
                     temp_result['ap_score_mean'] = ap_score
                     temp_result['roc_score_std'] = roc_score_std
                     temp_result['ap_score_std'] = ap_score_std
+                    temp_result['roc_score_list'] = roc_score_list
+                    temp_result['ap_score_list'] = ap_score_list
                 # np.save('result/embFiles/' + mkey + '_embedding_' + args.dataset + '.npy', emb)
             # save it in result file by using 'add' model
             fileObject = open(eval_file_name, 'a+')
+            temp_result=json.dumps(temp_result)
             fileObject.write(str(temp_result) + '\n')
             fileObject.close()
 
