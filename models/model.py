@@ -36,10 +36,16 @@ class Models(torch.nn.Module):
         if self.is_end2end():
             self.F1_mic, self.F1_mac, self.best = self.end2end()
         else:
-            emb, best, tuning_times = self.parameter_tuning()
-            self.best = best
-            self.emb = emb
-            self.tuning_times=tuning_times
+            if self.is_preprocessing:
+                emb = self.train_model()
+                self.emb = emb
+                self.best = {}
+                self.tuning_times = '0'
+            else:
+                emb, best, tuning_times = self.parameter_tuning()
+                self.best = best
+                self.emb = emb
+                self.tuning_times=tuning_times
         start_time = time.time()
         self.end_time = time.time() - start_time
 

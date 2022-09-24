@@ -17,6 +17,7 @@ from models.GAE import GAE
 from models.GCN import GCN
 from models.ProNE import ProNE
 from models.CAN_new import CAN_new
+from models.Spectral import Spectral
 # from models.CAN_original import CAN_original
 # from models.GAT import GATModel
 from models.HOPE import HOPE
@@ -34,7 +35,7 @@ import copy
 
 datasetlist = [Cora, Flickr, BlogCatalog, Citeseer, pubmed , chameleon,film, squirrel]  # yelp,reddit,cornell,ogbn_arxiv,neil001, ppi
 datasetdict = {Cls.__name__.lower(): Cls for Cls in datasetlist}
-modellist = [featwalk, netmf, deepwalk, node2vec, DGI, GAE, CAN_new, HOPE, SDNE,NetSMF,LINE,ProNE,Grarep]
+modellist = [featwalk, netmf, deepwalk, node2vec, DGI, GAE, CAN_new, HOPE, SDNE,NetSMF,LINE,ProNE,Grarep,Spectral]
 modeldict = {Cls.__name__.lower(): Cls for Cls in modellist}
 
 datasetdict_all = copy.deepcopy(datasetdict)
@@ -132,7 +133,6 @@ def main(args):
             Graph_cp = copy.deepcopy(Graph)
             model = model(datasets=Graph, iter=iter, time_setting=Stoptime, task_method=args.task_method,
                           tuning=args.tuning_method, cuda=args.cuda_device)
-
             emb = model.emb
             best = model.best
             tuning_times = model.tuning_times
