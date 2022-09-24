@@ -36,7 +36,7 @@ class Models(torch.nn.Module):
         if self.is_end2end():
             self.F1_mic, self.F1_mac, self.best = self.end2end()
         else:
-            if self.is_preprocessing:
+            if self.is_preprocessing() == True:
                 emb = self.train_model()
                 self.emb = emb
                 self.best = {}

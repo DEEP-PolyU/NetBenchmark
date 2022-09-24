@@ -24,6 +24,7 @@ from models.HOPE import HOPE
 from models.Grarep import Grarep
 from models.LINE import LINE
 from models.NetSMF import NetSMF
+from models.Metapath2vec import Metapath2vec
 import json
 from models.SDNE import SDNE
 from evaluation.link_prediction import link_prediction_10_time,link_prediction_10_time_old
@@ -35,7 +36,7 @@ import copy
 
 datasetlist = [Cora, Flickr, BlogCatalog, Citeseer, pubmed , chameleon,film, squirrel]  # yelp,reddit,cornell,ogbn_arxiv,neil001, ppi
 datasetdict = {Cls.__name__.lower(): Cls for Cls in datasetlist}
-modellist = [featwalk, netmf, deepwalk, node2vec, DGI, GAE, CAN_new, HOPE, SDNE,NetSMF,LINE,ProNE,Grarep,Spectral]
+modellist = [featwalk, netmf, deepwalk, node2vec, DGI, GAE, CAN_new, HOPE, SDNE,NetSMF,LINE,ProNE,Grarep,Spectral,Metapath2vec]
 modeldict = {Cls.__name__.lower(): Cls for Cls in modellist}
 
 datasetdict_all = copy.deepcopy(datasetdict)
