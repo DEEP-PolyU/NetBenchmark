@@ -37,8 +37,8 @@ def node_classifcation_10_time(feature, labels):
         f1_mac.extend(f1_mac_fold)
         pbar.update(1)
 
-    f1_mac = np.array(f1_mac)
-    f1_mic = np.array(f1_mic)
+    # f1_mac = np.array(f1_mac)
+    # f1_mic = np.array(f1_mic)
 
     print('Testing based on svm: ',
           'f1_micro=%.4f' % np.mean(f1_mic),"± %.4f" % np.std(f1_mic),
