@@ -14,12 +14,9 @@ from preprocessing.dataset import Flickr, ACM, Cora, BlogCatalog, Citeseer, neil
 from models.Node2vec import node2vec
 from models.DGI import DGI
 from models.GAE import GAE
-from models.GCN import GCN
 from models.ProNE import ProNE
 from models.CAN_new import CAN_new
 from models.Spectral import Spectral
-# from models.CAN_original import CAN_original
-# from models.GAT import GATModel
 from models.HOPE import HOPE
 from models.Grarep import Grarep
 from models.LINE import LINE
@@ -29,8 +26,6 @@ import json
 from models.SDNE import SDNE
 from evaluation.link_prediction import link_prediction_10_time,link_prediction_10_time_old
 from evaluation.node_classification import node_classifcation_10_time
-import preprocessing.preprocessing as pre
-import copy
 from datetime import date
 import copy
 
@@ -38,6 +33,7 @@ datasetlist = [Cora, Flickr, BlogCatalog, Citeseer, pubmed , chameleon,film, squ
 datasetdict = {Cls.__name__.lower(): Cls for Cls in datasetlist}
 modellist = [featwalk, netmf, deepwalk, node2vec, DGI, GAE, CAN_new, HOPE, SDNE,NetSMF,LINE,ProNE,Grarep,Spectral,Metapath2vec]
 modeldict = {Cls.__name__.lower(): Cls for Cls in modellist}
+modeldict.update({"can":modeldict.pop("can_new")})
 
 datasetdict_all = copy.deepcopy(datasetdict)
 datasetdict_all['all'] = 1
@@ -54,7 +50,7 @@ def parse_args():
     parser.add_argument('--method', type=str, default='all',
                         choices=modeldict_all,
                         help='The learning method')
-    parser.add_argument('--task_method', type=str, default='task2',
+    parser.add_argument('--task_method', type=str, default='task1',
                         choices=['task1', 'task2', 'task3'],
                         help='The task method')
     parser.add_argument('--training_ratio', type=float, default= 1.,
