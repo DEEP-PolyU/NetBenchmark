@@ -158,7 +158,10 @@ class GAE(Models):
         return False
 
     def check_train_parameters(self):
-        space_dtree=SPACE_TREE
+        space_dtree= {}
+        space_dtree['lr']=SPACE_TREE["lr"]
+        space_dtree['nb_epochs']=SPACE_TREE["nb_epochs"]
+        space_dtree['dropout']=SPACE_TREE["dropout"]
         space_dtree['tuning_method']=str(self.tuning)
         space_dtree['hid1']=hp.choice('hid1',[64,128,256])
         space_dtree['weight_decay']= hp.choice('weight_decay',[0,5e-4,1e-3])
