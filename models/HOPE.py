@@ -7,7 +7,8 @@ from hyperparameters.public_hyper import SPACE_TREE
 
 class HOPE(Models):
     def check_train_parameters(self):
-        space_dtree = SPACE_TREE
+        space_dtree = {}
+        space_dtree['lr'] = SPACE_TREE['lr']
         return space_dtree
 
     @classmethod
