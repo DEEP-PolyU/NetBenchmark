@@ -33,7 +33,8 @@ datasetlist = [Cora, Flickr, BlogCatalog, Citeseer, pubmed , chameleon,film, squ
 datasetdict = {Cls.__name__.lower(): Cls for Cls in datasetlist}
 modellist = [featwalk, netmf, deepwalk, node2vec, DGI, GAE, CAN_new, HOPE, SDNE,NetSMF,LINE,ProNE,Grarep,Spectral,Metapath2vec]
 modeldict = {Cls.__name__.lower(): Cls for Cls in modellist}
-modeldict.update({"can":modeldict.pop("can_new")})
+if "can_new" in modeldict:
+    modeldict.update({"can":modeldict.pop("can_new")})
 
 datasetdict_all = copy.deepcopy(datasetdict)
 datasetdict_all['all'] = 1
