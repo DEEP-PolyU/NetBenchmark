@@ -4,13 +4,13 @@ Node Representation Learning Benchmark
 
 | Status        | Developing      |
 :-------------- |:---------------------------------------------------- |
-| **Author(s)** | QIAN Zhiqiang (zhiqiang.qian@connect.polyu.hk), QUO Zhihao (zhi-hao.guo@connect.polyu.hk), YU Rico (ricoyu.yu@connect.polyu.hk) , LIAN, Amber (amber.lian@connect.polyu.hk) |
+| **Author(s)** | QIAN Zhiqiang (zhiqiang.qian@connect.polyu.hk), GUO Zhihao (zhi-hao.guo@connect.polyu.hk), YU Rico (ricoyu.yu@connect.polyu.hk) , LIAN, Amber (amber.lian@connect.polyu.hk) |
 | **Updated**   | 2021-05                                           |
 
 
 ## Objective
 
-We aim at building a auto,fair and systematic evaluation platform to compare the results of different Network Embedding models. 
+We aim at building an automatic,fair and systematic evaluation platform to compare the results of different Network Embedding models. 
 The implemented or modified models include [DeepWalk](https://github.com/phanein/deepwalk),  [node2vec](https://github.com/aditya-grover/node2vec), 
 [GCN](https://github.com/tkipf/gcn), [NetMF](https://github.com/xptree/NetMF), GAE, [featWalk](https://github.com/xhuang31/FeatWalk_AAAI19), CAN,LINE,HOPE.
 
@@ -50,7 +50,7 @@ optional arguments:
 
 An example
 ```bash
-CUDA_VISIBLE_DEVICE="0,1,2,3,4,5" python netBenchmark.py --method=all --dataset=all --task_method=task1 --cuda_device=1 
+python netBenchmark.py --method=all --dataset=all --task_method=task1 --cuda_device=1 
 ```
 
 
